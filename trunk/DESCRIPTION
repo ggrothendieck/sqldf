@@ -1,10 +1,10 @@
 Package: sqldf
 Version: 0.1-0
-Date: 2007-07-17
+Date: 2007-07-19
 Title: SQL on data frames.
 Author: G. Grothendieck
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
-Description:  Thin layer over RSQLlite facilitating use of 
-	SQL selects on data frames.
+Description:  Thin layer over RSQLite and RMySQL facilitating use of SQL selects on data frames.
 Depends: R (>= 2.5.1), RSQLite (>= 0.5-5), gsubfn
 License: GPL (Version 3 or later)
+URL: http://code.google.com/p/sqldf/
