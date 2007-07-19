@@ -3,10 +3,10 @@
 # in place of dot since dot is meaningful in SQL
 sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, sep = " ", envir = parent.frame(), 
-   method = c("auto", "raw"), drv) {
+   method = c("auto", "raw"), drv = getOption("dbDriver")) {
 	on.exit(dbDisconnect(con))
 
-	if (missing(drv)) {
+	if (is.null(drv))
 		drv <- if ("package:RMySQL" %in% search()) "MySQL" else "SQLite"
 	}
 

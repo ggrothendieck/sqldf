@@ -6,7 +6,8 @@ SQL select on data frames
 }
 \usage{
 sqldf(..., stringsAsFactors, col.classes = NULL, rownames = FALSE, 
-   sep = " ", envir = parent.frame(), method = c("auto", "raw"), drv)
+   sep = " ", envir = parent.frame(), method = c("auto", "raw"), 
+   drv = getOption("dbDriver"))
 }
 \arguments{
   \item{\dots}{ Character strings which are pasted together to form the
@@ -25,6 +26,7 @@ sqldf(..., stringsAsFactors, col.classes = NULL, rownames = FALSE,
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
+   the \code{"dbDriver"} option is checked and if that is not set then
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
 }
 \details{
