@@ -3,3 +3,10 @@
 
 - more examples
 
+- if database driver not specified through argument or option then
+  MySQL is used if RMySQL package is loaded and SQLite is used otherwise.
+  This is a bit fragile and it would be better if we could check that
+  the MySQL driver had actually been loaded.  Note that currently there
+  is no way to check this but if RMySQL and DBI were upgraded to support
+  this then this could be added.
+
