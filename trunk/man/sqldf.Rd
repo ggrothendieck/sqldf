@@ -5,7 +5,7 @@
 SQL select on data frames
 }
 \usage{
-sqldf(..., stringsAsFactors, col.classes = NULL, rownames = FALSE, 
+sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE, 
    sep = " ", envir = parent.frame(), method = c("auto", "raw"), 
    drv = getOption("dbDriver"))
 }
@@ -16,7 +16,7 @@ sqldf(..., stringsAsFactors, col.classes = NULL, rownames = FALSE,
   \item{stringsAsFactors}{ If TRUE then output "character" columns are 
    converted to factor.}
   \item{col.classes}{ Not currently used.}
-  \item{rownames}{ If \code{TRUE} then any \code{row_names} column in the output
+  \item{row.names}{ If \code{TRUE} then any \code{row_names} column in the output
    is used as the rownames in the output instead.  Otherwise any 
    \code{row_names} column is dropped.}
   \item{sep}{ A character string used for pasting together \dots. }
@@ -94,12 +94,12 @@ a1s <- sqldf("select * from warpbreaks limit 6")
 identical(a1r, a1s)
 
 # subset
-data("farms", package = "MASS")
-a2r <- subset(farms, regexpr(".F", Manag) > 0)
-row.names(a2r) <- NULL
-a2s <- sqldf("select * from farms where Manag like '\%F'")
-identical(a2r, a2s)
 
+a2r <- subset(CO2, regexpr("Qn", Plant) > 0)
+a2s <- sqldf("select * from CO2 where Plant like 'Qn\%'")
+all.equal(a2r, a2s, check.attributes = FALSE)
+
+data(farms, package = "MASS")
 a3r <- subset(farms, Manag \%in\% c("BF", "HF"))
 a3s <- sqldf("select * from farms where Manag in ('BF', 'HF')")
 row.names(a3r) <- NULL
@@ -110,7 +110,6 @@ a4s <- sqldf("select * from warpbreaks where breaks between 20 and 30",
    row.names = TRUE)
 identical(a4r, a4s)
 
-# subset
 a5r <- subset(farms, Mois == 'M1')
 a5s <- sqldf("select * from farms where Mois = 'M1'", row.names = TRUE)
 identical(a5r, a5s)
@@ -185,3 +184,4 @@ row.names(a16r) <- NULL
 identical(a16r, a16s)
 
 }
+\keyword{manip}
