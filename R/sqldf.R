@@ -6,8 +6,9 @@ sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL,
    method = c("auto", "raw"), drv = getOption("dbDriver")) {
 	on.exit(dbDisconnect(con))
 
-	if (is.null(drv))
-		drv <- if ("package:RMySQL" %in% search()) "MySQL" else "SQLite"
+	if (is.null(drv)) {
+		drv <- if ("package:RMySQL" %in% search()) "MySQL" 
+		else "SQLite"
 	}
 
 	if (drv == "MySQL") {
@@ -51,8 +52,8 @@ sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL,
 			if (cn %in% colnames(df)) {
 				cls <- class(df[[cn]])
 				if (inherits(df[[cn]], "ordered"))
-					return(as.ordered(rs[[cn]], 
-						levels = levels(df[[cn]])))
+					return(as.ordered(factor(rs[[cn]], 
+						levels = levels(df[[cn]]))))
 				else if (inherits(df[[cn]], "factor"))
 					return(factor(rs[[cn]], 
 						levels = levels(df[[cn]])))
