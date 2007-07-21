@@ -8,5 +8,10 @@
   This is a bit fragile and it would be better if we could check that
   the MySQL driver had actually been loaded.  Note that currently there
   is no way to check this but if RMySQL and DBI were upgraded to support
-  this then this could be added.
+  such discovery this feature could be added.
+
+- MySQL supports sign(), var_pop(), variance(), var_samp(), std() and 
+  stddev_samp() functions but SQLite does not.
+
+- neither MySQL nor SQLite supports median() or quantile()
 

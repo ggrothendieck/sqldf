@@ -55,7 +55,7 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
   any \code{NATURAL JOIN} will make use of it which may not be what was
   intended.
 
-  The MySQL code has not been tested.
+  The SQLite code has been tested but the MySQL code has not.
 }
 \note{
   Typically the SQL result will have the same data as the corresponding
@@ -72,14 +72,8 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
 
 }
 \references{ 
-\describe{
-\item{SQLite:}{\url{http://www.sqlite.org}}
-\item{SQLite syntax:}{\url{http://www.sqlite.org/lang.html}}
-\item{SQLite expressions:}{\url{http://www.sqlite.org/lang_expr.html}}
-\item{SQLite datatypes:}{\url{http://www.sqlite.org/datatype3.html}}
-\item{SQLlite FAQ:}{\url{http://www.sqlite.org/faq.html}}
-\item{SQLite mailing list and archives:}{\url{http://www.sqlite.org/support.html}}
-}
+The sqldf home page \url{http://code.google.com/p/batchfiles/} contains
+links to SQLite pages that may be helpful in formulating queries.
 }
 \examples{
 
