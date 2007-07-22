@@ -33,10 +33,12 @@ sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL,
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
-			subset(rs, select = - row_names)
+			# subset(rs, select = - row_names)
+			rs[- which(names(rs) == "row_names")]
 		} else { 
 			rn <- rs$row_names
-			rs <- subset(rs, select = - row_names)
+			# rs <- subset(rs, select = - row_names)
+			rs <- rs[- which(names(rs) == "row_names")]
 			if (all(regexpr("^[[:digit:]]*$", rn) > 0)) 
 				rn <- as.integer(rn)
 			rownames(rs) <- rn
