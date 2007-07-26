@@ -1,17 +1,31 @@
 
+Wishlist for sqldf package
+
+
+
 - test out package with MySQL (code is already there)
 
-- more examples
+- improve explanation in sqldf.Rd
 
-- if database driver not specified through argument or option then
-  MySQL is used if RMySQL package is loaded and SQLite is used otherwise.
-  This is a bit fragile and it would be better if we could check that
-  the MySQL driver had actually been loaded.  Note that currently there
-  is no way to check this but if RMySQL and DBI were upgraded to support
-  such discovery this feature could be added.
+- more examples (only if they truly add something since we already have
+  quite a few)
+
+
+These depend on software outside of sqldf:
 
 - MySQL supports sign(), var_pop(), variance(), var_samp(), std() and 
   stddev_samp() functions but SQLite does not.
 
 - neither MySQL nor SQLite supports median() or quantile()
+
+- if database driver not specified through argument or option then
+  MySQL is used if RMySQL package is loaded and SQLite is used otherwise.
+  This is a bit fragile and it would be better if we could check that
+  the MySQL driver (rather than package) had actually been loaded.  Note 
+  that currently there is no way to check this but if RMySQL and DBI were 
+  upgraded to support such discovery this feature could be added.
+
+- there has been some talk about removing the automatic dot to undescore 
+  conversion in the DBI layer that underlies both RSQLite and RMySQL.  If
+  that were to be done then sqldf would have to be modified accordingly.
 

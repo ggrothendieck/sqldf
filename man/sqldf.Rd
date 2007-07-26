@@ -14,7 +14,7 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
    select statement.  The select statement syntax must conform to the
    particular database being used.}
   \item{stringsAsFactors}{ If TRUE then output "character" columns are 
-   converted to factor.}
+   converted to factor if the heuristic is unable to determine the class.}
   \item{col.classes}{ Not currently used.}
   \item{row.names}{ If \code{TRUE} then any \code{row_names} column in the output
    is used as the rownames in the output instead.  Otherwise any 
@@ -165,17 +165,23 @@ identical(a12r, a13s)
 a14s <- sqldf("select g, t, v from DF natural join (select g, avg(v) as avg_v from DF group by g) where v > avg_v")
 identical(a12r, a14s)
 
+# table
+a15r <- table(warpbreaks$tension, warpbreaks$wool)
+a15s <- sqldf("select sum(wool = 'A'), sum(wool = 'B') 
+   from warpbreaks group by tension")
+all.equal(as.data.frame.matrix(a15r), a15s, check.attributes = FALSE)
+
 # reshape
 t.names <- paste("t", unique(as.character(DF$t)), sep = "_")
-a15r <- reshape(DF, direction = "wide", timevar = "t", idvar = "g", varying = list(t.names))
-a15s <- sqldf("select g, sum((t == 1) * v) t_1, sum((t == 2) * v) t_2, sum((t == 3) * v) t_3, sum((t == 4) * v) t_4, sum((t == 5) * v) t_5 from DF group by g")
-all.equal(a15r, a15s, check.attributes = FALSE)
+a16r <- reshape(DF, direction = "wide", timevar = "t", idvar = "g", varying = list(t.names))
+a16s <- sqldf("select g, sum((t == 1) * v) t_1, sum((t == 2) * v) t_2, sum((t == 3) * v) t_3, sum((t == 4) * v) t_4, sum((t == 5) * v) t_5 from DF group by g")
+all.equal(a16r, a16s, check.attributes = FALSE)
 
 # order
-a16r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
-a16s <- sqldf("select * from Formaldehyde order by optden desc")
-row.names(a16r) <- NULL
-identical(a16r, a16s)
+a17r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
+a17s <- sqldf("select * from Formaldehyde order by optden desc")
+row.names(a17r) <- NULL
+identical(a17r, a1ts)
 
 }
 \keyword{manip}
