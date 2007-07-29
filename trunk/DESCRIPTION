@@ -1,6 +1,6 @@
 Package: sqldf
 Version: 0-1.1
-Date: 2007-07-27
+Date: 2007-07-28
 Title: Perform SQL Selects on R Data Frames
 Author: G. Grothendieck <ggrothendieck@gmail.com>
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
@@ -11,7 +11,7 @@ Description:  Package sqldf contains a single function, also called
 	the data frames into that database, performs the SQL select 
 	statement and returns the result using a heuristic to determine 
 	what class to assign to each column of the returned data frame.
-Depends: R (>= 2.5.1), RSQLite (>= 0.5-5), gsubfn, DBI, proto
+Depends: R (>= 2.5.1), RSQLite (>= 0.5-5), gsubfn
 Description: Manipulate R data frames using SQL.
 License: GPL version 3 or newer
 URL: http://code.google.com/p/sqldf

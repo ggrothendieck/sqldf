@@ -13,12 +13,16 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
   \item{\dots}{ Character strings which are pasted together to form the
    select statement.  The select statement syntax must conform to the
    particular database being used.}
-  \item{stringsAsFactors}{ If TRUE then output "character" columns are 
-   converted to factor if the heuristic is unable to determine the class.}
+  \item{stringsAsFactors}{ If \code{TRUE} then output \code{"character"} 
+   columns are 
+   converted to \code{"factor"} if the heuristic is unable to determine 
+   the class.
+   If \code{method="raw"} then \code{stringsAsFactors} is ignored.}
   \item{col.classes}{ Not currently used.}
-  \item{row.names}{ If \code{TRUE} then any \code{row_names} column in the output
-   is used as the rownames in the output instead.  Otherwise any 
-   \code{row_names} column is dropped.}
+  \item{row.names}{For \code{TRUE} the tables in the data base are given
+   a \code{row_names} column filled with the row names of the corresponding
+   data frames.  Upon output the \code{row_names} column is used for
+   the row names of the resulting data frame.}
   \item{sep}{ A character string used for pasting together \dots. }
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
@@ -30,50 +34,54 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
 }
 \details{
-  \code{sqldf} scans the select statement for tables, creates or accesses
-  a database, reads data frames with the indicated table names into the 
-  database, performs the
-  select statement, converts the columns to appropriate classes,
-  outputs the result as a data frame and deletes the
-  database.  The select statement must use the syntax and expressions
-  of the database, SQLite or MySQL, being used.
-  In typical usage the only argument is the SQL statement.
+The typical action of \code{sqldf} is to 
+\describe{
+\item{create a database}{in memory}
+\item{read in the data frames}{used in the select statement.  
+(This is done by scanning the select statement to see which words in 
+the select statement are objects in the parent frame,  or the
+specified environment if \code{envir} is used, and for each object
+found by reading it into the database if it is a data frame.  (Note
+that this heuristic usually reads in the wanted data frames
+but on occasion may harmlessly read in extra data frames in too.)}
+\item{run the select statement}{getting the result as a data frame}
+\item{assign the classes}{of the returned data frame's columns if
+\code{method = "auto"}.  This is done by checking all the column
+names in the read-in data frames and if any are the same as
+as in the output data frame their class (and their factor levels
+if factor) is used.  If they are not matched then they are returned
+as except that if 
+\code{stringsAsFactors = TRUE} then any character strings are converted
+to factors.  If \code{method = "raw"} then the classes are as returned
+from the database and \code{stringsAsFactors} is ignored. }
+}
 
-  If the default \code{method = "auto"} is used then
-  the classes used for the columns of the result are determined heuristically
-  in a two step manner.  First a column of the same name is searched for
-  in the input data frames and the class of that column is used if found.
-  If that column is a factor or ordered factor its levels are also used.  
-  If no column is found using this method then if the column is of character 
-  class then it is converted to factor; otherwise, it is whatever class 
-  came back from the database.  The second step, i.e. automatic conversion of 
-  unmatched character columns to factor, can be disabled while still performing
-  the first step by setting the \code{stringsAsFactors} argument 
-  to \code{FALSE}.
-
-  Note that if \code{row.names = TRUE} is used then 
-  any \code{NATURAL JOIN} will make use of it which may not be what was
-  intended.
-
-  The SQLite code has been tested but the MySQL code has not.
 }
 \note{
-  Typically the SQL result will have the same data as the corresponding
-  \code{R} code but may differ in row names and other attributes.  In the
-  examples below we use \code{identical} in those cases where the two
-  results are the same in all respects or set the row names to \code{NULL}
-  if they would have otherwise differed only in row names or use
-  \code{all.equal} if the data portion is the same but attributes aside
-  from row names differ.  
+ 
+If \code{row.names = TRUE} is used then 
+any \code{NATURAL JOIN} will make use of it which may not be what was
+intended.
 
+The SQLite code has been tested but the MySQL code has not.
+
+Typically the SQL result will have the same data as the corresponding
+\code{R} code but may differ in row names and other attributes.  In the
+examples below we use \code{identical} in those cases where the two
+results are the same in all respects or set the row names to \code{NULL}
+if they would have otherwise differed only in row names or use
+\code{all.equal} if the data portion is the same but attributes aside
+from row names differ.
 }
+
 \value{
   The result of the specified select statement is output as a data frame.
 
 }
 \references{ 
 The sqldf home page \url{http://code.google.com/p/batchfiles/} contains
-links to SQLite pages that may be helpful in formulating queries.
+more examples as well as links to SQLite pages that may be helpful in 
+formulating queries.
 }
 \examples{
 
@@ -181,7 +189,7 @@ all.equal(a16r, a16s, check.attributes = FALSE)
 a17r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
 a17s <- sqldf("select * from Formaldehyde order by optden desc")
 row.names(a17r) <- NULL
-identical(a17r, a1ts)
+identical(a17r, a17s)
 
 }
 \keyword{manip}
