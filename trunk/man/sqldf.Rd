@@ -38,32 +38,34 @@ The typical action of \code{sqldf} is to
 \describe{
 \item{create a database}{in memory}
 \item{read in the data frames}{used in the select statement.  
-(This is done by scanning the select statement to see which words in 
+This is done by scanning the select statement to see which words in 
 the select statement are objects in the parent frame,  or the
 specified environment if \code{envir} is used, and for each object
-found by reading it into the database if it is a data frame.  (Note
+found by reading it into the database if it is a data frame.  Note
 that this heuristic usually reads in the wanted data frames
-but on occasion may harmlessly read in extra data frames in too.)}
+but on occasion may harmlessly read in extra data frames in too.}
 \item{run the select statement}{getting the result as a data frame}
 \item{assign the classes}{of the returned data frame's columns if
 \code{method = "auto"}.  This is done by checking all the column
-names in the read-in data frames and if any are the same as
+names in the read-in data frames and if any are the same
 as in the output data frame their class (and their factor levels
 if factor) is used.  If they are not matched then they are returned
-as except that if 
+as is except that if 
 \code{stringsAsFactors = TRUE} then any character strings are converted
-to factors.  If \code{method = "raw"} then the classes are as returned
-from the database and \code{stringsAsFactors} is ignored. }
+to factors.  If \code{method = "raw"} then the classes are returned
+as is from the database and \code{stringsAsFactors} is ignored. }
 }
 
 }
 \note{
- 
 If \code{row.names = TRUE} is used then 
 any \code{NATURAL JOIN} will make use of it which may not be what was
 intended.
 
-The SQLite code has been tested but the MySQL code has not.
+{3/2} and {3.0/2} are the same in R but in SQLite the first one
+causes integer arithmetic to be used.  Thus both evaluate to 
+{1.5} in R but they evaluate to {1} and {1.5} respectively in
+SQLite.
 
 Typically the SQL result will have the same data as the corresponding
 \code{R} code but may differ in row names and other attributes.  In the
@@ -72,6 +74,8 @@ results are the same in all respects or set the row names to \code{NULL}
 if they would have otherwise differed only in row names or use
 \code{all.equal} if the data portion is the same but attributes aside
 from row names differ.
+
+The SQLite code has been tested but the MySQL code has not.
 }
 
 \value{
@@ -79,7 +83,7 @@ from row names differ.
 
 }
 \references{ 
-The sqldf home page \url{http://code.google.com/p/batchfiles/} contains
+The sqldf home page \url{http://code.google.com/p/sqldf/} contains
 more examples as well as links to SQLite pages that may be helpful in 
 formulating queries.
 }
