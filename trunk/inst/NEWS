@@ -1,7 +1,18 @@
 
 Version 0.1-2
 
-o minor improvements in sqldf.Rd
+o searches for and uses "file" objects as well as data frame objects.
+  Can be useful for reading large data sets or portions of large data 
+  sets into R.  New argument file.control specifies file format details.
+  See example at end of ?sqldf .  [Thanks to Soren Hojsgaard for idea
+  to allow use of input files in addition to data frames.]
+
+o ... in argument list replaced with a single variable x and sep removed.
+
+o new dbname argument can be specified.  For SQLite it defaults to ":memory:",
+  i.e. an embedded data base.
+
+o improvements in sqldf.Rd
 
 Version 0.1-1
 

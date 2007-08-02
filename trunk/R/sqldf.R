@@ -1,9 +1,7 @@
 
-# note that column names with . in them must be referenced using underscore
-# in place of dot since dot is meaningful in SQL
-sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL, 
-   row.names = FALSE, sep = " ", envir = parent.frame(), 
-   method = c("auto", "raw"), drv = getOption("dbDriver")) {
+sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
+   row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
+   file.control = list(), dbname, drv = getOption("dbDriver")) {
 	on.exit(dbDisconnect(con))
 
 	if (is.null(drv)) {
@@ -16,19 +14,32 @@ sqldf <- function(..., stringsAsFactors = TRUE, col.classes = NULL,
 		con <- dbConnect(m) 
 	} else {
 		m <- dbDriver("SQLite")
-		con <- dbConnect(m, dbname = ":memory:") 
+		if (missing(dbname)) dbname <- ":memory:"
+		con <- dbConnect(m, dbname = dbname)
 	}
-	
-	s <- paste(..., sep = sep)
-	words <- strapply(s, "\\w+")
+
+	words <- strapply(x, "\\w+")
 	if (length(words) > 0) words <- unique(words[[1]])
-	is.df <- sapply(
+	is.special <- sapply(
 		mget(words, envir, "any", NA, inherits = TRUE), 
-		is.data.frame)
-	dfnames <- words[is.df]
+		function(x) is.data.frame(x) + 2 * inherits(x, "file"))
+	dfnames <- words[is.special == 1]
 	for(nam in dfnames) 
-		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), row.names = row.names)
-	rs <- dbGetQuery(con, s)
+		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), 
+			row.names = row.names)
+	filenames <- if (is.null(file.control)) character(0)
+	else {
+		eol <- if (.Platform$OS == "windows") "\r\n" else "\n"
+		words[is.special == 2]
+	}
+
+	for(nam in filenames) {
+		Filename <- summary(get(nam, envir))$description
+		args <- c(list(conn = con, name = nam, value = Filename), 
+			modifyList(list(eol = eol), file.control))
+		do.call("dbWriteTable", args)
+	}
+	rs <- dbGetQuery(con, x)
 	if (match.arg(method) == "raw") return(rs)
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {

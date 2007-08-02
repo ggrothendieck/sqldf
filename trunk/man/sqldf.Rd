@@ -1,16 +1,15 @@
-\name{sqldf}
-\alias{sqldf}
-\title{ SQL select on data frames }
 \description{
 SQL select on data frames
 }
 \usage{
-sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE, 
-   sep = " ", envir = parent.frame(), method = c("auto", "raw"), 
-   drv = getOption("dbDriver"))
+
+sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
+   row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
+   file.control = list(), dbname, drv = getOption("dbDriver"))
 }
+
 \arguments{
-  \item{\dots}{ Character strings which are pasted together to form the
+  \item{x}{ Character string representing an SQL
    select statement.  The select statement syntax must conform to the
    particular database being used.}
   \item{stringsAsFactors}{ If \code{TRUE} then output \code{"character"} 
@@ -21,14 +20,22 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
   \item{col.classes}{ Not currently used.}
   \item{row.names}{For \code{TRUE} the tables in the data base are given
    a \code{row_names} column filled with the row names of the corresponding
-   data frames.  Upon output the \code{row_names} column is used for
-   the row names of the resulting data frame.}
-  \item{sep}{ A character string used for pasting together \dots. }
+   data frames.}
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
   \item{method}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.}
+  \item{file.control}{A list whose components are passed to 
+    \code{\link{sqliteImportFile}}.  Components may include \code{sep}, 
+    \code{header}, \code{row.names}, \code{skip}.  Their default values
+    are the same
+    as in \code{sqliteImportFile} except for \code{eol} which defaults
+    to the end of line character(s) for the operating system in use.  
+    \code{file.control} may be set to \code{NULL} in order not to search
+    for input file objects at all.}
+  \item{dbname}{Name of the database.  For SQLite data bases this defaults to
+   \code{":memory:"} which results in an embedded database.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
@@ -37,13 +44,13 @@ sqldf(..., stringsAsFactors = TRUE, col.classes = NULL, row.names = FALSE,
 The typical action of \code{sqldf} is to 
 \describe{
 \item{create a database}{in memory}
-\item{read in the data frames}{used in the select statement.  
+\item{read in the data frames and files}{used in the select statement.  
 This is done by scanning the select statement to see which words in 
 the select statement are objects in the parent frame,  or the
 specified environment if \code{envir} is used, and for each object
 found by reading it into the database if it is a data frame.  Note
-that this heuristic usually reads in the wanted data frames
-but on occasion may harmlessly read in extra data frames in too.}
+that this heuristic usually reads in the wanted data frames and files
+but on occasion may harmlessly read in extra ones too.}
 \item{run the select statement}{getting the result as a data frame}
 \item{assign the classes}{of the returned data frame's columns if
 \code{method = "auto"}.  This is done by checking all the column
@@ -194,6 +201,22 @@ a17r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
 a17s <- sqldf("select * from Formaldehyde order by optden desc")
 row.names(a17r) <- NULL
 identical(a17r, a17s)
+
+\dontrun{
+
+# test of file connections with sqldf
+
+# create test .csv file of just 3 records
+write.table(head(iris, 3), "iris3.dat", sep = ",", quote = FALSE)
+
+# look at contents of iris3.dat
+readLines("iris3.dat")
+
+# set up file connection
+iris3 <- file("iris3.dat")
+sqldf("select * from iris3 where Sepal_Width > 3")
+
+}
 
 }
 \keyword{manip}
