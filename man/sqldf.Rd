@@ -8,7 +8,7 @@ SQL select on data frames
 
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), dbname, drv = getOption("dbDriver"))
+   file.format = list(), overwrite = FALSE, dbname, drv = getOption("dbDriver"))
 }
 
 \arguments{
@@ -30,15 +30,19 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.}
   \item{file.format}{A list whose components are passed to 
-    \code{\link{sqliteImportFile}}.  Components may include \code{sep}, 
-    \code{header}, \code{row.names}, \code{skip}.  Their default values
-    are the same
+    \code{sqliteImportFile}.  Components may include \code{sep}, 
+    \code{header}, \code{row.names}, \code{skip} and \code{eol}.  
+    Their default values are the same
     as in \code{sqliteImportFile} except for \code{eol} which defaults
     to the end of line character(s) for the operating system in use.  
     \code{file.format} may be set to \code{NULL} in order not to search
     for input file objects at all.  The \code{file.format} can also
     be specified as an attribute in each file object itself in which case 
-    such specification overrides any given here. }
+    such specification overrides any given through the argument list.  There
+    is further discussion of \code{file.format} in Note section below.}
+  \item{overwrite}{logical variable which is \code{TRUE} if tables in
+    an existing database may be overwritten.  Ignored if database is newly
+    created in this call of sqldf.}
   \item{dbname}{Name of the database.  For SQLite data bases this defaults to
    \code{":memory:"} which results in an embedded database.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
@@ -75,9 +79,12 @@ any \code{NATURAL JOIN} will make use of it which may not be what was
 intended.
 
 {3/2} and {3.0/2} are the same in R but in SQLite the first one
-causes integer arithmetic to be used.  Thus both evaluate to 
+causes integer arithmetic to be used whereas the second using floating point.  
+Thus both evaluate to 
 {1.5} in R but they evaluate to {1} and {1.5} respectively in
 SQLite.
+
+The \code{dbWriteTable}/\code{sqliteImportFile} routines that sqldf uses to transfer files to the data base are intended for speed and they are not as flexible as \code{\link{read.table}}.  Also they have slightly different defaults. (If more flexible input is needed use the slower \code{read.table} to read the data into a data frame instead of reading directly from a file.)  The default for \code{sep} is \code{sep = ","}. If the first row of the file has one fewer entry than subsequent ones then it is assumed that \code{header <- row.names <- TRUE} and otherwise that \code{header <- row.names <- FALSE}. The \code{header} can be forced to \code{header <- TRUE} by specifying \code{file.format = list(header = TRUE)} as an argument to \code{sqldf.} \code{sep} and \code{row.names} are other \code{file.format} subarguments. Also, one limitation with .csv files is that quotes are not regarded as special within files so a comma within a data field such as \code{"Smith, James"} would be regarded as a field delimiter and the quotes would be entered as part of the data which probably is not what is intended.  
 
 Typically the SQL result will have the same data as the corresponding
 \code{R} code but may differ in row names and other attributes.  In the

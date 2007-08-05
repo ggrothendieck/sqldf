@@ -1,8 +1,13 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), dbname, drv = getOption("dbDriver")) {
-	on.exit(dbDisconnect(con))
+   file.format = list(), overwrite = FALSE, 
+   dbname, drv = getOption("dbDriver")) {
+	on.exit({ 
+		dbDisconnect(con)
+		if (!dbPreExists && drv == "SQLite" && dbname != ":memory:")
+			file.remove(dbname)
+	})
 
 	if (is.null(drv)) {
 		drv <- if ("package:RMySQL" %in% search()) "MySQL" 
@@ -15,6 +20,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	} else {
 		m <- dbDriver("SQLite")
 		if (missing(dbname)) dbname <- ":memory:"
+		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
 		con <- dbConnect(m, dbname = dbname)
 	}
 
@@ -24,9 +30,13 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		mget(words, envir, "any", NA, inherits = TRUE), 
 		function(x) is.data.frame(x) + 2 * inherits(x, "file"))
 	dfnames <- words[is.special == 1]
-	for(nam in dfnames) 
+	for(nam in dfnames) {
+		if (dbPreExists && !overwrite && dbExistsTable(con, nam))
+			stop(paste("sqldf:", "table", nam, 
+				"already in", dbname, "\n"))
 		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
+	}
 	filenames <- if (is.null(file.format)) character(0)
 	else {
 		eol <- if (.Platform$OS == "windows") "\r\n" else "\n"
@@ -35,6 +45,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 	for(nam in filenames) {
 		Filename <- summary(get(nam, envir))$description
+		if (dbPreExists && !overwrite && dbTableExists(con, Filename))
+			stop(paste("sqldf:", "table", nam, "from file", 
+				Filename, "already in", dbname, "\n"))
 		args <- c(list(conn = con, name = nam, value = Filename), 
 			modifyList(list(eol = eol), file.format))
 		args <- modifyList(args, as.list(attr(nam, "file.format")))
