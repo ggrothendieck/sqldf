@@ -1,14 +1,16 @@
 
 Wishlist for sqldf package
 
+- handling existing databases:
+  -- search order: data frame, file, database 
+  -- it is an error to try to write over an existing table 
+  -- if database is created it should be deleted afterwards unless keep=TRUE
 
+- verbose argument
 
-- test out package with MySQL (code is already there)
+- MySQL
 
-- improve explanation in sqldf.Rd
-
-- more examples (only if they truly add something since we already have
-  quite a few)
+- moving average example
 
 
 These depend on software outside of sqldf:

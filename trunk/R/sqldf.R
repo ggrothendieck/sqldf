@@ -1,7 +1,7 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.control = list(), dbname, drv = getOption("dbDriver")) {
+   file.format = list(), dbname, drv = getOption("dbDriver")) {
 	on.exit(dbDisconnect(con))
 
 	if (is.null(drv)) {
@@ -27,7 +27,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	for(nam in dfnames) 
 		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
-	filenames <- if (is.null(file.control)) character(0)
+	filenames <- if (is.null(file.format)) character(0)
 	else {
 		eol <- if (.Platform$OS == "windows") "\r\n" else "\n"
 		words[is.special == 2]
@@ -36,7 +36,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	for(nam in filenames) {
 		Filename <- summary(get(nam, envir))$description
 		args <- c(list(conn = con, name = nam, value = Filename), 
-			modifyList(list(eol = eol), file.control))
+			modifyList(list(eol = eol), file.format))
+		args <- modifyList(args, as.list(attr(nam, "file.format")))
 		do.call("dbWriteTable", args)
 	}
 	rs <- dbGetQuery(con, x)
