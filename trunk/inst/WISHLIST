@@ -1,11 +1,6 @@
 
 Wishlist for sqldf package
 
-- handling existing databases:
-  -- search order: data frame, file, database 
-  -- it is an error to try to write over an existing table 
-  -- if database is created it should be deleted afterwards unless keep=TRUE
-
 - verbose argument
 
 - MySQL
@@ -19,6 +14,8 @@ These depend on software outside of sqldf:
   stddev_samp() functions but SQLite does not.
 
 - neither MySQL nor SQLite supports median() or quantile()
+
+- support quotes in csv files
 
 - if database driver not specified through argument or option then
   MySQL is used if RMySQL package is loaded and SQLite is used otherwise.
