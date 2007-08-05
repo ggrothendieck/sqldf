@@ -1,3 +1,6 @@
+\name{sqldf}
+\alias{sqldf}
+\title{SQL select on data frames}
 \description{
 SQL select on data frames
 }
@@ -5,7 +8,7 @@ SQL select on data frames
 
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.control = list(), dbname, drv = getOption("dbDriver"))
+   file.format = list(), dbname, drv = getOption("dbDriver"))
 }
 
 \arguments{
@@ -26,14 +29,16 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{method}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.}
-  \item{file.control}{A list whose components are passed to 
+  \item{file.format}{A list whose components are passed to 
     \code{\link{sqliteImportFile}}.  Components may include \code{sep}, 
     \code{header}, \code{row.names}, \code{skip}.  Their default values
     are the same
     as in \code{sqliteImportFile} except for \code{eol} which defaults
     to the end of line character(s) for the operating system in use.  
-    \code{file.control} may be set to \code{NULL} in order not to search
-    for input file objects at all.}
+    \code{file.format} may be set to \code{NULL} in order not to search
+    for input file objects at all.  The \code{file.format} can also
+    be specified as an attribute in each file object itself in which case 
+    such specification overrides any given here. }
   \item{dbname}{Name of the database.  For SQLite data bases this defaults to
    \code{":memory:"} which results in an embedded database.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
@@ -215,6 +220,19 @@ readLines("iris3.dat")
 # set up file connection
 iris3 <- file("iris3.dat")
 sqldf("select * from iris3 where Sepal_Width > 3")
+
+# a test using a non-default separator
+write.table(head(iris, 3), "iris3.dat", sep = ";", quote = FALSE)
+iris3 <- file("iris3.dat")
+sqldf("select * from iris3 where Sepal_Width > 3", 
+  file.format = list(sep = ";"))
+
+# another way to specify the separator
+# also this example creates database db on disk on the fly 
+write.table(head(iris, 3), "iris3.dat", sep = ";", quote = FALSE)
+iris3 <- file("iris3.dat")
+attr(iris3, "file.format") <- list(sep = ";")
+sqldf("select * from iris3 where Sepal_Width > 3", dbname = "db")
 
 }
 
