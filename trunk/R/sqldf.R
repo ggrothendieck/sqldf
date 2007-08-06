@@ -1,12 +1,21 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), overwrite = FALSE, 
-   dbname, drv = getOption("dbDriver")) {
+   file.format = list(), dbname, drv = getOption("dbDriver")) {
+	overwrite <- FALSE
+	dfnames <- fileobjs <- character(0)
 	on.exit({ 
-		dbDisconnect(con)
-		if (!dbPreExists && drv == "SQLite" && dbname != ":memory:")
+		if (dbname == ":memory:") dbDisconnect(con)
+		else if (!dbPreExists && drv == "SQLite") {
+			# data base not pre-existing
+			dbDisconnect(con)
 			file.remove(dbname)
+		} else {
+			# data base pre-existing
+			for (nam in dfnames) dbRemoveTable(con, nam)
+			for (fo in fileobjs) dbRemoveTable(con, fo)
+			dbDisconnect(con)
+		}
 	})
 
 	if (is.null(drv)) {
@@ -29,31 +38,47 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	is.special <- sapply(
 		mget(words, envir, "any", NA, inherits = TRUE), 
 		function(x) is.data.frame(x) + 2 * inherits(x, "file"))
+
+	# process data frames
 	dfnames <- words[is.special == 1]
-	for(nam in dfnames) {
-		if (dbPreExists && !overwrite && dbExistsTable(con, nam))
+	for(i in seq_along(dfnames)) {
+		nam <- dfnames[i]
+		if (dbPreExists && !overwrite && dbExistsTable(con, nam)) {
+			# exit code removes tables in dfnames
+			# so only include those added so far
+			dfnames <- head(dfnames, i-1)
 			stop(paste("sqldf:", "table", nam, 
 				"already in", dbname, "\n"))
+		}
 		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
 	}
-	filenames <- if (is.null(file.format)) character(0)
-	else {
+
+	# process file objects
+	fileobjs <- if (is.null(file.format)) { character(0)
+	} else {
 		eol <- if (.Platform$OS == "windows") "\r\n" else "\n"
 		words[is.special == 2]
 	}
-
-	for(nam in filenames) {
-		Filename <- summary(get(nam, envir))$description
-		if (dbPreExists && !overwrite && dbTableExists(con, Filename))
-			stop(paste("sqldf:", "table", nam, "from file", 
+	for(i in seq_along(fileobjs)) {
+		fo <- fileobjs[i]
+		Filename <- summary(get(fo, envir))$description
+		if (dbPreExists && !overwrite && dbTableExists(con, Filename)) {
+			# exit code should only remove tables added so far
+			fileobjs <- head(fileobjs, i-1)
+			stop(paste("sqldf:", "table", fo, "from file", 
 				Filename, "already in", dbname, "\n"))
-		args <- c(list(conn = con, name = nam, value = Filename), 
+		}
+		args <- c(list(conn = con, name = fo, value = Filename), 
 			modifyList(list(eol = eol), file.format))
-		args <- modifyList(args, as.list(attr(nam, "file.format")))
+		args <- modifyList(args, as.list(attr(get(fo), "file.format")))
 		do.call("dbWriteTable", args)
 	}
+
+	# process select statement
 	rs <- dbGetQuery(con, x)
+
+	# get result back
 	if (match.arg(method) == "raw") return(rs)
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
