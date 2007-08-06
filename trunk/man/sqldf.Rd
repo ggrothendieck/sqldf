@@ -224,8 +224,8 @@ s18 <- sqldf("select a.x x, avg(b.x) movavgx from DF a, DF b
    order by a.row_names+0", 
  row.names = TRUE)
 r18 <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
-row.names(r0) <- NULL
-all.equal(r0, s0)
+row.names(r18) <- NULL
+all.equal(r18, s18)
 
 \dontrun{
 
