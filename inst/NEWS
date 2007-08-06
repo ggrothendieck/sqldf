@@ -2,15 +2,16 @@
 Version 0.1-2
 
 o searches for and uses "file" objects as well as data frame objects.
-  Can be useful for reading large data sets or portions of large data 
-  sets into R.  New argument file.control specifies file format details.
-  See example at end of ?sqldf .  [Thanks to Soren Hojsgaard for idea
-  to allow use of input files in addition to data frames.]
+  file.format argument or "file.format" attribute on file object
+  is a list with arguments accepted by sqliteImportFile.
+  [Thanks to Soren Hojsgaard for suggestion to support files.]
 
-o ... in argument list replaced with a single variable x and sep removed.
+o dots in argument list replaced with a single variable x
 
 o new dbname argument can be specified.  For SQLite it defaults to ":memory:",
-  i.e. an embedded data base.
+  i.e. an embedded data base.  If database does not exist it is created
+  and deleted upon exit.  If it does exist then tables created by sqldf
+  are are deleted on exit.
 
 o improvements in sqldf.Rd
 

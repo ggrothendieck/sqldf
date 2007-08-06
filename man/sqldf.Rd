@@ -8,7 +8,7 @@ SQL select on data frames
 
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), overwrite = FALSE, dbname, drv = getOption("dbDriver"))
+   file.format = list(), dbname, drv = getOption("dbDriver"))
 }
 
 \arguments{
@@ -40,9 +40,6 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
     be specified as an attribute in each file object itself in which case 
     such specification overrides any given through the argument list.  There
     is further discussion of \code{file.format} in Note section below.}
-  \item{overwrite}{logical variable which is \code{TRUE} if tables in
-    an existing database may be overwritten.  Ignored if database is newly
-    created in this call of sqldf.}
   \item{dbname}{Name of the database.  For SQLite data bases this defaults to
    \code{":memory:"} which results in an embedded database.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
@@ -70,6 +67,10 @@ as is except that if
 \code{stringsAsFactors = TRUE} then any character strings are converted
 to factors.  If \code{method = "raw"} then the classes are returned
 as is from the database and \code{stringsAsFactors} is ignored. }
+\item{cleanup}{If the database was created by sqldf then it is deleted;
+otherwise, all tables that were created are dropped in order to leave
+the database in the same state that it was before.  The database
+connection is terminated.}
 }
 
 }
@@ -214,6 +215,18 @@ a17s <- sqldf("select * from Formaldehyde order by optden desc")
 row.names(a17r) <- NULL
 identical(a17r, a17s)
 
+# centered moving average of length 7
+set.seed(1)
+DF <- data.frame(x = rnorm(15, 1:15))
+s18 <- sqldf("select a.x x, avg(b.x) movavgx from DF a, DF b 
+   where a.row_names - b.row_names between -3 and 3 
+   group by a.row_names having count(*) = 7 
+   order by a.row_names+0", 
+ row.names = TRUE)
+r18 <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
+row.names(r0) <- NULL
+all.equal(r0, s0)
+
 \dontrun{
 
 # test of file connections with sqldf
@@ -228,18 +241,19 @@ readLines("iris3.dat")
 iris3 <- file("iris3.dat")
 sqldf("select * from iris3 where Sepal_Width > 3")
 
-# a test using a non-default separator
+# using a non-default separator
+# file.format can be an attribute of file object or an arg passed to sqldf
 write.table(head(iris, 3), "iris3.dat", sep = ";", quote = FALSE)
 iris3 <- file("iris3.dat")
-sqldf("select * from iris3 where Sepal_Width > 3", 
-  file.format = list(sep = ";"))
+sqldf("select * from iris3 where Sepal_Width > 3", file.format = list(sep = ";"))
 
-# another way to specify the separator
-# also this example creates database db on disk on the fly 
-write.table(head(iris, 3), "iris3.dat", sep = ";", quote = FALSE)
-iris3 <- file("iris3.dat")
+# same but pass file.format through attribute of file object
 attr(iris3, "file.format") <- list(sep = ";")
-sqldf("select * from iris3 where Sepal_Width > 3", dbname = "db")
+sqldf("select * from iris3 where Sepal_Width > 3")
+
+# copy file straight to disk without going through R
+# and then retrieve portion into R  
+sqldf("select * from iris3 where Sepal_Width > 3", dbname = tempfile())
 
 }
 
