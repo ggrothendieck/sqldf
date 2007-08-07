@@ -25,7 +25,10 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 	if (drv == "MySQL") {
 		m <- dbDriver("MySQL")
-		con <- dbConnect(m) 
+		con <- if (missing(dbname)) { 
+				dbConnect(m) 
+			} else dbConnect(m, dbname = dbname)
+			dbPreExists <- TRUE
 	} else {
 		m <- dbDriver("SQLite")
 		if (missing(dbname)) dbname <- ":memory:"
