@@ -95,7 +95,16 @@ if they would have otherwise differed only in row names or use
 \code{all.equal} if the data portion is the same but attributes aside
 from row names differ.
 
-The SQLite code has been tested but the MySQL code has not.
+The SQLite code has been tested but the MySQL code has only been partly
+tested.  
+
+On MySQL the database must pre-exist.  Create a \code{c:\\my.cnf} file 
+on Windows or a \code{/etc/my.cnf}
+file on UNIX to contain information about the database.  This file may 
+include the username, password, database and port.  The password
+can be omitted if one has not been set and the database can be omitted if
+its passed as the \code{dbname} argument to \code{sqldf}.  The \code{port}
+argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refman/5.0/en/option-files.html}.
 }
 
 \value{
