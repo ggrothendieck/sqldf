@@ -15,6 +15,10 @@ o new dbname argument can be specified.  For SQLite it defaults to ":memory:",
 
 o improvements in sqldf.Rd
 
+o MySQL testing
+
+o added a demo illustrating sorting and grouping vs. nested selects
+
 Version 0.1-1
 
 o removed use of subset in favor of subscripts since codetools chokes on it
