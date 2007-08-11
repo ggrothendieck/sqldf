@@ -12,9 +12,11 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
 }
 
 \arguments{
-  \item{x}{ Character string representing an SQL
-   select statement.  The select statement syntax must conform to the
-   particular database being used.}
+  \item{x}{ Character string representing an SQL select statement or
+   character vector whose components each represent a successive SQL
+   statement to be executed. 
+   The select statement syntax must conform to the particular database 
+   being used.}
   \item{stringsAsFactors}{ If \code{TRUE} then output \code{"character"} 
    columns are 
    converted to \code{"factor"} if the heuristic is unable to determine 
@@ -23,7 +25,8 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{col.classes}{ Not currently used.}
   \item{row.names}{For \code{TRUE} the tables in the data base are given
    a \code{row_names} column filled with the row names of the corresponding
-   data frames.}
+   data frames.  Note that in SQLite a special \code{rowid} (or equivalently
+   \code{oid} or \code{_rowid_}) is available in any case.}
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
   \item{method}{\code{"auto"} means automatically assign the class of each
@@ -109,7 +112,8 @@ argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refm
 
 \value{
   The result of the specified select statement is output as a data frame.
-
+  If a vector of sql statements is given as \code{x} then the result of
+  the last one is returned.
 }
 \references{ 
 The sqldf home page \url{http://code.google.com/p/sqldf/} contains
@@ -235,6 +239,28 @@ s18 <- sqldf("select a.x x, avg(b.x) movavgx from DF a, DF b
 r18 <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
 row.names(r18) <- NULL
 all.equal(r18, s18)
+
+# within Date, of the highest quality records list the one closest 
+# to noon.  Note use of two sql statements in one call to sqldf.
+
+Lines <- "DeployID Date.Time LocationQuality Latitude Longitude
+STM05-1 2005/02/28 17:35 Good -35.562 177.158
+STM05-1 2005/02/28 19:44 Good -35.487 177.129
+STM05-1 2005/02/28 23:01 Unknown -35.399 177.064
+STM05-1 2005/03/01 07:28 Unknown -34.978 177.268
+STM05-1 2005/03/01 18:06 Poor -34.799 177.027
+STM05-1 2005/03/01 18:47 Poor -34.85 177.059
+STM05-2 2005/02/28 12:49 Good -35.928 177.328
+STM05-2 2005/02/28 21:23 Poor -35.926 177.314
+"
+
+DF <- read.table(textConnection(Lines), skip = 1,  as.is = TRUE,
+ col.names = c("Id", "Date", "Time", "Quality", "Lat", "Long"))
+
+sqldf(c("create temp table DFo as select * from DF order by
+  Date__1 DESC, Quality DESC,
+  abs(substr(Time__1, 1, 2) + substr(Time__1, 4, 2) /60 - 12) DESC",
+  "select * from DFo group by Date__1"))
 
 \dontrun{
 

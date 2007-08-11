@@ -79,7 +79,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	}
 
 	# process select statement
-	rs <- dbGetQuery(con, x)
+	for(xi in x) rs <- dbGetQuery(con, xi)
 
 	# get result back
 	if (match.arg(method) == "raw") return(rs)

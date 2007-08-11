@@ -6,7 +6,9 @@ o searches for and uses "file" objects as well as data frame objects.
   is a list with arguments accepted by sqliteImportFile.
   [Thanks to Soren Hojsgaard for suggestion to support files.]
 
-o dots in argument list replaced with a single variable x
+o dots in argument list replaced with a single variable x.
+  x can be a "character" vector in which case each component is 
+  executed by SQLite in turn and result of the last is returned.
 
 o new dbname argument can be specified.  For SQLite it defaults to ":memory:",
   i.e. an embedded data base.  If database does not exist it is created
@@ -18,6 +20,8 @@ o improvements in sqldf.Rd
 o MySQL testing
 
 o added a demo illustrating sorting and grouping vs. nested selects
+
+o new example illustrating vector x
 
 Version 0.1-1
 

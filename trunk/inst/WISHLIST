@@ -1,6 +1,9 @@
 
 Wishlist for sqldf package
 
+- allow x argument of sqldf be a vector in which case each component
+  is regarded to be a statement which is executed in turn
+
 - verbose argument
 
 - MySQL
