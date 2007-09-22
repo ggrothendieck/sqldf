@@ -23,6 +23,8 @@ o added a demo illustrating sorting and grouping vs. nested selects
 
 o new example illustrating vector x
 
+o support for POSIXct, Date and chron dates and times
+
 Version 0.1-1
 
 o removed use of subset in favor of subscripts since codetools chokes on it

@@ -2,6 +2,14 @@
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
    file.format = list(), dbname, drv = getOption("dbDriver")) {
+
+   as.POSIXct.character <- function(x) structure(as.numeric(x),
+	class = c("POSIXt", "POSIXct"))
+   as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
+   as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
+   as.times.character <- function(x) structure(as.numeric(x), class = "times")
+
+
 	overwrite <- FALSE
 	dfnames <- fileobjs <- character(0)
 	on.exit({ 
@@ -66,7 +74,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	for(i in seq_along(fileobjs)) {
 		fo <- fileobjs[i]
 		Filename <- summary(get(fo, envir))$description
-		if (dbPreExists && !overwrite && dbTableExists(con, Filename)) {
+		if (dbPreExists && !overwrite && dbExistsTable(con, Filename)) {
 			# exit code should only remove tables added so far
 			fileobjs <- head(fileobjs, i-1)
 			stop(paste("sqldf:", "table", fo, "from file", 
