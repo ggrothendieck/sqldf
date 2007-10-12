@@ -82,7 +82,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		}
 		args <- c(list(conn = con, name = fo, value = Filename), 
 			modifyList(list(eol = eol), file.format))
-		args <- modifyList(args, as.list(attr(get(fo), "file.format")))
+		args <- modifyList(args, as.list(attr(get(fo, envir), "file.format")))
 		do.call("dbWriteTable", args)
 	}
 
