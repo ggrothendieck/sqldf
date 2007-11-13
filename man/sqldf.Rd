@@ -240,6 +240,14 @@ r18 <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
 row.names(r18) <- NULL
 all.equal(r18, s18)
 
+# merge.  s19 and r19 are same except row order and row names
+A <- data.frame(a1 = c(1, 2, 1), a2 = c(2, 3, 3), a3 = c(3, 1, 2))
+B <- data.frame(b1 = 1:2, b2 = 2:1)
+a19s <- sqldf("select * from A, B")
+a19r <- merge(A, B)
+my.sort <- function(DF) DF[order(apply(DF, 1, paste, collapse = "")),]
+all.equal(my.sort(a19s), my.sort(a19r), check.attributes = FALSE)
+
 # within Date, of the highest quality records list the one closest 
 # to noon.  Note use of two sql statements in one call to sqldf.
 
