@@ -1,7 +1,8 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), dbname, drv = getOption("dbDriver")) {
+   file.format = list(), dbname, drv = getOption("sqldf.driver"), 
+   connection = getOption("sqldf.connection")) {
 
    as.POSIXct.character <- function(x) structure(as.numeric(x),
 	class = c("POSIXt", "POSIXct"))
@@ -11,38 +12,69 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 
 	overwrite <- FALSE
+
+	request.open <- missing(x) && is.null(connection)
+	request.close <- missing(x) && !is.null(connection)
+	request.con <- !missing(x) && !is.null(connection)
+	request.nocon <- !missing(x) && is.null(connection)
+
 	dfnames <- fileobjs <- character(0)
-	on.exit({ 
-		if (dbname == ":memory:") dbDisconnect(con)
-		else if (!dbPreExists && drv == "SQLite") {
-			# data base not pre-existing
-			dbDisconnect(con)
-			file.remove(dbname)
-		} else {
-			# data base pre-existing
-			for (nam in dfnames) dbRemoveTable(con, nam)
-			for (fo in fileobjs) dbRemoveTable(con, fo)
-			dbDisconnect(con)
+
+	# if exactly one of x and connection are missing then close on exit
+	if (request.close || request.nocon) { 
+
+		on.exit({
+			dbPreExists <- attr(connection, "dbPreExists")
+			dbname <- attr(connection, "dbname")
+    		if (dbname == ":memory:") dbDisconnect(connection)
+    		else if (!dbPreExists && drv == "SQLite") {
+    			# data base not pre-existing
+    			dbDisconnect(connection)
+    			file.remove(dbname)
+    		} else {
+    			# data base pre-existing
+    			for (nam in dfnames) dbRemoveTable(connection, nam)
+    			for (fo in fileobjs) dbRemoveTable(connection, fo)
+    			dbDisconnect(connection)
+    		}
+    	})
+		if (request.close) {
+			if (identical(connection, getOption("sqldf.connection")))
+				options(sqldf.connection = NULL)
+			return()
 		}
-	})
-
-	if (is.null(drv)) {
-		drv <- if ("package:RMySQL" %in% search()) "MySQL" 
-		else "SQLite"
 	}
 
-	if (drv == "MySQL") {
-		m <- dbDriver("MySQL")
-		con <- if (missing(dbname)) { 
-				dbConnect(m) 
-			} else dbConnect(m, dbname = dbname)
-			dbPreExists <- TRUE
-	} else {
-		m <- dbDriver("SQLite")
-		if (missing(dbname)) dbname <- ":memory:"
-		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
-		con <- dbConnect(m, dbname = dbname)
+	# if con is missing then connection opened
+	if (request.open || request.nocon) {
+    
+    	if (is.null(drv)) {
+    		drv <- if ("package:RMySQL" %in% search()) "MySQL" 
+    		else "SQLite"
+    	}
+    
+    	if (drv == "MySQL") {
+    		m <- dbDriver("MySQL")
+    		connection <- if (missing(dbname)) { 
+    				dbConnect(m) 
+    			} else dbConnect(m, dbname = dbname)
+    			dbPreExists <- TRUE
+    	} else {
+    		m <- dbDriver("SQLite")
+    		if (missing(dbname)) dbname <- ":memory:"
+    		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
+    		connection <- dbConnect(m, dbname = dbname)
+    	}
+		attr(connection, "dbPreExists") <- dbPreExists
+		if (missing(dbname) && drv == "SQLite") dbname <- ":memory:"
+		attr(connection, "dbname") <- dbname
+    	if (request.open) {
+			options(sqldf.connection = connection)
+			return(connection)
+		}
 	}
+
+	if (request.con) dbPreExists <- attr(connection, "dbPreExists")
 
 	words <- strapply(x, "\\w+")
 	if (length(words) > 0) words <- unique(words[[1]])
@@ -54,14 +86,14 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	dfnames <- words[is.special == 1]
 	for(i in seq_along(dfnames)) {
 		nam <- dfnames[i]
-		if (dbPreExists && !overwrite && dbExistsTable(con, nam)) {
+		if (dbPreExists && !overwrite && dbExistsTable(connection, nam)) {
 			# exit code removes tables in dfnames
 			# so only include those added so far
 			dfnames <- head(dfnames, i-1)
 			stop(paste("sqldf:", "table", nam, 
 				"already in", dbname, "\n"))
 		}
-		dbWriteTable(con, nam, as.data.frame(get(nam, envir)), 
+		dbWriteTable(connection, nam, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
 	}
 
@@ -74,20 +106,20 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	for(i in seq_along(fileobjs)) {
 		fo <- fileobjs[i]
 		Filename <- summary(get(fo, envir))$description
-		if (dbPreExists && !overwrite && dbExistsTable(con, Filename)) {
+		if (dbPreExists && !overwrite && dbExistsTable(connection, Filename)) {
 			# exit code should only remove tables added so far
 			fileobjs <- head(fileobjs, i-1)
 			stop(paste("sqldf:", "table", fo, "from file", 
 				Filename, "already in", dbname, "\n"))
 		}
-		args <- c(list(conn = con, name = fo, value = Filename), 
+		args <- c(list(conn = connection, name = fo, value = Filename), 
 			modifyList(list(eol = eol), file.format))
 		args <- modifyList(args, as.list(attr(get(fo, envir), "file.format")))
 		do.call("dbWriteTable", args)
 	}
 
 	# process select statement
-	for(xi in x) rs <- dbGetQuery(con, xi)
+	for(xi in x) rs <- dbGetQuery(connection, xi)
 
 	# get result back
 	if (match.arg(method) == "raw") return(rs)

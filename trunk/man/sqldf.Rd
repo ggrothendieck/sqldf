@@ -8,7 +8,8 @@ SQL select on data frames
 
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
-   file.format = list(), dbname, drv = getOption("dbDriver"))
+   file.format = list(), dbname, drv = getOption("sqldf.driver"), 
+   connection = getOption("sqldf.connection"))
 }
 
 \arguments{
@@ -48,6 +49,15 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
+  \item{connection}{If this is \code{NULL} then a connection is created;
+   otherwise the indicated connection is used.  The default is
+   the value of the option \code{sqldf.connection}.  If neither 
+   \code{connection} nor \code{sqldf.connection} are specified a connection
+   is automatically generated on-the-fly and closed on exit of the call to 
+   \code{sqldf}.  If this argument is not \code{NULL} then the specified
+   connection is left open on termination of the \code{sqldf} call.  Usually 
+   this argument is left unspecified.  It can be used to make repeated calls
+   to a database without reloading it.}
 }
 \details{
 The typical action of \code{sqldf} is to 
@@ -90,8 +100,9 @@ SQLite.
 
 The \code{dbWriteTable}/\code{sqliteImportFile} routines that sqldf uses to transfer files to the data base are intended for speed and they are not as flexible as \code{\link{read.table}}.  Also they have slightly different defaults. (If more flexible input is needed use the slower \code{read.table} to read the data into a data frame instead of reading directly from a file.)  The default for \code{sep} is \code{sep = ","}. If the first row of the file has one fewer entry than subsequent ones then it is assumed that \code{header <- row.names <- TRUE} and otherwise that \code{header <- row.names <- FALSE}. The \code{header} can be forced to \code{header <- TRUE} by specifying \code{file.format = list(header = TRUE)} as an argument to \code{sqldf.} \code{sep} and \code{row.names} are other \code{file.format} subarguments. Also, one limitation with .csv files is that quotes are not regarded as special within files so a comma within a data field such as \code{"Smith, James"} would be regarded as a field delimiter and the quotes would be entered as part of the data which probably is not what is intended.  
 
-Typically the SQL result will have the same data as the corresponding
-\code{R} code but may differ in row names and other attributes.  In the
+Typically the SQL result will have the same data as the analogous
+non-database \code{R} code manipulations using data frames 
+but may differ in row names and other attributes.  In the
 examples below we use \code{identical} in those cases where the two
 results are the same in all respects or set the row names to \code{NULL}
 if they would have otherwise differed only in row names or use
@@ -113,7 +124,10 @@ argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refm
 \value{
   The result of the specified select statement is output as a data frame.
   If a vector of sql statements is given as \code{x} then the result of
-  the last one is returned.
+  the last one is returned.  If the \code{x} and \code{connection}
+  arguments are missing then it returns a new connection and also places
+  this connection in the option \code{sqldf.connection}.
+  
 }
 \references{ 
 The sqldf home page \url{http://code.google.com/p/sqldf/} contains
@@ -298,6 +312,36 @@ sqldf("select * from iris3 where Sepal_Width > 3")
 # and then retrieve portion into R  
 sqldf("select * from iris3 where Sepal_Width > 3", dbname = tempfile())
 
+### same as previous example except it allows multiple queries against
+### the database.  We use iris3 from before.  This time we use an
+### in memory SQLite database.
+
+sqldf() # open a connection
+sqldf("select * from iris3 where Sepal_Width > 3")
+
+# At this point we have an iris3 variable in both
+# the R workspace and in the SQLite database so we need to
+# explicitly let it know we want the version in the database.
+# If we were not to do that it would try to use the R version
+# by default and fail since sqldf would prevent it from 
+# overwriting the version already in the database to protect
+# the user from inadvertent errors.
+sqldf("select * from main.iris3 where Sepal_Width > 4")
+sqldf("select * from main.iris3 where Sepal_Width < 4")
+sqldf() # close connection
+
+### another way to do this is a mix of sqldf and RSQLite statements
+### In that case we need to fetch the connection for use with RSQLite
+### and do not have to specifically refer to main since RSQLite can
+### only access the database.
+
+con <- sqldf()
+# this iris3 refers to the R variable and file
+sqldf("select * from iris3 where Sepal_Width > 3")
+# these iris3 refer to the database table
+dbGetQuery(con, "select from iris3 where Sepal_Width > 4")
+dbGetQuery(con, "select from iris3 where Sepal_Width < 4")
+sqldf()
 }
 
 }
