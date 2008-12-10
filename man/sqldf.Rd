@@ -17,7 +17,9 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
    character vector whose components each represent a successive SQL
    statement to be executed. 
    The select statement syntax must conform to the particular database 
-   being used.}
+   being used.  If x is missing then it establishes a connection
+   which subsequent sqldf statements access.  In that case the database
+   is not destroyed until the next sqldf statement with no x.}
   \item{stringsAsFactors}{ If \code{TRUE} then output \code{"character"} 
    columns are 
    converted to \code{"factor"} if the heuristic is unable to determine 
@@ -65,11 +67,11 @@ The typical action of \code{sqldf} is to
 \item{create a database}{in memory}
 \item{read in the data frames and files}{used in the select statement.  
 This is done by scanning the select statement to see which words in 
-the select statement are objects in the parent frame,  or the
+the select statement are of class "data.frame" or "file" in the parent frame,  or the
 specified environment if \code{envir} is used, and for each object
 found by reading it into the database if it is a data frame.  Note
 that this heuristic usually reads in the wanted data frames and files
-but on occasion may harmlessly read in extra ones too.}
+but on occasion may harmlessly reads in extra ones too.}
 \item{run the select statement}{getting the result as a data frame}
 \item{assign the classes}{of the returned data frame's columns if
 \code{method = "auto"}.  This is done by checking all the column
@@ -85,6 +87,11 @@ otherwise, all tables that were created are dropped in order to leave
 the database in the same state that it was before.  The database
 connection is terminated.}
 }
+Warning. Although sqldf is usually used with on-the-fly databases
+which it automatically sets up and destroys if you wish to use it
+with existing databases be sure to back up your database prior to
+using it since incorrect operation could destroy the entire 
+database.
 
 }
 \note{
@@ -119,6 +126,7 @@ include the username, password, database and port.  The password
 can be omitted if one has not been set and the database can be omitted if
 its passed as the \code{dbname} argument to \code{sqldf}.  The \code{port}
 argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refman/5.0/en/option-files.html}.
+
 }
 
 \value{
