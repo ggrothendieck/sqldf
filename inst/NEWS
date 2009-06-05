@@ -3,6 +3,8 @@ Version 0.1-5
 
 o minor improvement in second example in ?sqldf (thanks to Wacek Kusnierczyk)
 
+o new command read.csv.sql
+
 Version 0.1-4
 
 o removed junk files
