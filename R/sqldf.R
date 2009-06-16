@@ -171,15 +171,23 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 
 read.csv.sql <- function(file, sql = "select * from file", 
-	header = TRUE, sep = ",", row.names, eol, dbname = tempfile(), ...) {
+	header = TRUE, sep = ",", row.names, eol, skip, dbname = tempfile(), ...) {
 	file.format <- list(header = header, sep = sep)
 	if (!missing(eol)) 
 		file.format <- append(file.format, list(eol = eol))
 	if (!missing(row.names)) 
 		file.format <- append(file.format, list(row.names = row.names))
+	if (!missing(skip)) 
+		file.format <- append(file.format, list(skip = skip))
 	pf <- parent.frame()
 	p <- proto(pf, file = file(file))
 	p <- do.call(proto, list(pf, file = file(file)))
 	sqldf(sql, envir = p, file.format = file.format, dbname = dbname, ...)
 }
 
+read.csv2.sql <- function(file, sql = "select * from file", 
+	header = TRUE, sep = ";", row.names, eol, skip, dbname = tempfile(), ...) {
+
+	read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
+		row.names = row.names, eol = eol, skip = skip, dbname = dbname)
+}
