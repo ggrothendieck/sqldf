@@ -76,7 +76,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 	if (request.con) dbPreExists <- attr(connection, "dbPreExists")
 
-	words <- strapply(x, "\\w+")
+	words <- strapply(x, "[[:alnum:]._]+")
 	if (length(words) > 0) words <- unique(words[[1]])
 	is.special <- sapply(
 		mget(words, envir, "any", NA, inherits = TRUE), 
@@ -93,7 +93,12 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 			stop(paste("sqldf:", "table", nam, 
 				"already in", dbname, "\n"))
 		}
-		dbWriteTable(connection, nam, as.data.frame(get(nam, envir)), 
+		# check if the nam2 processing works with MySQL
+		# if not then ensure its only applied to SQLite
+		nam2 <- if (regexpr(".", nam, fixed = TRUE)) {
+			paste("`", nam, "`", sep = "")
+		} else nam
+		dbWriteTable(connection, nam2, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
 	}
 
