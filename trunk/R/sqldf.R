@@ -157,6 +157,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 				else if (inherits(df[[cn]], "factor"))
 					return(factor(rs[[cn]], 
 						levels = levels(df[[cn]])))
+				else if (inherits(df[[cn]], "POSIXct"))
+					return(as.POSIXct(rs[[cn]]))
 				else {
 					asfn <- paste("as", 
 						class(df[[cn]]), sep = ".")

@@ -3,6 +3,8 @@ Version 0.1-7
 o now supports table names with a dot in them provided that they are 
   placed within a backquotes
 
+o bug fixes (thanks to Soren Hojsgaard for bug report)
+
 Version 0.1-6
 
 o new command read.csv2.sql
