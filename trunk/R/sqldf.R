@@ -120,6 +120,15 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		args <- c(list(conn = connection, name = fo, value = Filename), 
 			modifyList(list(eol = eol), file.format))
 		args <- modifyList(args, as.list(attr(get(fo, envir), "file.format")))
+		filter <- args$filter
+		if (!is.null(filter)) {
+			args$filter <- NULL
+			Filename.tmp <- tempfile()
+			args$value <- Filename.tmp
+			cmd <- sprintf("%s %s > %s", filter, Filename, Filename.tmp)
+			if (.Platform$OS == "windows") cmd <- paste("cmd /c", cmd)
+			system(cmd)
+		}
 		do.call("dbWriteTable", args)
 	}
 
@@ -178,7 +187,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 
 read.csv.sql <- function(file, sql = "select * from file", 
-	header = TRUE, sep = ",", row.names, eol, skip, dbname = tempfile(), ...) {
+	header = TRUE, sep = ",", row.names, eol, skip, filter, 
+    dbname = tempfile(), ...) {
 	file.format <- list(header = header, sep = sep)
 	if (!missing(eol)) 
 		file.format <- append(file.format, list(eol = eol))
@@ -186,6 +196,8 @@ read.csv.sql <- function(file, sql = "select * from file",
 		file.format <- append(file.format, list(row.names = row.names))
 	if (!missing(skip)) 
 		file.format <- append(file.format, list(skip = skip))
+	if (!missing(filter)) 
+		file.format <- append(file.format, list(filter = filter))
 	pf <- parent.frame()
 	p <- proto(pf, file = file(file))
 	p <- do.call(proto, list(pf, file = file(file)))
@@ -193,8 +205,10 @@ read.csv.sql <- function(file, sql = "select * from file",
 }
 
 read.csv2.sql <- function(file, sql = "select * from file", 
-	header = TRUE, sep = ";", row.names, eol, skip, dbname = tempfile(), ...) {
+	header = TRUE, sep = ";", row.names, eol, skip, filter, 
+    dbname = tempfile(), ...) {
 
 	read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
-		row.names = row.names, eol = eol, skip = skip, dbname = dbname)
+		row.names = row.names, eol = eol, skip = skip, filter = filter, 
+        dbname = dbname)
 }

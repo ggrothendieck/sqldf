@@ -37,15 +37,18 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
    whatever classes are returned by the database with no automatic processing.}
   \item{file.format}{A list whose components are passed to 
     \code{sqliteImportFile}.  Components may include \code{sep}, 
-    \code{header}, \code{row.names}, \code{skip} and \code{eol}.  
-    Their default values are the same
-    as in \code{sqliteImportFile} except for \code{eol} which defaults
-    to the end of line character(s) for the operating system in use.  
+    \code{header}, \code{row.names}, \code{skip}, \code{eol} and \code{filter}.
+    Except for \code{filter} they are passed to
+    \code{sqliteImportFile} and have the same default values as 
+    in \code{sqliteImportFile} (except for \code{eol} which defaults
+    to the end of line character(s) for the operating system in use). 
+    \code{filter} may optionally contain a batch/shell command through which the
+    input file is piped prior to reading it in.
     \code{file.format} may be set to \code{NULL} in order not to search
     for input file objects at all.  The \code{file.format} can also
     be specified as an attribute in each file object itself in which case 
     such specification overrides any given through the argument list.  There
-    is further discussion of \code{file.format} in Note section below.}
+    is further discussion of \code{file.format} below.}
   \item{dbname}{Name of the database.  For SQLite data bases this defaults to
    \code{":memory:"} which results in an embedded database.}
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
