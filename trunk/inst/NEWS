@@ -3,10 +3,13 @@ Version 0.-18
 o file.format list can contain a filter which is a batch or shell command
   that filters the input file
 
+o read.csv2.sql has a default filter which translates each comma in the input
+  file to a dot
+
 Version 0.1-7
 
 o now supports table names with a dot in them provided that they are 
-  placed within a backquotes
+  placed within backquotes
 
 o bug fixes (thanks to Soren Hojsgaard for bug report)
 

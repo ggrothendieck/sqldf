@@ -125,8 +125,21 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 			args$filter <- NULL
 			Filename.tmp <- tempfile()
 			args$value <- Filename.tmp
-			cmd <- sprintf("%s %s > %s", filter, Filename, Filename.tmp)
-			if (.Platform$OS == "windows") cmd <- paste("cmd /c", cmd)
+			cmd <- sprintf("%s < %s > %s", filter, Filename, Filename.tmp)
+			# on Windows platform preface command with cmd /c 
+			if (.Platform$OS == "windows") {
+				cmd <- paste("cmd /c", cmd)
+				key <- "SOFTWARE\\R-core"
+				reg <- readRegistry(key, maxdepth = 3)$Rtools$InstallPath
+				# add Rtools bin directory to PATH if found in registry
+				if (!is.null(reg)) {
+					Rtools.path <- file.path(reg, "bin", fsep = "\\")
+					path <- Sys.getenv("PATH")
+					on.exit(Sys.setenv(PATH = path), add = TRUE)
+					path.new <- paste(path, Rtools.path, sep = ";")
+					Sys.setenv(PATH = path.new)
+				}
+			}
 			system(cmd)
 		}
 		do.call("dbWriteTable", args)
@@ -208,7 +221,13 @@ read.csv2.sql <- function(file, sql = "select * from file",
 	header = TRUE, sep = ";", row.names, eol, skip, filter, 
     dbname = tempfile(), ...) {
 
+	if (missing(filter)) {
+		filter <- if (.Platform$OS == "windows")
+			paste("cscript /nologo", chartr("/", "\\", system.file("trcomma2dot.vbs", package = "sqldf")))
+		else "tr , ."
+	}
+
 	read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
-        dbname = dbname)
+		dbname = dbname)
 }
