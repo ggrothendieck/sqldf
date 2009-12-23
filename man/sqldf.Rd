@@ -9,7 +9,7 @@ SQL select on data frames
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
-   connection = getOption("sqldf.connection"))
+   dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"))
 }
 
 \arguments{
@@ -54,6 +54,9 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
+  \item{dll}{Name of an SQLite loadable extension to automatically load.
+    Default is \code{"libspatial-1.dll"}.  If found on PATH then it is 
+	automatically loaded and the SQLite functions it in will be accessible.}
   \item{connection}{If this is \code{NULL} then a connection is created;
    otherwise the indicated connection is used.  The default is
    the value of the option \code{sqldf.connection}.  If neither 
@@ -128,6 +131,33 @@ include the username, password, database and port.  The password
 can be omitted if one has not been set and the database can be omitted if
 its passed as the \code{dbname} argument to \code{sqldf}.  The \code{port}
 argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refman/5.0/en/option-files.html}.
+
+In versions of the \code{DBI} package prior to \code{DBI 0.2-5}, 
+SQL reserved words such as 
+\code{time} and \code{date} were automatically translated to 
+\code{time__1} and \code{date__1}, etc. to prevent collisions.  The new version
+of \code{DBI} used with the current version of sqldf automatically quotes those
+variables instead so that the database will use the column names of \code{date}
+and code{time} instead of \code{date__1} and \code{time__1}.  
+The user moving from older versions of \code{sqldf} to this one 
+should be aware of this change in \code{DBI}.  
+
+If \code{getOption("sqldf.dll")}, defaulting to \code{"libspatial.dll"} 
+is found on the PATH
+then it will be loaded as an SQLite loadable extension.  With the default the
+user will also have access to these additional SQL functions:
+\url{http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html}
+The sqldf package does not itself include this or any other dll and the user 
+must download and place it on the PATH if they wish to use it.  The dll can
+be found here:
+\url{http://www.gaia-gis.it/spatialite}
+If \code{sqldf} does not find the dll on the \code{PATH} then \code{sqldf} 
+will continue to work 
+but, of course, those functions will not be available.
+If you add \code{libspatialite-1.dll} to your \code{PATH}
+part way through your session then it will be necessary to set the 
+\code{sqldf.dll} option to \code{NULL}: \code{options(sqldf.dll = NULL)} as 
+well.
 
 }
 
@@ -290,9 +320,9 @@ DF <- read.table(textConnection(Lines), skip = 1,  as.is = TRUE,
  col.names = c("Id", "Date", "Time", "Quality", "Lat", "Long"))
 
 sqldf(c("create temp table DFo as select * from DF order by
-  Date__1 DESC, Quality DESC,
-  abs(substr(Time__1, 1, 2) + substr(Time__1, 4, 2) /60 - 12) DESC",
-  "select * from DFo group by Date__1"))
+  Date DESC, Quality DESC,
+  abs(substr(Time, 1, 2) + substr(Time, 4, 2) /60 - 12) DESC",
+  "select * from DFo group by Date"))
 
 \dontrun{
 
@@ -352,6 +382,18 @@ sqldf("select * from iris3 where Sepal_Width > 3")
 dbGetQuery(con, "select from iris3 where Sepal_Width > 4")
 dbGetQuery(con, "select from iris3 where Sepal_Width < 4")
 sqldf()
+
+
+### demonstrate use of libspatial.dll loadable extension functions
+### In this example stddev_pop and var_pop are libspatial functions.
+### This will only work if libspatial.dll is on the PATH.
+\dontrun{
+Sys.which("libspatialite-1.dll") # shows location of spatialite on PATH
+sqldf("select avg(demand) mean, stddev_pop(demand) sd, var_pop(demand) var from BOD")
+with(BOD, c(mean = mean(demand), sd = sd(demand), var = var(demand)))
+
+}
+
 }
 
 }

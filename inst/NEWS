@@ -1,10 +1,21 @@
-Version 0.-18
+Version 0.2-0
 
 o file.format list can contain a filter which is a batch or shell command
   that filters the input file
 
-o read.csv2.sql has a default filter which translates each comma in the input
-  file to a dot
+o read.csv2.sql is like read.csv.sql but has a default filter which translates 
+  each comma in the input file to a dot
+
+o if getOption("sqldf.dll") defaulting to libspatial-1.dll is found on the PATH
+  then it will be loaded as an SQLite loadable extension.  With the default this
+  gives access to these SQL functions:
+  http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html
+  The sqldf package does not itself include this or any other SQLite loadable
+  extension.  The user must download and place it on the PATH if they wish to 
+  use it.  libspatialite-1.dll can be found here:
+  http://www.gaia-gis.it/spatialite
+  If sqldf does not find the dll on the PATH then sqldf will continue to work 
+  but without access to these functions.
 
 Version 0.1-7
 
