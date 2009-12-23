@@ -38,10 +38,10 @@ do.call("rbind", by(DF2, DF2$Date, head, 1))
 #################################
 
 DFo <- sqldf("select * from DF order by
- substr(Date__1, 7, 4) || substr(Date__1, 4, 2) || substr(Date__1, 1, 2) DESC,
+ substr(Date, 7, 4) || substr(Date, 4, 2) || substr(Date, 1, 2) DESC,
  Quality DESC,
- abs(substr(Time__1, 1, 2) + substr(Time__1, 4, 2) /60 - 12) DESC")
-sqldf("select * from DFo group by Date__1")
+ abs(substr(Time, 1, 2) + substr(Time, 4, 2) /60 - 12) DESC")
+sqldf("select * from DFo group by Date")
 
 #################################
 # Here is a second different way to do it in sqldf
@@ -50,10 +50,10 @@ sqldf("select * from DFo group by Date__1")
 #################################
 
 sqldf("select * from DF u
- where abs(substr(Time__1, 1, 2) + substr(Time__1, 4, 2) /60 - 12) =
-  (select min(abs(substr(Time__1, 1, 2) + substr(Time__1, 4, 2) /60 - 12))
+ where abs(substr(Time, 1, 2) + substr(Time, 4, 2) /60 - 12) =
+  (select min(abs(substr(Time, 1, 2) + substr(Time, 4, 2) /60 - 12))
     from DF x where Quality =
       (select min(Quality) from DF y
-         where x.Date__1 = y.Date__1) and x.Date__1 = u.Date__1)")
+         where x.Date = y.Date) and x.Date = u.Date)")
 
 
