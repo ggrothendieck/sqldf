@@ -1,4 +1,13 @@
+Version 0.2-1
+
+o bug fixes
+
+o certain Date conversions which previously required as.Date.numeric from zoo
+  package no longer depend on zoo
+
 Version 0.2-0
+
+o column names which are SQL reserved words are no longer mangled
 
 o file.format list can contain a filter which is a batch or shell command
   that filters the input file

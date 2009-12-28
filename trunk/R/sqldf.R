@@ -7,6 +7,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    as.POSIXct.character <- function(x) structure(as.numeric(x),
 	class = c("POSIXt", "POSIXct"))
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
+   as.Date.numeric <- function(x, origin = "1970-01-01", ...) base::as.Date.numeric(x, origin = origin, ...)
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
@@ -257,7 +258,7 @@ read.csv2.sql <- function(file, sql = "select * from file",
 
 	if (missing(filter)) {
 		filter <- if (.Platform$OS == "windows")
-			paste("cscript", tr("/", "\\", system.file("trcomma2dot.vbs", package = "sqldf")))
+			paste("cscript /nologo", normalizePath(system.file("trcomma2dot.vbs", package = "sqldf")))
 		else "tr , ."
 	}
 
