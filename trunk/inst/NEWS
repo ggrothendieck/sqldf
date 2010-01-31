@@ -1,3 +1,7 @@
+Version 0.3-1
+
+o if H2 package is loaded then sqldf will use H2 database
+
 Version 0.2-1
 
 o bug fixes

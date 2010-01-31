@@ -1,6 +1,6 @@
 Package: sqldf
-Version: 0-2.1
-Date: 2009-12-27
+Version: 0-3.1
+Date: 2010-02-01
 Title: Perform SQL Selects on R Data Frames
 Author: G. Grothendieck <ggrothendieck@gmail.com>
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
@@ -14,6 +14,7 @@ Description: The sqldf is typically passed a single argument which is
     files into R even if the original files are larger than R itself 
     can handle.
 Depends: R (>= 2.10.0), DBI (>= 0.2-5), RSQLite (>= 0.8-0), gsubfn, proto
+Suggests: RH2
 Description: Manipulate R data frames using SQL.
 License: GPL-2
 URL: http://sqldf.googlecode.com
