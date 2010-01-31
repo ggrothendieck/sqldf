@@ -51,7 +51,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
     
     	if (is.null(drv)) {
     		drv <- if ("package:RMySQL" %in% search()) { "MySQL" 
-    		} else if ("package:RJDBC" %in% search()) { "H2" 
+    		} else if ("package:H2" %in% search()) { "H2" 
     		} else "SQLite"
     	}
     
@@ -63,15 +63,17 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
     			dbPreExists <- TRUE
     	} else if (drv == "H2") {
 			# jar.file <- "C:\\Program Files\\H2\\bin\\h2.jar"
-			jar.file <- system.file("h2.jar", package = "H2")
-			m <- JDBC("org.h2.Driver", jar.file, identifier.quote = '"')
+			# jar.file <- system.file("h2.jar", package = "H2")
+			# m <- JDBC("org.h2.Driver", jar.file, identifier.quote = '"')
+			m <- H2()
     		if (missing(dbname)) dbname <- ":memory:"
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
 			connection <- if (missing(dbname) || dbname == ":memory:") {
 					dbConnect(m, "jdbc:h2:mem:", "sa", "")
 				} else {
 					jdbc.string <- paste("jdbc:h2", dbname, sep = ":")
-					dbConnect(m, jdbc.string, "sa", "")
+					# dbConnect(m, jdbc.string, "sa", "")
+					dbConnect(m, jdbc.string)
 				}
 		} else {
     		m <- dbDriver("SQLite")
@@ -129,9 +131,12 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		}
 		# check if the nam2 processing works with MySQL
 		# if not then ensure its only applied to SQLite
-		nam2 <- if (regexpr(".", nam, fixed = TRUE)) {
-			paste("`", nam, "`", sep = "")
-		} else nam
+		nam2 <- if (drv == "H2") { nam
+		} else {
+			if (regexpr(".", nam, fixed = TRUE)) {
+				paste("`", nam, "`", sep = "")
+			} else nam
+		}
 		dbWriteTable(connection, nam2, as.data.frame(get(nam, envir)), 
 			row.names = row.names)
 	}

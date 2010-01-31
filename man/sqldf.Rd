@@ -188,7 +188,7 @@ identical(a1r, a1s)
 
 # subset
 
-a2r <- subset(CO2, regexpr("^Qn", Plant) > 0)
+a2r <- subset(CO2, grepl("^Qn", Plant))
 a2s <- sqldf("select * from CO2 where Plant like 'Qn\%'")
 all.equal(a2r, a2s, check.attributes = FALSE)
 
