@@ -51,7 +51,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
     
     	if (is.null(drv)) {
     		drv <- if ("package:RMySQL" %in% search()) { "MySQL" 
-    		} else if ("package:H2" %in% search()) { "H2" 
+    		} else if ("package:RH2" %in% search()) { "H2" 
     		} else "SQLite"
     	}
     
