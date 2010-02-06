@@ -169,7 +169,10 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 			if (.Platform$OS == "windows") {
 				cmd <- paste("cmd /c", cmd)
 				key <- "SOFTWARE\\R-core"
+				show.error.message <- getOption("show.error.message")
+				options(show.error.messages = FALSE)
 				reg <- try(readRegistry(key, maxdepth = 3)$Rtools$InstallPath)
+				options(show.error.messages = show.error.message)
 				# add Rtools bin directory to PATH if found in registry
 				if (!is.null(reg) && !inherits(reg, "try-error")) {
 					Rtools.path <- file.path(reg, "bin", fsep = "\\")
