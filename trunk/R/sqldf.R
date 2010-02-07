@@ -109,7 +109,11 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		}
 	}
 
-	if (request.con) dbPreExists <- attr(connection, "dbPreExists")
+	if (request.con) {
+		drv <- if (inherits(class(connection), "H2Connection")) "H2"
+			else "SQLite"
+		dbPreExists <- attr(connection, "dbPreExists")
+	}
 
 	# words <- strapply(x, "\\w+")
 	words <- strapply(x, "[[:alnum:]._]+")
