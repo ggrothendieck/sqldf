@@ -9,6 +9,7 @@ SQL select on data frames
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
+   user, password = "", host = "localhost",
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"))
 }
 
@@ -54,6 +55,9 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{"SQLite"} is used unless the RMySQL package is loaded.}
+  \item{user}{user name.  Not needed for embedded databases.}
+  \item{password}{password. Not needed for embedded databases.}
+  \item{host}{host.  Default of "localhost" is normally sufficient.}
   \item{dll}{Name of an SQLite loadable extension to automatically load.
     Default is \code{"libspatial-1.dll"}.  If found on PATH then it is 
 	automatically loaded and the SQLite functions it in will be accessible.}
