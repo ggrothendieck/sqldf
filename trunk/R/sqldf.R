@@ -2,6 +2,7 @@
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
    row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
+   user, password = "", host = "localhost",
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection")) {
 
    as.POSIXct.character <- function(x) structure(as.numeric(x),
@@ -27,8 +28,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		on.exit({
 			dbPreExists <- attr(connection, "dbPreExists")
 			dbname <- attr(connection, "dbname")
-    		if (dbname == ":memory:") dbDisconnect(connection)
-    		else if (!dbPreExists && drv == "SQLite") {
+    		if (!missing(dbname) && !is.null(dbname) && dbname == ":memory:") {
+				dbDisconnect(connection)
+    		} else if (!dbPreExists && drv == "sqlite") {
     			# data base not pre-existing
     			dbDisconnect(connection)
     			file.remove(dbname)
@@ -50,23 +52,33 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	if (request.open || request.nocon) {
     
     	if (is.null(drv)) {
-    		drv <- if ("package:RMySQL" %in% search()) { "MySQL" 
+    		drv <- if ("package:RpgSQL" %in% search()) { "pgSQL"
+			} else if ("package:RMySQL" %in% search()) { "MySQL" 
     		} else if ("package:RH2" %in% search()) { "H2" 
     		} else "SQLite"
     	}
     
-    	if (drv == "MySQL") {
+		drv <- tolower(drv)
+    	if (drv == "mysql") {
     		m <- dbDriver("MySQL")
     		connection <- if (missing(dbname) || dbname == ":memory:") { 
     				dbConnect(m) 
     			} else dbConnect(m, dbname = dbname)
     			dbPreExists <- TRUE
-    	} else if (drv == "H2") {
+		} else if (drv == "pgsql") {
+    		m <- dbDriver("pgSQL")
+			if (missing(dbname) || is.null(dbname)) {
+				dbname <- getOption("RpgSQL.dbname")
+				if (is.null(dbname)) dbname <- "test"
+			}
+			connection <- dbConnect(m, dbname = dbname)
+    		dbPreExists <- TRUE
+    	} else if (drv == "h2") {
 			# jar.file <- "C:\\Program Files\\H2\\bin\\h2.jar"
 			# jar.file <- system.file("h2.jar", package = "H2")
 			# m <- JDBC("org.h2.Driver", jar.file, identifier.quote = '"')
 			m <- H2()
-    		if (missing(dbname)) dbname <- ":memory:"
+    		if (missing(dbname) || is.null(dbname)) dbname <- ":memory:"
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
 			connection <- if (missing(dbname) || dbname == ":memory:") {
 					dbConnect(m, "jdbc:h2:mem:", "sa", "")
@@ -101,7 +113,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 			} else connection <- dbConnect(m, dbname = dbname)
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
-		if (missing(dbname) && drv == "SQLite") dbname <- ":memory:"
+		if (missing(dbname) && drv == "sqlite") dbname <- ":memory:"
 		attr(connection, "dbname") <- dbname
     	if (request.open) {
 			options(sqldf.connection = connection)
@@ -109,9 +121,13 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		}
 	}
 
+	# connection was specified
 	if (request.con) {
-		drv <- if (inherits(class(connection), "H2Connection")) "H2"
-			else "SQLite"
+		drv <- if (inherits(connection, "pgSQLConnection")) "pgSQL"
+		else if (inherits(connection, "MySQLConnection")) "MySQL"
+		else if (inherits(connection, "H2Connection")) "H2"
+		else "SQLite"
+		drv <- tolower(drv)
 		dbPreExists <- attr(connection, "dbPreExists")
 	}
 
@@ -135,7 +151,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 		}
 		# check if the nam2 processing works with MySQL
 		# if not then ensure its only applied to SQLite
-		nam2 <- if (drv == "H2") { nam
+		nam2 <- if (drv == "h2") { nam
+		} else if (drv == "pgsql") { nam
 		} else {
 			if (regexpr(".", nam, fixed = TRUE)) {
 				paste("`", nam, "`", sep = "")
@@ -172,11 +189,13 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 			# on Windows platform preface command with cmd /c 
 			if (.Platform$OS == "windows") {
 				cmd <- paste("cmd /c", cmd)
+				if (FALSE) {
 				key <- "SOFTWARE\\R-core"
-				show.error.message <- getOption("show.error.message")
+				show.error.messages <- getOption("show.error.message")
 				options(show.error.messages = FALSE)
 				reg <- try(readRegistry(key, maxdepth = 3)$Rtools$InstallPath)
-				options(show.error.messages = show.error.message)
+				reg <- NULL
+				options(show.error.messages = show.error.messages)
 				# add Rtools bin directory to PATH if found in registry
 				if (!is.null(reg) && !inherits(reg, "try-error")) {
 					Rtools.path <- file.path(reg, "bin", fsep = "\\")
@@ -184,6 +203,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 					on.exit(Sys.setenv(PATH = path), add = TRUE)
 					path.new <- paste(path, Rtools.path, sep = ";")
 					Sys.setenv(PATH = path.new)
+				}
 				}
 			}
 			system(cmd)
