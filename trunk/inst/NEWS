@@ -1,13 +1,13 @@
-VErsion 0.3-3
+Version 0.3-3
 
 o if RpgSQL is loaded or if sqldf drv argument is "RpgSQL" then sqldf will use 
   PostgreSQL database
 
-o search for spatialite DLL is now for version 2.4.0 of spatialite, 
-  libspatialite-2.dll
-
 o database persistance (sqldf without arguments) now works with H2 database
   (previously only SQLite)
+
+o all SQL statements now work with H2 (previously only select, call and show
+  worked)
 
 o bug fixes
 
