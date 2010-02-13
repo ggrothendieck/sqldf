@@ -11,8 +11,8 @@ portion is processed by R so that files larger than R can otherwise
 handle can be accommodated.
 }
 \usage{
-read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, dbname = tempfile(), ...)
-read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, dbname = tempfile(), ...)
+read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, dbname = tempfile(), drv = "SQLite", ...)
+read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, dbname = tempfile(), drv = "SQLite", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +43,13 @@ If specified, this should be a shell/batch command that the input file is piped 
 }
   \item{dbname}{
 As in \code{sqldf} except that the default is \code{tempfile()}.
+}
+  \item{drv}{
+This argument is ignored. 
+Currently the only database SQLite supported by \code{read.csv.sql} and 
+\code{read.csv2.sql} is SQLite.  
+Note that the H2 database has a builtin SQL function,
+\code{CSVREAD}, which can be used in place of \code{read.csv.sql}.
 }
   \item{\dots}{
 Passed to \code{sqldf}.
