@@ -220,7 +220,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	} else {
 		for(i in seq_along(x)) {
 			if (length(words.[[i]]) > 0) {
-				if (tolower(words.[[i]][1]) %in% c("select", "show", "call")) {
+				dbGetQueryWords <- c("select", "show", "call", "explain")
+				if (tolower(words.[[i]][1]) %in% dbGetQueryWords) {
 					rs <- dbGetQuery(connection, x[i])
 				} else {
 					rs <- dbSendUpdate(connection, x[i])
@@ -262,6 +263,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 						levels = levels(df[[cn]])))
 				else if (inherits(df[[cn]], "POSIXct"))
 					return(as.POSIXct(rs[[cn]]))
+				else if (identical(class(df[[cn]]), "times")) 
+					return(times(df[[cn]]))
 				else {
 					asfn <- paste("as", 
 						class(df[[cn]]), sep = ".")
@@ -301,7 +304,7 @@ read.csv.sql <- function(file, sql = "select * from file",
 
 read.csv2.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ";", row.names, eol, skip, filter, 
-    dbname = tempfile(), ...) {
+    dbname = tempfile(), drv = "SQLite", ...) {
 
 	if (missing(filter)) {
 		filter <- if (.Platform$OS == "windows")
@@ -311,5 +314,5 @@ read.csv2.sql <- function(file, sql = "select * from file",
 
 	read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
-		dbname = dbname)
+		dbname = dbname, drv = drv)
 }

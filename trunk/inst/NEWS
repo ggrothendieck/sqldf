@@ -1,3 +1,7 @@
+Version 0.3-4
+
+o all SQL statements now work with H2 rather than just a subset
+
 Version 0.3-3
 
 o if RpgSQL is loaded or if sqldf drv argument is "RpgSQL" then sqldf will use 
@@ -5,9 +9,6 @@ o if RpgSQL is loaded or if sqldf drv argument is "RpgSQL" then sqldf will use
 
 o database persistance (sqldf without arguments) now works with H2 database
   (previously only SQLite)
-
-o all SQL statements now work with H2 (previously only select, call and show
-  worked)
 
 o bug fixes
 
