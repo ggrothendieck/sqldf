@@ -7,7 +7,8 @@ SQL select on data frames
 \usage{
 
 sqldf(x, stringsAsFactors = TRUE, col.classes = NULL, 
-   row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
+   row.names = FALSE, envir = parent.frame(), 
+   method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"))
@@ -35,7 +36,10 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
    are to be found.}
   \item{method}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
-   whatever classes are returned by the database with no automatic processing.}
+   whatever classes are returned by the database with no automatic processing.
+   If this argument is not specified the value of 
+   \code{getOption("sqldf.method")}
+   is used and if that is not specified either then \code{"auto"} is used.}
   \item{file.format}{A list whose components are passed to 
     \code{sqliteImportFile}.  Components may include \code{sep}, 
     \code{header}, \code{row.names}, \code{skip}, \code{eol} and \code{filter}.
@@ -217,8 +221,11 @@ identical(a6r, a6s)
 
 # rbind
 a7r <- rbind(a5r, a6r)
-a7s <- sqldf("select * from a5s union all select * from a6s", row.names = TRUE)
-identical(a7r, a7s)
+a7s <- sqldf("select * from a5s union all select * from a6s")
+# sqldf drops the unused levels of Mois but rbind does not; however,
+# all data is the same and the other columns are identical
+row.names(a7r) <- NULL
+identical(a7r[-1], a7s[-1])
 
 # aggregate - avg conc and uptake by Plant and Type
 a8r <- aggregate(iris[1:2], iris[5], mean)

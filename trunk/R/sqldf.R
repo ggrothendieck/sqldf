@@ -1,6 +1,7 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
-   row.names = FALSE, envir = parent.frame(), method = c("auto", "raw"), 
+   row.names = FALSE, envir = parent.frame(), 
+   method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection")) {
@@ -111,6 +112,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else connection <- dbConnect(m, dbname = dbname)
+			# if (require("RSQLite.extfuns")) init_extensions(connection)
+			# load extension functions from RSQLite.extfuns
+			init_extensions(connection)
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
 		if (missing(dbname) && drv == "sqlite") dbname <- ":memory:"
@@ -231,7 +235,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	}
 
 	# get result back
-	if (match.arg(method) == "raw") return(rs)
+	if (is.null(method)) method <- "auto"
+	if (match.arg(method, c("auto", "raw")) == "raw") return(rs)
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
@@ -249,35 +254,47 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	} else rs
 
 	# fix up column classes
-	cn <- colnames(rs)
-	rs2 <- lapply(colnames(rs), function(cn) {
-		for(dfname in dfnames) {
-			df <- get(dfname, envir)
-			if (cn %in% colnames(df)) {
-				cls <- class(df[[cn]])
-				if (inherits(df[[cn]], "ordered"))
-					return(as.ordered(factor(rs[[cn]], 
-						levels = levels(df[[cn]]))))
-				else if (inherits(df[[cn]], "factor"))
-					return(factor(rs[[cn]], 
-						levels = levels(df[[cn]])))
-				else if (inherits(df[[cn]], "POSIXct"))
-					return(as.POSIXct(rs[[cn]]))
-				else if (identical(class(df[[cn]]), "times")) 
-					return(times(df[[cn]]))
-				else {
-					asfn <- paste("as", 
-						class(df[[cn]]), sep = ".")
-					asfn <- match.fun(asfn)
-					return(asfn(rs[[cn]]))
-				}
+	#
+	# For each column name in the result, match it against each column name
+	# of each data frame in envir.
+	# 
+	#
+	tab <- do.call("rbind", lapply(dfnames, function(dfname) {
+		df <- get(dfname, envir)
+		cbind(dfname, colnames(df))
+	}))
+	# column names which are duplicated
+	dup <- tab[,2][duplicated(tab[,2])]
+
+	f <- function(i) {
+		cn <- colnames(rs)[[i]]
+		if (! cn %in% dup && 
+			(ix <- match(cn, tab[, 2], nomatch = 0)) > 0) {
+			df <- get(tab[ix, 1], envir)
+			if (inherits(df[[cn]], "ordered"))
+				return(as.ordered(factor(rs[[cn]], 
+					levels = levels(df[[cn]]))))
+			else if (inherits(df[[cn]], "factor"))
+				return(factor(rs[[cn]], 
+					levels = levels(df[[cn]])))
+			else if (inherits(df[[cn]], "POSIXct"))
+				return(as.POSIXct(rs[[cn]]))
+			else if (identical(class(df[[cn]]), "times")) 
+				return(times(df[[cn]]))
+			else {
+				asfn <- paste("as", 
+					class(df[[cn]]), sep = ".")
+				asfn <- match.fun(asfn)
+				return(asfn(rs[[cn]]))
 			}
 		}
 		if (stringsAsFactors) 
-			if (is.character(rs[[cn]]))
-				factor(rs[[cn]])
-			else rs[[cn]]
-	})
+			if (is.character(rs[[i]]))
+				factor(rs[[i]])
+			else rs[[i]]
+	}
+	# debug(f)
+	rs2 <- lapply(seq_along(rs), f)
 	rs[] <- rs2
 	rs
 }
