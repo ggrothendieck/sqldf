@@ -222,6 +222,7 @@ identical(a6r, a6s)
 # rbind
 a7r <- rbind(a5r, a6r)
 a7s <- sqldf("select * from a5s union all select * from a6s")
+
 # sqldf drops the unused levels of Mois but rbind does not; however,
 # all data is the same and the other columns are identical
 row.names(a7r) <- NULL
