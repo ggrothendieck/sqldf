@@ -236,6 +236,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 
 	# get result back
 	if (is.null(method)) method <- "auto"
+    if (is.function(method)) return(method(rs))
 	if (match.arg(method, c("auto", "raw")) == "raw") return(rs)
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {

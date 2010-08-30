@@ -37,6 +37,9 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{method}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.
+   If the value of this argument is a function then that function is called
+   with a first argument being the data frame and the output of the function
+   is returned from sqldf in place of the usual output.
    If this argument is not specified the value of 
    \code{getOption("sqldf.method")}
    is used and if that is not specified either then \code{"auto"} is used.}
