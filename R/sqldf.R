@@ -6,6 +6,8 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    user, password = "", host = "localhost",
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection")) {
 
+   as.POSIXct.numeric <- function(x, origin = "1970-01-01 00:00:00", ...)
+      base::as.POSIXct.numeric(x, origin = origin, ...)
    as.POSIXct.character <- function(x) structure(as.numeric(x),
 	class = c("POSIXt", "POSIXct"))
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
@@ -13,6 +15,17 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
+   name_class <- function(data, ...) {
+	cls <- sub(".*_([^_]+)|.*", "\\1", names(data))
+	names(data) <- sub("_[^_]+$", "", names(data))
+	f <- function(i) {
+		if (cls[i] == "") { 
+			data[[i]] 
+		} else do.call(paste("as", cls[i], sep = "."), list(data[[i]]))
+	}
+	data[] <- lapply(1:NCOL(data), f)
+	data
+   }
 
 	overwrite <- FALSE
 
@@ -237,7 +250,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	# get result back
 	if (is.null(method)) method <- "auto"
     if (is.function(method)) return(method(rs))
-	if (match.arg(method, c("auto", "raw")) == "raw") return(rs)
+	method <- match.arg(method, c("auto", "raw", "name_class"))
+	if (method == "raw") return(rs)
+	if (method == "name_class") return(do.call(name_class, list(rs)))
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
