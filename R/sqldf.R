@@ -16,12 +16,21 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
    name_class <- function(data, ...) {
+   browser()
 	cls <- sub(".*_([^_]+)|.*", "\\1", names(data))
-	names(data) <- sub("_[^_]+$", "", names(data))
 	f <- function(i) {
 		if (cls[i] == "") { 
 			data[[i]] 
-		} else do.call(paste("as", cls[i], sep = "."), list(data[[i]]))
+		} else {
+			fun_name <- paste("as", cls[i], sep = ".")
+			fun <- mget(fun_name, env = environment(), 
+				mode = "function", ifnotfound = NA, inherit = TRUE)[[1]]
+			if (identical(fun, NA)) data[[i]] else {
+				# strip _class off name
+				names(data)[i] <<- sub("_[^_]+$", "", names(data)[i])
+				fun(data[[i]])
+			}
+		}
 	}
 	data[] <- lapply(1:NCOL(data), f)
 	data
@@ -252,7 +261,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
     if (is.function(method)) return(method(rs))
 	method <- match.arg(method, c("auto", "raw", "name_class"))
 	if (method == "raw") return(rs)
-	if (method == "name_class") return(do.call(name_class, list(rs)))
+	if (method == "name_class") return(do.call("name_class", list(rs)))
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
