@@ -15,9 +15,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
-   name_class <- function(data, ...) {
+   name__class <- function(data, ...) {
 	if (is.null(data)) return(data)
-	cls <- sub(".*_([^_]+)|.*", "\\1", names(data))
+	cls <- sub(".*__([^_]+)|.*", "\\1", names(data))
 	f <- function(i) {
 		if (cls[i] == "") { 
 			data[[i]] 
@@ -27,7 +27,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 				mode = "function", ifnotfound = NA, inherit = TRUE)[[1]]
 			if (identical(fun, NA)) data[[i]] else {
 				# strip _class off name
-				names(data)[i] <<- sub("_[^_]+$", "", names(data)[i])
+				names(data)[i] <<- sub("__[^_]+$", "", names(data)[i])
 				fun(data[[i]])
 			}
 		}

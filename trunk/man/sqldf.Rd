@@ -37,9 +37,9 @@ sqldf(x, stringsAsFactors = TRUE, col.classes = NULL,
   \item{method}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.
-   \code{"name_class"} means that columns names that end in \code{_class}
+   \code{"name__class"} means that columns names that end in \code{_class}
    where \code{class} is an R class such as \code{Date} are converted to
-   that class and the \code{_class} portion is removed from the column name.
+   that class and the \code{__class} portion is removed from the column name.
    If the value of this argument is a function then that function is called
    with a first argument being the data frame and the output of the function
    is returned from sqldf in place of the usual output.
