@@ -16,7 +16,7 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
    name_class <- function(data, ...) {
-   browser()
+	if (is.null(data)) return(data)
 	cls <- sub(".*_([^_]+)|.*", "\\1", names(data))
 	f <- function(i) {
 		if (cls[i] == "") { 
