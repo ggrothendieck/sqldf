@@ -1,6 +1,7 @@
 
-sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL, 
+sqldf <- function(x, stringsAsFactors = TRUE, 
    row.names = FALSE, envir = parent.frame(), 
+   db2df = getOption("sqldf.db2df"), df2db = getOption("sqldf.df2db"),
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
@@ -185,8 +186,9 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 				paste("`", nam, "`", sep = "")
 			} else nam
 		}
-		dbWriteTable(connection, nam2, as.data.frame(get(nam, envir)), 
-			row.names = row.names)
+		DF <- as.data.frame(get(nam, envir))
+		if (!is.null(df2db) && is.function(df2db)) DF <- df2db(DF)
+		dbWriteTable(connection, nam2, DF, row.names = row.names)
 	}
 
 	# process file objects
@@ -257,11 +259,17 @@ sqldf <- function(x, stringsAsFactors = TRUE, col.classes = NULL,
 	}
 
 	# get result back
-	if (is.null(method)) method <- "auto"
-    if (is.function(method)) return(method(rs))
-	method <- match.arg(method, c("auto", "raw", "name_class"))
-	if (method == "raw") return(rs)
-	if (method == "name_class") return(do.call("name_class", list(rs)))
+	if (!is.null(method) && !is.null(db2df)) {
+		stop("cannot specify both method and db2df. Use just db2df.")
+	}
+	if (!is.null(method)) warning("method is deprecated. Use db2df instead.")
+	if (!is.null(method)) db2df <- method
+
+	if (is.null(db2df)) db2df <- "auto"
+    if (is.function(db2df)) return(db2df(rs))
+	db2df <- match.arg(db2df, c("auto", "raw", "name__class"))
+	if (db2df == "raw") return(rs)
+	if (db2df == "name__class") return(do.call("name__class", list(rs)))
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
