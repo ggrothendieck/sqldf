@@ -8,7 +8,7 @@ SQL select on data frames
 
 sqldf(x, stringsAsFactors = TRUE, 
    row.names = FALSE, envir = parent.frame(), 
-   db2df = getOption("sqldf.db2df"), df2db = getOption("sqldf.df2db"),
+   to.df = getOption("sqldf.to.df"), to.db = getOption("sqldf.to.db"),
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
@@ -36,7 +36,7 @@ sqldf(x, stringsAsFactors = TRUE,
    \code{oid} or \code{_rowid_}) is available in any case.}
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
-  \item{db2df}{\code{"auto"} means automatically assign the class of each
+  \item{to.df}{\code{"auto"} means automatically assign the class of each
    column using the heuristic described later.  \code{"raw"} means use
    whatever classes are returned by the database with no automatic processing.
    \code{"name__class"} means that columns names that end in \code{_class}
@@ -46,12 +46,12 @@ sqldf(x, stringsAsFactors = TRUE,
    with a first argument being the data frame and the output of the function
    is returned from sqldf in place of the usual output.
    If this argument is not specified the value of 
-   \code{getOption("sqldf.df2db")}
+   \code{getOption("sqldf.to.db")}
    is used and if that is not specified either then \code{"auto"} is used.}
-  \item{df2db}{Function.  Each data frame that is implicitly loaded into the
+  \item{to.db}{Function.  Each data frame that is implicitly loaded into the
    database is transformed using this function.  If \code{NULL} then no
-   transformation occurs.  Defaults to value of option \code{"sqldf.df2db"}.}
-  \item{method}{This argument is deprecated.  Use \code{db2df} instead.}
+   transformation occurs.  Defaults to value of option \code{"sqldf.to.db"}.}
+  \item{method}{This argument is deprecated.  Use \code{to.df} instead.}
   \item{file.format}{A list whose components are passed to 
     \code{sqliteImportFile}.  Components may include \code{sep}, 
     \code{header}, \code{row.names}, \code{skip}, \code{eol} and \code{filter}.
