@@ -5,7 +5,8 @@ sqldf <- function(x, stringsAsFactors = TRUE,
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
-   dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection")) {
+   dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"),
+   verbose = isTRUE(getOption("sqldf.verbose"))) {
 
    as.POSIXct.numeric <- function(x, origin = "1970-01-01 00:00:00", ...)
       base::as.POSIXct.numeric(x, origin = origin, ...)
@@ -15,6 +16,18 @@ sqldf <- function(x, stringsAsFactors = TRUE,
    as.Date.numeric <- function(x, origin = "1970-01-01", ...) base::as.Date.numeric(x, origin = origin, ...)
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
+
+
+   # nam2 code is duplicated above.  Needs to be factored out.
+   backquote.maybe <- function(nam) {
+		if (drv == "h2") { nam
+		} else if (drv == "pgsql") { nam
+		} else {
+			if (regexpr(".", nam, fixed = TRUE)) {
+				paste("`", nam, "`", sep = "")
+			} else nam
+		}
+	}
 
    name__class <- function(data, ...) {
 	if (is.null(data)) return(data)
@@ -53,15 +66,36 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 			dbPreExists <- attr(connection, "dbPreExists")
 			dbname <- attr(connection, "dbname")
     		if (!missing(dbname) && !is.null(dbname) && dbname == ":memory:") {
+				if (verbose) {
+					cat("sqldf: disconnecting database\n")
+				}
 				dbDisconnect(connection)
     		} else if (!dbPreExists && drv == "sqlite") {
     			# data base not pre-existing
+				if (verbose) {
+					cat("sqldf: disconnecting and removing database\n")
+				}
     			dbDisconnect(connection)
     			file.remove(dbname)
     		} else {
     			# data base pre-existing
-    			for (nam in dfnames) dbRemoveTable(connection, nam)
-    			for (fo in fileobjs) dbRemoveTable(connection, fo)
+
+    			for (nam in dfnames) {
+					nam2 <- backquote.maybe(nam)
+					if (verbose) {
+						cat("sqldf: removing table", nam2, "from database\n")
+					}
+					dbRemoveTable(connection, nam2)
+				}
+    			for (fo in fileobjs) {
+					if (verbose) {
+						cat("sqldf: removing table", fo, "from database\n")
+					}
+					dbRemoveTable(connection, fo)
+				}
+				if (verbose) {
+					cat("sqldf: disconnecting database\n")
+				}
     			dbDisconnect(connection)
     		}
     	})
@@ -83,6 +117,9 @@ sqldf <- function(x, stringsAsFactors = TRUE,
     	}
     
 		drv <- tolower(drv)
+		if (verbose) {
+			cat("sqldf: using", drv, "driver\n")
+		}
     	if (drv == "mysql") {
     		m <- dbDriver("MySQL")
     		connection <- if (missing(dbname) || dbname == ":memory:") { 
@@ -129,9 +166,15 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 			}
 			options(sqldf.dll = dll)
 
+			if (verbose) {
+				cat("sqldf: connecting to database", dbname, "\n")
+			}
 			if (!identical(dll, FALSE)) {
 				connection <- dbConnect(m, dbname = dbname, 
 					loadable.extensions = TRUE)
+				if (verbose) {
+					cat("sqldf: loading extension", dll, "\n")
+				}
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else connection <- dbConnect(m, dbname = dbname)
@@ -179,15 +222,10 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 		}
 		# check if the nam2 processing works with MySQL
 		# if not then ensure its only applied to SQLite
-		nam2 <- if (drv == "h2") { nam
-		} else if (drv == "pgsql") { nam
-		} else {
-			if (regexpr(".", nam, fixed = TRUE)) {
-				paste("`", nam, "`", sep = "")
-			} else nam
-		}
 		DF <- as.data.frame(get(nam, envir))
 		if (!is.null(df2db) && is.function(df2db)) DF <- df2db(DF)
+		nam2 <- backquote.maybe(nam)
+		if (verbose) cat("sqldf: writing", nam2, "to database\n")
 		dbWriteTable(connection, nam2, DF, row.names = row.names)
 	}
 
@@ -244,14 +282,25 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 	# Other databases process select/call/show with dbGetQuery and other 
 	# statements with dbSendQuery.
 	if (drv == "sqlite") {
-		for(xi in x) rs <- dbGetQuery(connection, xi)
+		for(xi in x) {
+			if (verbose) {
+				cat("sqldf: dbGetQuery:", xi, "\n")
+			}
+			rs <- dbGetQuery(connection, xi)
+		}
 	} else {
 		for(i in seq_along(x)) {
 			if (length(words.[[i]]) > 0) {
 				dbGetQueryWords <- c("select", "show", "call", "explain")
 				if (tolower(words.[[i]][1]) %in% dbGetQueryWords) {
+					if (verbose) {
+						cat("sqldf: dbGetQuery:", x[i], "\n")
+					}
 					rs <- dbGetQuery(connection, x[i])
 				} else {
+					if (verbose) {
+						cat("sqldf: dbSendUpdate:", x[i], "\n")
+					}
 					rs <- dbSendUpdate(connection, x[i])
 				}
 			}

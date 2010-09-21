@@ -12,11 +12,13 @@ sqldf(x, stringsAsFactors = TRUE,
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
-   dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"))
+   dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"),
+   verbose = isTRUE(getOption("sqldf.verbose")))
+
 }
 
 \arguments{
-  \item{x}{ Character string representing an SQL select statement or
+  \item{x}{Character string representing an SQL select statement or
    character vector whose components each represent a successive SQL
    statement to be executed. 
    The select statement syntax must conform to the particular database 
@@ -84,6 +86,9 @@ sqldf(x, stringsAsFactors = TRUE,
    connection is left open on termination of the \code{sqldf} call.  Usually 
    this argument is left unspecified.  It can be used to make repeated calls
    to a database without reloading it.}
+  \item{verbose}{If \code{TRUE} then verboe output shown.  Anything else
+   suppresses verbose output. Can be set globally using option 
+   \code{"sqldf.verbose"}.}
 }
 \details{
 The typical action of \code{sqldf} is to 
