@@ -1,16 +1,16 @@
 Version 0.3-6
 
-o sqldf has new db2df argument replacing method argument.  In addition to the
-  values previously accepted by method it can be a function or "name__class".
+o sqldf has new to.df= argument replacing method= argument.  In addition to the
+  values previously accepted by method value can be a function or "name__class".
   "name__class" causes any column whose name is of that form to be converted
   to the indicated class.  Note that "name__class" has two underscores.
 
-o sqldf method argument deprecated (but is still available)
+o sqldf method= argument deprecated (but is still available)
 
-o sqldf has new optional df2db argument to specify function to transform 
+o sqldf has new optional to.db= argument to specify function to transform 
   data frames prior to writing them to database
 
-o sqldf has new optional argument verbose
+o sqldf has new optional argument verbose=
 
 Version 0.3-5
 

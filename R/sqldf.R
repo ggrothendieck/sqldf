@@ -1,7 +1,7 @@
 
 sqldf <- function(x, stringsAsFactors = TRUE, 
    row.names = FALSE, envir = parent.frame(), 
-   db2df = getOption("sqldf.db2df"), df2db = getOption("sqldf.df2db"),
+   to.df = getOption("sqldf.to.df"), to.db = getOption("sqldf.to.db"),
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
@@ -223,7 +223,7 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 		# check if the nam2 processing works with MySQL
 		# if not then ensure its only applied to SQLite
 		DF <- as.data.frame(get(nam, envir))
-		if (!is.null(df2db) && is.function(df2db)) DF <- df2db(DF)
+		if (!is.null(to.db) && is.function(to.db)) DF <- to.db(DF)
 		nam2 <- backquote.maybe(nam)
 		if (verbose) cat("sqldf: writing", nam2, "to database\n")
 		dbWriteTable(connection, nam2, DF, row.names = row.names)
@@ -308,17 +308,17 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 	}
 
 	# get result back
-	if (!is.null(method) && !is.null(db2df)) {
-		stop("cannot specify both method and db2df. Use just db2df.")
+	if (!is.null(method) && !is.null(to.df)) {
+		stop("cannot specify both method and to.df. Use just to.df.")
 	}
-	if (!is.null(method)) warning("method is deprecated. Use db2df instead.")
-	if (!is.null(method)) db2df <- method
+	if (!is.null(method)) warning("method is deprecated. Use to.df instead.")
+	if (!is.null(method)) to.df <- method
 
-	if (is.null(db2df)) db2df <- "auto"
-    if (is.function(db2df)) return(db2df(rs))
-	db2df <- match.arg(db2df, c("auto", "raw", "name__class"))
-	if (db2df == "raw") return(rs)
-	if (db2df == "name__class") return(do.call("name__class", list(rs)))
+	if (is.null(to.df)) to.df <- "auto"
+    if (is.function(to.df)) return(to.df(rs))
+	to.df <- match.arg(to.df, c("auto", "raw", "name__class"))
+	if (to.df == "raw") return(rs)
+	if (to.df == "name__class") return(do.call("name__class", list(rs)))
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
