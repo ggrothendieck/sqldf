@@ -50,6 +50,28 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 	data
    }
 
+	colClass <- function(data, cls) {
+	  if (is.null(data)) return(data)
+	  if (is.list(cls)) cls <- unlist(cls)
+	  cls <- rep(cls, length = length(data))
+	  f <- function(i) {
+		if (cls[i] == "") { 
+			data[[i]] 
+		} else {
+			fun_name <- paste("as", cls[i], sep = ".")
+			fun <- mget(fun_name, env = environment(), 
+				mode = "function", ifnotfound = NA, inherit = TRUE)[[1]]
+			if (identical(fun, NA)) data[[i]] else {
+				# strip _class off name
+				names(data)[i] <<- sub("__[^_]+$", "", names(data)[i])
+				fun(data[[i]])
+			}
+		 }
+	   }
+	data[] <- lapply(1:NCOL(data), f)
+	data
+   }
+
 	overwrite <- FALSE
 
 	request.open <- missing(x) && is.null(connection)
@@ -316,9 +338,10 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 
 	if (is.null(to.df)) to.df <- "auto"
     if (is.function(to.df)) return(to.df(rs))
-	to.df <- match.arg(to.df, c("auto", "raw", "name__class"))
-	if (to.df == "raw") return(rs)
-	if (to.df == "name__class") return(do.call("name__class", list(rs)))
+	# to.df <- match.arg(to.df, c("auto", "raw", "name__class"))
+	if (identical(to.df, "raw")) return(rs)
+	if (identical(to.df, "name__class")) return(do.call("name__class", list(rs)))
+	if (!identical(to.df, "auto")) return(do.call("colClass", list(rs, to.df)))
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
