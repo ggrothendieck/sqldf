@@ -139,16 +139,15 @@ sqldf <- function(x, stringsAsFactors = TRUE,
     	}
     
 		drv <- tolower(drv)
-		if (verbose) {
-			cat("sqldf: using", drv, "driver\n")
-		}
     	if (drv == "mysql") {
+			if (verbose) cat("sqldf: using mysql\n")
     		m <- dbDriver("MySQL")
     		connection <- if (missing(dbname) || dbname == ":memory:") { 
     				dbConnect(m) 
     			} else dbConnect(m, dbname = dbname)
     			dbPreExists <- TRUE
 		} else if (drv == "pgsql") {
+			if (verbose) cat("sqldf: using pgSQL\n")
     		m <- dbDriver("pgSQL")
 			if (missing(dbname) || is.null(dbname)) {
 				dbname <- getOption("RpgSQL.dbname")
@@ -160,6 +159,7 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 			# jar.file <- "C:\\Program Files\\H2\\bin\\h2.jar"
 			# jar.file <- system.file("h2.jar", package = "H2")
 			# m <- JDBC("org.h2.Driver", jar.file, identifier.quote = '"')
+			if (verbose) cat("sqldf: using H2\n")
 			m <- H2()
     		if (missing(dbname) || is.null(dbname)) dbname <- ":memory:"
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
@@ -171,6 +171,7 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 					dbConnect(m, jdbc.string)
 				}
 		} else {
+			if (verbose) cat("sqldf: using SQLite\n")
     		m <- dbDriver("SQLite")
     		if (missing(dbname)) dbname <- ":memory:"
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
@@ -434,7 +435,7 @@ read.csv2.sql <- function(file, sql = "select * from file",
 		else "tr , ."
 	}
 
-	read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
+read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
 		dbname = dbname, drv = drv)
 }
