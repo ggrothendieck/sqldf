@@ -13,6 +13,8 @@ sqldf <- function(x, stringsAsFactors = TRUE,
    as.POSIXct.character <- function(x) structure(as.numeric(x),
 	class = c("POSIXt", "POSIXct"))
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
+   as.Date2 <- function(x) UseMethod("as.Date2")
+   as.Date2.character <- function(x) base:::as.Date.character(x)
    as.Date.numeric <- function(x, origin = "1970-01-01", ...) base::as.Date.numeric(x, origin = origin, ...)
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
@@ -196,13 +198,14 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 				connection <- dbConnect(m, dbname = dbname, 
 					loadable.extensions = TRUE)
 				if (verbose) {
-					cat("sqldf: loading extension", dll, "\n")
+					cat("sqldf: loading extension", normalizePath(dll), "\n")
 				}
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else connection <- dbConnect(m, dbname = dbname)
 			# if (require("RSQLite.extfuns")) init_extensions(connection)
 			# load extension functions from RSQLite.extfuns
+			if (verbose) cat("sqldf: loading extension from RSQLite.extfuns package\n")
 			init_extensions(connection)
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
