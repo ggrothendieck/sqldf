@@ -301,6 +301,7 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 			}
 			system(cmd)
 		}
+		if (verbose) cat("dbWriteTable - importing from file:", args$value, "\n") 
 		do.call("dbWriteTable", args)
 	}
 
@@ -397,10 +398,8 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 				return(asfn(rs[[cn]]))
 			}
 		}
-		if (stringsAsFactors) 
-			if (is.character(rs[[i]]))
-				factor(rs[[i]])
-			else rs[[i]]
+		if (stringsAsFactors && is.character(rs[[i]])) factor(rs[[i]])
+		else rs[[i]]
 	}
 	# debug(f)
 	rs2 <- lapply(seq_along(rs), f)
