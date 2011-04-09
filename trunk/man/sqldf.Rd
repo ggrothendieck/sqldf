@@ -6,9 +6,8 @@ SQL select on data frames
 }
 \usage{
 
-sqldf(x, stringsAsFactors = TRUE, 
+sqldf(x, stringsAsFactors = TRUE,
    row.names = FALSE, envir = parent.frame(), 
-   to.df = getOption("sqldf.to.df"), to.db = getOption("sqldf.to.db"),
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
@@ -25,60 +24,98 @@ sqldf(x, stringsAsFactors = TRUE,
    being used.  If x is missing then it establishes a connection
    which subsequent sqldf statements access.  In that case the database
    is not destroyed until the next sqldf statement with no x.}
-  \item{stringsAsFactors}{ If \code{TRUE} then output \code{"character"} 
-   columns are 
+  \item{stringsAsFactors}{ If \code{TRUE} then those columns output 
+   from the database as \code{"character"} are 
    converted to \code{"factor"} if the heuristic is unable to determine 
-   the class.
-   If \code{method="raw"} then \code{stringsAsFactors} is ignored.}
+   the class.}
   \item{row.names}{For \code{TRUE} the tables in the data base are given
    a \code{row_names} column filled with the row names of the corresponding
    data frames.  Note that in SQLite a special \code{rowid} (or equivalently
    \code{oid} or \code{_rowid_}) is available in any case.}
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
-  \item{to.df}{\code{"auto"} means automatically assign the class of each
-   column using the heuristic described later.  \code{"raw"} means use
-   whatever classes are returned by the database with no automatic processing.
-   \code{"name__class"} means that columns names that end in \code{__class}
+  \item{method}{This argument is a list of two functions, keywords or character
+   vectors.  If the second component of the list 
+   is \code{NULL} (the default) then the first component 
+   of the list can be specified without wrapping it in a list. The
+   first component
+   specifies a transformation of the data frame output from the database
+   and the second specifies a transformation to each data frame that is 
+   passed to the data base just before it is read into the database.  
+   The second component is less frequently used.
+   If the first component is \code{NULL} or not
+   specified that it defaults to "auto".  If the second component is \code{NULL}
+   or not specified then no transformation is performed on the input.
+
+   The allowable keywords for the first components are (1) \code{"auto"} 
+   which is the default and automatically assigns the class of each
+   column using the heuristic described later, (2) \code{"auto.factor"} which is
+   the same as \code{"auto"} but does not assign \code{"factor"} and 
+   \code{"ordered"} classes,
+   (3) \code{"raw"} or \code{NULL} which means use
+   whatever classes are returned by the database with no automatic processing
+   and (4) \code{"name__class"} which
+   means that columns names that end in \code{__class}
    with two underscores
-   where \code{class} is an R class such as \code{Date} are converted to
+   where \code{class} is an R class (such as \code{Date}) are converted to
    that class and the \code{__class} portion is removed from the column name.
-   If the value of \code{to.df} is a function then that function is called
-   with a first argument being the data frame and the output of the function
-   is returned from sqldf in place of the usual output.
-   \code{to.df} can also be a character vector of classes to assign to the
-   returned data.frame.
-   If this argument is not specified the value of 
-   \code{getOption("sqldf.to.db")}
-   is used and if that is not specified either then \code{"auto"} is used.}
-  \item{to.db}{Function.  Each data frame that is implicitly loaded into the
-   database is transformed using this function.  If \code{NULL} then no
-   transformation occurs.  Defaults to value of option \code{"sqldf.to.db"}.}
-  \item{method}{This argument is deprecated.  Use \code{to.df} instead.}
+   For example, 
+	\code{sqldf("select a as x__Date from DF", method = "name__class")} 
+   would cause
+   column \code{a} to be coerced to class \code{Date} and have the column name 
+   \code{x}.
+   The first component of \code{method}
+   can also be a character vector of classes to assign to the
+   returned data.frame.  The example just given could alternately be implemented
+   using 
+	\code{sqldf("select a as x from DF", method = "Date")} 
+  }
   \item{file.format}{A list whose components are passed to 
     \code{sqliteImportFile}.  Components may include \code{sep}, 
     \code{header}, \code{row.names}, \code{skip}, \code{eol} and \code{filter}.
     Except for \code{filter} they are passed to
     \code{sqliteImportFile} and have the same default values as 
     in \code{sqliteImportFile} (except for \code{eol} which defaults
-    to the end of line character(s) for the operating system in use). 
+    to the end of line character(s) for the operating system in use -- note
+	that
+    if the file being read does not have the line endings for the platform
+    being used then \code{eol} will have to be specified.  In particular, 
+    certain UNIX-like tools on Windows may produce files with UNIX line endings
+    in which case \code{eol="\n"} should be specified). 
     \code{filter} may optionally contain a batch/shell command through which the
-    input file is piped prior to reading it in.
+    input file is piped prior to reading it in.  Alternately \code{filter}
+    may be a list whose first component is a batch/shell command containing
+    names which correspond to the names of the subsequent list components.
+    These subsequent components should each be a character
+    vector which \code{sqldf} will read into a temporary file. The name of
+    the temporary file will be replaced into the command.   For example,
+    \code{filter = list("gawk -f prog", prog = '{ gsub(",", ".") }')} . 
+    command line quoting which may vary among shells and Windows.
+    Note that if the filter produces files with UNIX line endings on Windows
+    then \code{eol} must be specified, as discussed above.
     \code{file.format} may be set to \code{NULL} in order not to search
     for input file objects at all.  The \code{file.format} can also
     be specified as an attribute in each file object itself in which case 
     such specification overrides any given through the argument list.  There
     is further discussion of \code{file.format} below.}
-  \item{dbname}{Name of the database.  For SQLite data bases this defaults to
-   \code{":memory:"} which results in an embedded database.}
-  \item{drv}{\code{"SQLite"} or \code{"MySQL"}.  If not specified then
+  \item{dbname}{Name of the database.  For SQLite and h2 data bases this 
+   defaults to
+   \code{":memory:"} which results in an embedded database. For MySQL this
+   defaults to \code{getOption("RMysql.dbname")} and if that is not specified
+   then \code{"test"} is used.  For RpgSQL this 
+   defaults to \code{getOption("RpgSQL.dbname")} and if that is not specified
+   then \code{"test"} is used.}
+  \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"} or \code{"pgSQL"}.  
+   If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
-   \code{"SQLite"} is used unless the RMySQL package is loaded.}
+   \code{sqldf} checks whether \code{RpgSQL}, \code{RmySQL} or \code{RH2} 
+   is loaded in that order and the driver corresponding to the first one
+   found is used.  If none are loaded then \code{"SQLite"} is used.}
   \item{user}{user name.  Not needed for embedded databases.}
   \item{password}{password. Not needed for embedded databases.}
   \item{host}{host.  Default of "localhost" is normally sufficient.}
   \item{dll}{Name of an SQLite loadable extension to automatically load.
-    Default is \code{"libspatial-1.dll"}.  If found on PATH then it is 
+    If found on PATH then it is 
 	automatically loaded and the SQLite functions it in will be accessible.}
   \item{connection}{If this is \code{NULL} then a connection is created;
    otherwise the indicated connection is used.  The default is
@@ -108,12 +145,16 @@ but on occasion may harmlessly reads in extra ones too.}
 \item{assign the classes}{of the returned data frame's columns if
 \code{method = "auto"}.  This is done by checking all the column
 names in the read-in data frames and if any are the same
-as in the output data frame their class (and their factor levels
-if factor) is used.  If they are not matched then they are returned
-as is except that if 
-\code{stringsAsFactors = TRUE} then any character strings are converted
-to factors.  If \code{method = "raw"} then the classes are returned
-as is from the database and \code{stringsAsFactors} is ignored. }
+as a column output from the data base then that column is coerced to the
+class of the column whose name matched.  
+If the class of the column is \code{"factor"} or \code{"ordered"} or if the
+column is not matched then the column is returned
+as is.  If \code{method = "auto.factor"} then processing is similar except
+that \code{"factor"} and \code{"ordered"} classes and their levels will be
+assigned as well.  The \code{"auto.factor"} heuristic
+is less reliable than the \code{"auto"} heuristic.
+If \code{method = "raw"} then the classes are returned
+as is from the database. }
 \item{cleanup}{If the database was created by sqldf then it is deleted;
 otherwise, all tables that were created are dropped in order to leave
 the database in the same state that it was before.  The database
@@ -168,22 +209,10 @@ and code{time} instead of \code{date__1} and \code{time__1}.
 The user moving from older versions of \code{sqldf} to this one 
 should be aware of this change in \code{DBI}.  
 
-If \code{getOption("sqldf.dll")}, defaulting to \code{"libspatial.dll"} 
-is found on the PATH
-then it will be loaded as an SQLite loadable extension.  With the default the
-user will also have access to these additional SQL functions:
-\url{http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html}
-The sqldf package does not itself include this or any other dll and the user 
-must download and place it on the PATH if they wish to use it.  The dll can
-be found here:
-\url{http://www.gaia-gis.it/spatialite}
-If \code{sqldf} does not find the dll on the \code{PATH} then \code{sqldf} 
-will continue to work 
-but, of course, those functions will not be available.
-If you add \code{libspatialite-1.dll} to your \code{PATH}
-part way through your session then it will be necessary to set the 
-\code{sqldf.dll} option to \code{NULL}: \code{options(sqldf.dll = NULL)} as 
-well.
+If \code{getOption("sqldf.dll")} is specified
+then the named dll will be loaded as an SQLite loadable extension.  
+This is in addition to the extension found in the RSQLite.extfunctions 
+R package which is always loaded into SQLite.
 
 }
 
@@ -196,9 +225,10 @@ well.
   
 }
 \references{ 
-The sqldf home page \url{http://code.google.com/p/sqldf/} contains
+The sqldf home page \url{http://sqldf.googlecode.com} contains
 more examples as well as links to SQLite pages that may be helpful in 
-formulating queries.
+formulating queries.  It also containers pointers to using sqldf with H2
+and PostgreSQL.
 }
 \examples{
 
@@ -216,7 +246,7 @@ identical(a1r, a1s)
 
 a2r <- subset(CO2, grepl("^Qn", Plant))
 a2s <- sqldf("select * from CO2 where Plant like 'Qn\%'")
-all.equal(a2r, a2s, check.attributes = FALSE)
+all.equal(as.data.frame(a2r), a2s)
 
 data(farms, package = "MASS")
 a3r <- subset(farms, Manag \%in\% c("BF", "HF"))
@@ -408,23 +438,12 @@ sqldf() # close connection
 con <- sqldf()
 # this iris3 refers to the R variable and file
 sqldf("select * from iris3 where Sepal_Width > 3")
+sqldf("select count(*) from iris3")
 # these iris3 refer to the database table
-dbGetQuery(con, "select from iris3 where Sepal_Width > 4")
-dbGetQuery(con, "select from iris3 where Sepal_Width < 4")
+dbGetQuery(con, "select * from iris3 where Sepal_Width > 4")
+dbGetQuery(con, "select * from iris3 where Sepal_Width < 4")
 sqldf()
 
-
-### demonstrate use of libspatial.dll loadable extension functions
-### In this example stddev_pop and var_pop are libspatial functions.
-### This will only work if libspatial.dll is on the PATH.
-\dontrun{
-Sys.which("libspatialite-1.dll") # shows location of spatialite on PATH
-sqldf("select avg(demand) mean, stddev_pop(demand) sd, var_pop(demand) var from BOD")
-with(BOD, c(mean = mean(demand), sd = sd(demand), var = var(demand)))
-
 }
-
-}
-
 }
 \keyword{manip}

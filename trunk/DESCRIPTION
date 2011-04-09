@@ -1,16 +1,16 @@
 Package: sqldf
 Version: 0.3-6
-Date: 2010-08-30
+Date: 2011-04-08
 Title: Perform SQL Selects on R Data Frames
 Author: G. Grothendieck <ggrothendieck@gmail.com>
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
-Description: The sqldf is typically passed a single argument which is
+Description: The sqldf function is typically passed a single argument which is
 	an SQL select statement where the table names are ordinary
 	R data frames.  sqldf transparently sets up a database, imports
-	the data frames into that database, performs the SQL select 
+	the data frames into that database, performs the SQL select or other
 	statement and returns the result using a heuristic to determine 
-	what class to assign to each column of the returned data frame.
-    The sqldf or read.csv.sql functions can be used to read filtered 
+	which class to assign to each column of the returned data frame.
+    The sqldf or read.csv.sql functions can also be used to read filtered 
     files into R even if the original files are larger than R itself 
     can handle.
 Depends: R (>= 2.10.0), DBI (>= 0.2-5), RSQLite (>= 0.8-0), RSQLite.extfuns, gsubfn, proto, chron

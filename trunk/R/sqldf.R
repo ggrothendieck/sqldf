@@ -1,7 +1,6 @@
 
-sqldf <- function(x, stringsAsFactors = TRUE, 
+sqldf <- function(x, stringsAsFactors = FALSE,
    row.names = FALSE, envir = parent.frame(), 
-   to.df = getOption("sqldf.to.df"), to.db = getOption("sqldf.to.db"),
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
    user, password = "", host = "localhost",
@@ -83,6 +82,11 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 
 	dfnames <- fileobjs <- character(0)
 
+
+	if (!is.list(method)) method <- list(method, NULL)
+	to.df <- method[[1]]
+	to.db <- method[[2]]
+
 	# if exactly one of x and connection are missing then close on exit
 	if (request.close || request.nocon) { 
 
@@ -144,6 +148,10 @@ sqldf <- function(x, stringsAsFactors = TRUE,
     	if (drv == "mysql") {
 			if (verbose) cat("sqldf: using mysql\n")
     		m <- dbDriver("MySQL")
+			if (missing(dbname) || is.null(dbname)) {
+				dbname <- getOption("RMySQL.dbname")
+				if (is.null(dbname)) dbname <- "test"
+			}
     		connection <- if (missing(dbname) || dbname == ":memory:") { 
     				dbConnect(m) 
     			} else dbConnect(m, dbname = dbname)
@@ -179,10 +187,12 @@ sqldf <- function(x, stringsAsFactors = TRUE,
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
 
 			# search for spatialite extension on PATH and, if found, load it
-			if (is.null(getOption("sqldf.dll"))) {
-				dll <- Sys.which("libspatialite-1.dll")
-				if (dll != "") options(sqldf.dll = dll) else options(sqldf.dll = FALSE)
-			}
+			# if (is.null(getOption("sqldf.dll"))) {
+			#	dll <- Sys.which("libspatialite-2.dll")
+			#	if (dll == "") dll <- Sys.which("libspatialite-1.dll")
+			#	dll <- if (dll == "") FALSE else normalizePath(dll)
+			#	options(sqldf.dll = dll)
+			# }
 			dll <- getOption("sqldf.dll")
 			if (length(dll) != 1 || identical(dll, FALSE) || nchar(dll) == 0) {
 				dll <- FALSE
@@ -308,7 +318,7 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 	# SQLite can process all statements using dbGetQuery.  
 	# Other databases process select/call/show with dbGetQuery and other 
 	# statements with dbSendQuery.
-	if (drv == "sqlite") {
+	if (drv == "sqlite" || drv == "mysql") {
 		for(xi in x) {
 			if (verbose) {
 				cat("sqldf: dbGetQuery:", xi, "\n")
@@ -334,19 +344,14 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 		}
 	}
 
-	# get result back
-	if (!is.null(method) && !is.null(to.df)) {
-		stop("cannot specify both method and to.df. Use just to.df.")
-	}
-	if (!is.null(method)) warning("method is deprecated. Use to.df instead.")
-	if (!is.null(method)) to.df <- method
-
 	if (is.null(to.df)) to.df <- "auto"
     if (is.function(to.df)) return(to.df(rs))
 	# to.df <- match.arg(to.df, c("auto", "raw", "name__class"))
 	if (identical(to.df, "raw")) return(rs)
 	if (identical(to.df, "name__class")) return(do.call("name__class", list(rs)))
-	if (!identical(to.df, "auto")) return(do.call("colClass", list(rs, to.df)))
+	if (!identical(to.df, "nofactor") && !identical(to.df, "auto")) {
+		return(do.call("colClass", list(rs, to.df)))
+	}
 	# process row_names
 	rs <- if ("row_names" %in% names(rs)) {
 		if (identical(row.names, FALSE)) {
@@ -367,42 +372,86 @@ sqldf <- function(x, stringsAsFactors = TRUE,
 	#
 	# For each column name in the result, match it against each column name
 	# of each data frame in envir.
-	# 
 	#
-	tab <- do.call("rbind", lapply(dfnames, function(dfname) {
-		df <- get(dfname, envir)
-		cbind(dfname, colnames(df))
-	}))
-	# column names which are duplicated
-	dup <- tab[,2][duplicated(tab[,2])]
+	# tab has one row for each column in each data frame with columns being: 
+	# (1) data frame name, 
+	# (2) column name, 
+	# (3) class vector concatenated using toString,
+	# (4) levels concatenated using toString
+	#
+	tab <- do.call("rbind", 
+		lapply(dfnames, 
+			# calculate tab for one data frame
+			function(dfname) {
+				df <- get(dfname, envir)
+				nms <- names(df)
+				do.call("rbind", 
+					lapply(seq_along(df), 
+						# calculate row in tab for one column of one data frame
+						function(j) {
+							column <- df[[j]]
+							cbind(dfname, nms[j], toString(class(column)), 
+								toString(levels(column)))
+						}
+					)
+				)
+			}
+		)
+	)
+			
+	# each row is a unique column name/class vector/levels combo
+	tabu <- unique(tab[,-1,drop=FALSE])
 
-	f <- function(i) {
+	# dup is vector of column names that appear more than once in tabu.
+	# Such column names have conflicting classes or levels and therefore
+	# cannot form the basis of unique class and level assignments.
+	dup <- unname(tabu[duplicated(tabu[,1]), 1])
+
+	# cat("tab:\n")
+	# print(tab)
+	# cat("tabu:\n")
+	# print(tabu)
+	# cat("dup:\n")
+	# print(dup)
+
+	auto <- function(i) {
 		cn <- colnames(rs)[[i]]
 		if (! cn %in% dup && 
 			(ix <- match(cn, tab[, 2], nomatch = 0)) > 0) {
 			df <- get(tab[ix, 1], envir)
-			if (inherits(df[[cn]], "ordered"))
-				return(as.ordered(factor(rs[[cn]], 
-					levels = levels(df[[cn]]))))
-			else if (inherits(df[[cn]], "factor"))
-				return(factor(rs[[cn]], 
-					levels = levels(df[[cn]])))
-			else if (inherits(df[[cn]], "POSIXct"))
-				return(as.POSIXct(rs[[cn]]))
+			if (inherits(df[[cn]], "ordered")) {
+				if (identical(to.df, "auto")) {
+					u <- unique(rs[[i]])
+					levs <- levels(df[[cn]])
+					if (all(u %in% levs))
+						return(factor(rs[[i]], levels = levels(df[[cn]]), 
+							order = TRUE))
+					else return(rs[[i]])
+				} else return(rs[[i]])
+			} else if (inherits(df[[cn]], "factor")) {
+				if (identical(to.df, "auto")) {
+					u <- unique(rs[[i]])
+					levs <- levels(df[[cn]])
+					if (all(u %in% levs))
+						return(factor(rs[[i]], levels = levels(df[[cn]])))
+					else return(rs[[i]])
+				} else return(rs[[i]])
+			} else if (inherits(df[[cn]], "POSIXct"))
+				return(as.POSIXct(rs[[i]]))
 			else if (identical(class(df[[cn]]), "times")) 
 				return(times(df[[cn]]))
 			else {
 				asfn <- paste("as", 
 					class(df[[cn]]), sep = ".")
 				asfn <- match.fun(asfn)
-				return(asfn(rs[[cn]]))
+				return(asfn(rs[[i]]))
 			}
 		}
 		if (stringsAsFactors && is.character(rs[[i]])) factor(rs[[i]])
 		else rs[[i]]
 	}
 	# debug(f)
-	rs2 <- lapply(seq_along(rs), f)
+	rs2 <- lapply(seq_along(rs), auto)
 	rs[] <- rs2
 	rs
 }
