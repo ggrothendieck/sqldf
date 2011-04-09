@@ -1,15 +1,28 @@
-Version 0.3-6
+Version 0.4-0
 
-o sqldf has new to.df argument replacing method argument.  In addition to the
-  values previously accepted by method the value can be a function, 
-  "name__class" or a character vector or list of class names.  
+o the heuristic which assigns classes to columns for the data frame output
+  from sqldf has been improved
 
-o sqldf method argument deprecated (but is still available)
+o method argument can now be a list of two transformations. The first
+  component corresponds to the old method and can be a keyword ("auto", "raw"
+  or "name__class"), a function or a character vector of class names.  The
+  second may be a function which is used to transform all data frames input
+  to the data base prior to sending them to the data base.
 
-o sqldf has new optional to.db argument to specify function to transform data 
-  frames prior to writing them to database.
+o automatic searching for spatialite is no longer performed.  It seems less
+  useful now that RSQLite.extfunctions is automatically loaded.  To use
+  the spatialite extension specify its path using the dll argument.
 
-o sqldf has new optional argument verbose.
+o sqldf has a new optional argument verbose which gives more output if
+  it is set to TRUE.  Any other value suppresses the extra output.
+
+o filter may be a list whose first component is a command with keywords
+  naming the second and subsequent components.  These components are each
+  specified as character vectors which are written out to temporary files
+  of the indicated names.  This can be used for specifying gawk and other 
+  filters/preprocessors of the input file.
+
+o MySQL is now supported (in addition to SQLite, PostgreSQL and h2).
 
 Version 0.3-5
 
