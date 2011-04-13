@@ -22,6 +22,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
    # nam2 code is duplicated above.  Needs to be factored out.
    backquote.maybe <- function(nam) {
 		if (drv == "h2") { nam
+		} else if (drv == "mysql") { nam
 		} else if (drv == "pgsql") { nam
 		} else {
 			if (regexpr(".", nam, fixed = TRUE)) {
@@ -288,7 +289,22 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			args$filter <- NULL
 			Filename.tmp <- tempfile()
 			args$value <- Filename.tmp
-			cmd <- sprintf("%s < %s > %s", filter, Filename, Filename.tmp)
+			# for filter = list(cmd, x = ...) replace x in cmd with
+			# temporary filename for a file created to hold ...
+			filter.subs <- filter[-1]
+			# filter subs contains named elements of filter
+			filter.subs <- filter.subs[sapply(names(filter.subs), nzchar)]
+			filter.nms <- names(filter.subs)
+			# create temporary file names
+			filter.tempfiles <- sapply(filter.nms, tempfile)
+			cmd <- filter[[1]]
+			# write out temporary file & substitute temporary file name into cmd
+			for(nm in filter.nms) {
+				cat(filter.subs[[nm]], file = filter.tempfiles[[nm]])
+				cmd <- gsub(nm, filter.tempfiles[[nm]], cmd, fixed = TRUE)
+			}
+			cmd <- sprintf('%s < "%s" > "%s"', cmd, Filename, Filename.tmp)
+
 			# on Windows platform preface command with cmd /c 
 			if (.Platform$OS == "windows") {
 				cmd <- paste("cmd /c", cmd)
@@ -309,7 +325,9 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				}
 				}
 			}
+			if (verbose) cat("sqldf: running filter\n  ", cmd, "\n")
 			system(cmd)
+			for(fn in filter.tempfiles) file.remove(fn)
 		}
 		if (verbose) cat("dbWriteTable - importing from file:", args$value, "\n") 
 		do.call("dbWriteTable", args)
