@@ -6,7 +6,7 @@ SQL select on data frames
 }
 \usage{
 
-sqldf(x, stringsAsFactors = TRUE,
+sqldf(x, stringsAsFactors = FALSE,
    row.names = FALSE, envir = parent.frame(), 
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
