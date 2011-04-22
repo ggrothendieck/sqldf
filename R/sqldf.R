@@ -456,7 +456,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				} else return(rs[[i]])
 			} else if (inherits(df[[cn]], "POSIXct"))
 				return(as.POSIXct(rs[[i]]))
-			else if (identical(class(df[[cn]]), "times")) 
+			else if (inherits(df[[cn]], "times")) 
 				return(times(df[[cn]]))
 			else {
 				asfn <- paste("as", 
