@@ -14,7 +14,7 @@ Description: The sqldf function is typically passed a single argument which is
     files into R even if the original files are larger than R itself 
     can handle.
 Depends: R (>= 2.10.0), DBI (>= 0.2-5), RSQLite (>= 0.8-0), RSQLite.extfuns, gsubfn, proto, chron
-Suggests: RH2, RpgSQL
+Suggests: RH2, RMySQL, RpgSQL, svUnit
 Description: Manipulate R data frames using SQL.
 License: GPL-2
 URL: http://sqldf.googlecode.com
