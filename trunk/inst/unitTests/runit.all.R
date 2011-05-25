@@ -1,22 +1,53 @@
 
-library(svUnit)
+# To run these tests:
+#   library(sqldf)
+#   library(svUnit)
+#   # optionally: library(RH2), library(RMySQL) or library(RpgSQL)
+#   #  otherwise sqlite will be used.
+#   # optionally: options(sqldf.verbose = TRUE)
+#   runit.all <- system.file("unitTests", "runit.all.R", package = "sqldf")
+#   source(runit.all); clearLog(); test.all()
+#   Log()
 
 test.all <- function() {
+
+	drv <- getOption("sqldf.driver") 
+	if (is.null(drv)) {
+		drv <- if ("package:RpgSQL" %in% search()) { "pgSQL"
+			} else if ("package:RMySQL" %in% search()) { "MySQL" 
+			} else if ("package:RH2" %in% search()) { "H2" 
+			} else "SQLite"
+	}
+	drv <- tolower(drv)
+	cat("using driver:", drv, "\n")
 
 	# head
 	a1r <- head(warpbreaks)
 	a1s <- sqldf("select * from warpbreaks limit 6")
+	if (drv == "mysql") rownames(a1s) <- NULL
 	checkIdentical(a1r, a1s)
 
 	# subset / like
 	a2r <- subset(CO2, grepl("^Qn", Plant))
-	a2s <- sqldf("select * from CO2 where Plant like 'Qn%'")
+	if (drv == "pgsql") { # pgsql needs to have Plant quoted
+		a2s <- sqldf("select * from CO2 where \"Plant\" like 'Qn%'")
+	} else a2s <- sqldf("select * from CO2 where Plant like 'Qn%'")
 	checkEquals(a2r, a2s, check.attributes = FALSE)
 
-	# subset / in
 	data(farms, package = "MASS")
-	a3r <- subset(farms, Manag %in% c("BF", "HF"))
-	a3s <- sqldf("select * from farms where Manag in ('BF', 'HF')")
+	# subset / in
+	if (drv == "pgsql") { # pgsql needs to have Manag quoted
+		a3r <- subset(farms, Manag %in% c("BF", "HF"))
+		a3s <- sqldf("select * from farms where \"Manag\" in ('BF', 'HF')")
+	} else if (drv == "mysql") { 
+		farms3 <- farms[-3] # MySQL can't handle Use column; remove rownames
+		a3r <- subset(farms3, Manag %in% c("BF", "HF"))
+		a3s <- sqldf("select * from farms3 where Manag in ('BF', 'HF')")
+		rownames(a3s) <- NULL
+	} else { 
+		a3r <- subset(farms, Manag %in% c("BF", "HF"))
+		a3s <- sqldf("select * from farms where Manag in ('BF', 'HF')")
+	}
 	row.names(a3r) <- NULL
 	checkIdentical(a3r, a3s)
 
@@ -24,32 +55,61 @@ test.all <- function() {
 	a4r <- subset(warpbreaks, breaks >= 20 & breaks <= 30)
 	a4s <- sqldf("select * from warpbreaks where breaks between 20 and 30", 
 	   row.names = TRUE)
-	checkIdentical(a4r, a4s)
+	if (drv == "sqlite") {
+		checkIdentical(a4r, a4s)
+	} else checkEquals(a4r, a4s, check.attributes = FALSE)
 
-	# subset
-	a5r <- subset(farms, Mois == 'M1')
-	a5s <- sqldf("select * from farms where Mois = 'M1'", row.names = TRUE)
-	checkIdentical(a5r, a5s)
+	if (drv != "mysql") {
+		# subset
+		a5r <- subset(farms, Mois == 'M1')
+		if (drv == "pgsql") {
+			a5s <- sqldf("select * from farms where \"Mois\" = 'M1'", 
+				row.names = TRUE)
+		} else a5s <- sqldf("select * from farms where Mois = 'M1'", row.names = TRUE)
+		if (drv == "sqlite") {
+			checkIdentical(a5r, a5s)
+		} else if (drv != "mysql") checkEquals(a5r, a5s, check.attributes = FALSE) 
 
-	# subset
-	a6r <- subset(farms, Mois == 'M2')
-	a6s <- sqldf("select * from farms where Mois = 'M2'", row.names = TRUE)
-	checkIdentical(a6r, a6s)
+		# subset
+		a6r <- subset(farms, Mois == 'M2')
+		if (drv == "pgsql") {
+			a6s <- sqldf("select * from farms where \"Mois\" = 'M2'", row.names = TRUE)
+	 	} else {
+			a6s <- sqldf("select * from farms where Mois = 'M2'", row.names = TRUE)
+		}
+		if (drv == "sqlite") {
+			checkIdentical(a6r, a6s)
+		} else checkEquals(a6r, a6s, check.attributes = FALSE)
 
-	# rbind
-	a7r <- rbind(a5r, a6r)
-	a7s <- sqldf("select * from a5s union all select * from a6s")
+		# rbind
+		a7r <- rbind(a5r, a6r)
+		a7s <- sqldf("select * from a5s union all select * from a6s")
 
-	# sqldf drops the unused levels of Mois but rbind does not; however,
-	# all data is the same and the other columns are identical
-	row.names(a7r) <- NULL
-	checkIdentical(a7r[-1], a7s[-1])
+		# sqldf drops the unused levels of Mois but rbind does not; however,
+		# all data is the same and the other columns are identical
+		row.names(a7r) <- NULL
+		checkIdentical(a7r[-1], a7s[-1])
+	}
 
 	# aggregate - avg conc and uptake by Plant and Type
 	a8r <- aggregate(iris[1:2], iris[5], mean)
-	a8s <- sqldf("select Species, avg(Sepal_Length) `Sepal.Length`, 
-	   avg(Sepal_Width) `Sepal.Width` from iris group by Species")
-	checkEquals(a8r, a8s)
+	if (drv == "h2") { 
+		a8s <- sqldf('select "Species", AVG("Sepal.Length") `Sepal.Length`, 
+			AVG("Sepal.Width") `Sepal.Width` from iris 
+			group by "Species" order by "Species"')
+		checkEquals(a8r, a8s, check.attributes = FALSE)
+	} else if (drv == "pgsql") {
+		a8s <- sqldf('select "Species", AVG("Sepal.Length") \"Sepal.Length\", 
+			AVG("Sepal.Width") \"Sepal.Width\" from iris 
+			group by "Species" order by "Species"')
+		checkEquals(a8r, a8s, check.attributes = FALSE)
+	} else {
+		a8s <- sqldf("select Species, AVG(Sepal_Length) `Sepal.Length`, 
+		   AVG(Sepal_Width) `Sepal.Width` from iris
+		   group by Species order by Species")
+	    checkEquals(a8r, a8s, check.attributes = drv != "mysql")
+	}
+
 
 	# by - avg conc and total uptake by Plant and Type
 	a9r <- do.call(rbind, by(iris, iris[5], function(x) with(x,
@@ -58,70 +118,127 @@ test.all <- function() {
 			mean.Sepal.Width = mean(Sepal.Width),
 			mean.Sepal.ratio = mean(Sepal.Length/Sepal.Width)))))
 	row.names(a9r) <- NULL
-	a9s <- sqldf("select Species, avg(Sepal_Length) `mean.Sepal.Length`,
-		avg(Sepal_Width) `mean.Sepal.Width`, 
-		avg(Sepal_Length/Sepal_Width) `mean.Sepal.ratio` from iris
-		group by Species")
-	checkEquals(a9r, a9s)
+	if (drv == "pgsql") {
+		a9s <- sqldf('select "Species", AVG("Sepal.Length") "mean.Sepal.Length",
+			AVG("Sepal.Width") "mean.Sepal.Width", 
+			AVG("Sepal.Length"/"Sepal.Width") "mean.Sepal.ratio" from iris
+			group by "Species" order by "Species"')
+			checkEquals(a9r, a9s, check.attributes = FALSE)
+	} else if (drv == "h2") { 
+		a9s <- sqldf('select Species, AVG("Sepal.Length") `mean.Sepal.Length`,
+			AVG("Sepal.Width") `mean.Sepal.Width`, 
+			AVG("Sepal.Length"/"Sepal.Width") `mean.Sepal.ratio` from iris
+			group by Species order by Species')
+			checkEquals(a9r, a9s, check.attributes = FALSE)
+	} else {
+		a9s <- sqldf("select Species, AVG(Sepal_Length) `mean.Sepal.Length`,
+			AVG(Sepal_Width) `mean.Sepal.Width`, 
+			AVG(Sepal_Length/Sepal_Width) `mean.Sepal.ratio` from iris
+			group by Species order by Species")
+			checkEquals(a9r, a9s, check.attributes = drv != "mysql")
+	}
 
 	# head - top 3 breaks
 	a10r <- head(warpbreaks[order(warpbreaks$breaks, decreasing = TRUE), ], 3)
 	a10s <- sqldf("select * from warpbreaks order by breaks desc limit 3")
 	row.names(a10r) <- NULL
-	checkIdentical(a10r, a10s)
+	if (drv == "mysql") {
+		checkEquals(a10r, a10s, check.attributes = FALSE)
+	} else checkIdentical(a10r, a10s)
 
 	# head - bottom 3 breaks
 	a11r <- head(warpbreaks[order(warpbreaks$breaks), ], 3)
 	a11s <- sqldf("select * from warpbreaks order by breaks limit 3")
 	# attributes(a11r) <- attributes(a11s) <- NULL
 	row.names(a11r) <- NULL
-	checkIdentical(a11r, a11s)
+	if (drv == "mysql") {
+		checkEquals(a11r, a11s, check.attributes = FALSE)
+	} else checkIdentical(a11r, a11s)
 
 	# ave - rows for which v exceeds its group average where g is group
 	DF <- data.frame(g = rep(1:2, each = 5), t = rep(1:5, 2), v = 1:10)
 	a12r <- subset(DF, v > ave(v, g, FUN = mean))
-	Gavg <- sqldf("select g, avg(v) as avg_v from DF group by g")
+	Gavg <- sqldf("select g, AVG(v) as avg_v from DF group by g")
 	a12s <- sqldf("select DF.g, t, v from DF, Gavg where DF.g = Gavg.g and v > avg_v")
 	row.names(a12r) <- NULL
-	checkIdentical(a12r, a12s)
+	if (drv == "mysql") {
+		checkEquals(a12r, a12s, check.attributes = FALSE)
+	} else checkIdentical(a12r, a12s)
 
 	# same but reduce the two select statements to one using a subquery
-	a13s <- sqldf("select g, t, v from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) where d1.g = g2 and v > avg_v")
-	checkIdentical(a12r, a13s)
+	a13s <- sqldf("select g, t, v from DF d1, (select g as g2, AVG(v) as avg_v from DF group by g) d2 where d1.g = g2 and v > avg_v")
+	if (drv == "mysql") {
+		checkEquals(a12r, a13s, check.attributes = FALSE)
+	} else checkIdentical(a12r, a13s)
 
 	# same but shorten using natural join
-	a14s <- sqldf("select g, t, v from DF natural join (select g, avg(v) as avg_v from DF group by g) where v > avg_v")
-	checkIdentical(a12r, a14s)
+	a14s <- sqldf("select d1.g, t, v from DF d1
+			natural join 
+			(select g, AVG(v) as avg_v from DF group by g) d2 where v > avg_v")
+	if (drv == "mysql") {
+		checkEquals(a12r, a14s, check.attributes = FALSE)
+	} else checkIdentical(a12r, a14s)
 
-	# table
+	# table - the *1 part is not actually needed in sqlite but is in h2
 	a15r <- table(warpbreaks$tension, warpbreaks$wool)
-	a15s <- sqldf("select sum(wool = 'A'), sum(wool = 'B') 
-	   from warpbreaks group by tension")
+	if (drv == "pgsql") {
+		a15s <- sqldf("select 
+					sum(cast(wool = 'A' as integer)), 
+					sum(cast(wool = 'B' as integer))
+			   from warpbreaks group by tension")
+	} else {
+		a15s <- sqldf("select SUM((wool = 'A') * 1), SUM((wool = 'B') * 1) 
+			   from warpbreaks group by tension")
+	}
+
 	checkEquals(as.data.frame.matrix(a15r), a15s, check.attributes = FALSE)
 
 	# reshape
 	t.names <- paste("t", unique(as.character(DF$t)), sep = "_")
 	a16r <- reshape(DF, direction = "wide", timevar = "t", idvar = "g", varying = list(t.names))
-	a16s <- sqldf("select g, sum((t == 1) * v) t_1, sum((t == 2) * v) t_2, sum((t == 3) * v) t_3, sum((t == 4) * v) t_4, sum((t == 5) * v) t_5 from DF group by g")
+	if (drv == "pgsql") {
+		a16s <- sqldf("select g, 
+			sum(cast(t = 1 as integer) * v) t_1, 
+			sum(cast(t = 2 as integer) * v) t_2, 
+			sum(cast(t = 3 as integer) * v) t_3, 
+			sum(cast(t = 4 as integer) * v) t_4, 
+			sum(cast(t = 5 as integer) * v) t_5 from DF group by g")
+	} else a16s <- sqldf("select g, 
+		SUM((t = 1) * v) t_1, 
+		SUM((t = 2) * v) t_2, 
+		SUM((t = 3) * v) t_3, 
+		SUM((t = 4) * v) t_4, 
+		SUM((t = 5) * v) t_5 from DF group by g")
 	checkEquals(a16r, a16s, check.attributes = FALSE)
 
 	# order
 	a17r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
 	a17s <- sqldf("select * from Formaldehyde order by optden desc")
 	row.names(a17r) <- NULL
-	checkIdentical(a17r, a17s)
+	if (drv == "mysql") {
+		checkEquals(a17r, a17s, check.attributes = FALSE)
+	} else checkIdentical(a17r, a17s)
 
-	# centered moving average of length 7
-	set.seed(1)
 	DF <- data.frame(x = rnorm(15, 1:15))
-	s18 <- sqldf("select a.x x, avg(b.x) movavgx from DF a, DF b 
-	   where a.row_names - b.row_names between -3 and 3 
-	   group by a.row_names having count(*) = 7 
-	   order by a.row_names+0", 
-	 row.names = TRUE)
-	r18 <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
-	row.names(r18) <- NULL
-	checkEquals(r18, s18)
+	a18r <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
+	# centered moving average of length 7
+	if (drv == "pgsql") {
+		DF2 <- cbind(id = 1:nrow(DF), DF)
+		a18s <- sqldf("select min(a.x) x, AVG(b.x) movavgx from DF2 a, DF2 b 
+		   where a.id - b.id between -3 and 3 
+		   group by a.id having count(*) = 7 
+		   order by a.id")
+		checkEquals(a18r, a18s)
+	} else if (drv != "h2") {
+		a18s <- sqldf("select a.x x, AVG(b.x) movavgx from DF a, DF b 
+		   where a.row_names - b.row_names between -3 and 3 
+		   group by a.row_names having count(*) = 7 
+		   order by a.row_names+0", 
+		 row.names = TRUE)
+		if (drv == "mysql") {
+			checkEquals(a18r, a18s, check.attributes = FALSE)
+		} else checkIdentical(a18r, a18s)
+	}
 
 	# merge.  a19r and a19s are same except row order and row names
 	A <- data.frame(a1 = c(1, 2, 1), a2 = c(2, 3, 3), a3 = c(3, 1, 2))
@@ -131,28 +248,32 @@ test.all <- function() {
 	Sort <- function(DF) DF[do.call(order, DF),]
 	checkEquals(Sort(a19s), Sort(a19r), check.attributes = FALSE)
 
-	# test system tables
+	# test sqlite system tables
 
-	checkIdentical(dim(sqldf("pragma table_info(BOD)")), c(2L, 6L))
+	if (drv == "sqlite") {
 
-	sql <- c("select * from BOD", "select * from sqlite_master")
-	checkIdentical(dim(sqldf(sql)), c(1L, 5L))
+		checkIdentical(dim(sqldf("pragma table_info(BOD)")), c(2L, 6L))
 
-	checkTrue(sqldf("pragma database_list")$name == "main")
+		sql <- c("select * from BOD", "select * from sqlite_master")
+		checkIdentical(dim(sqldf(sql)), c(1L, 5L))
 
-	DF <- data.frame(a = 1:2, b = 2:1)
+		checkTrue(sqldf("pragma database_list")$name == "main")
 
-	checkIdentical(sqldf("select a/b as quotient from DF")$quotient, c(0L, 2L))
+		DF <- data.frame(a = 1:2, b = 2:1)
 
-	checkIdentical(sqldf("select (a+0.0)/b as quotient from DF")$quotient, c(0.5, 2.0))
+		checkIdentical(sqldf("select a/b as quotient from DF")$quotient, c(0L, 2L))
 
-	checkIdentical(sqldf("select cast(a as real)/b as quotient from DF")$quotient, c(0.5, 2.0))
+		checkIdentical(sqldf("select (a+0.0)/b as quotient from DF")$quotient, c(0.5, 2.0))
 
-	checkIdentical(sqldf(c("create table mytab(a real, b real)", 
-	   "insert into mytab select * from DF",  
-	   "select a/b as quotient from mytab"))$quotient, c(0.5, 2.0))
+		checkIdentical(sqldf("select cast(a as real)/b as quotient from DF")$quotient, c(0.5, 2.0))
 
-	tonum <- function(DF) replace(DF, TRUE, lapply(DF, as.numeric))
-	checkIdentical(sqldf("select a/b as quotient from DF", method = list("auto", tonum))$quotient, c(0.5, 2.0))
+		checkIdentical(sqldf(c("create table mytab(a real, b real)", 
+		   "insert into mytab select * from DF",  
+		   "select a/b as quotient from mytab"))$quotient, c(0.5, 2.0))
+
+		tonum <- function(DF) replace(DF, TRUE, lapply(DF, as.numeric))
+		checkIdentical(sqldf("select a/b as quotient from DF", 
+			method = list("auto", tonum))$quotient, c(0.5, 2.0))
+	}
 
 }
