@@ -13,7 +13,7 @@ o automatic searching for spatialite is no longer performed.  It seems less
   useful now that RSQLite.extfunctions is automatically loaded.  To use
   the spatialite extension specify its path using the dll argument.
 
-o sqldf has a new optional argument verbose which gives more output if
+o sqldf has a new optional argument, verbose, which gives more output if
   it is set to TRUE.  Any other value suppresses the extra output.
 
 o filter may be a list whose first component is a command with keywords
@@ -25,6 +25,8 @@ o filter may be a list whose first component is a command with keywords
 o MySQL is now supported (in addition to SQLite, PostgreSQL and h2).
 
 o stringsAsFactors now defaults to FALSE
+
+o unit tests have been added.  To run: demo("sqldf-unitTests")
 
 Version 0.3-5
 

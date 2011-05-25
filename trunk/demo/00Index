@@ -1,1 +1,2 @@
-sqldf-groupchoose	Choose one element from each group
+sqldf-groupchoose	Choose one element from each group.
+sqldf-unitTests	Run unit tests using svUnit package.
