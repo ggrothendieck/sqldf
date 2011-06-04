@@ -20,13 +20,23 @@ o filter may be a list whose first component is a command with keywords
   naming the second and subsequent components.  These components are each
   specified as character vectors which are written out to temporary files
   of the indicated names.  This can be used for specifying gawk and other 
-  filters/preprocessors of the input file.
+  filters/preprocessors of the input file without having to worry about
+  shell interpretation of special characters. e.g.
+	filter = list("gawk -f prog", prog = '{ gsub(",", ".") }')
 
 o MySQL is now supported (in addition to SQLite, PostgreSQL and h2).
 
 o stringsAsFactors now defaults to FALSE
 
-o unit tests have been added.  To run: demo("sqldf-unitTests")
+o unit tests have been added.  To run them for sqlite do this:
+	R CMD check sqldf
+  or:
+	demo("sqldf-unitTests")
+  To run for all 4 databases:
+    demo("sqldf-unitTests") # sqlite
+    library(RH2); demo("sqldf-unitTests"); detach()
+    library(RMySQL); demo("sqldf-unitTests"); detach()
+    library(RpgSQL); demo("sqldf-unitTests"); detach()
 
 Version 0.3-5
 
