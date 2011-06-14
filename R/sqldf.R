@@ -148,7 +148,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     
 		drv <- tolower(drv)
     	if (drv == "mysql") {
-			if (verbose) cat("sqldf: dbDriver(\"MySQL\")\n")
+			if (verbose) cat("sqldf: m <- dbDriver(\"MySQL\")\n")
     		m <- dbDriver("MySQL")
 			if (missing(dbname) || is.null(dbname)) {
 				dbname <- getOption("RMySQL.dbname")
@@ -159,7 +159,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     			} else dbConnect(m, dbname = dbname)
     			dbPreExists <- TRUE
 		} else if (drv == "pgsql") {
-			if (verbose) cat("sqldf: dbDriver(\"pgSQL\")\n")
+			if (verbose) cat("sqldf: m <- dbDriver(\"pgSQL\")\n")
     		m <- dbDriver("pgSQL")
 			if (missing(dbname) || is.null(dbname)) {
 				dbname <- getOption("RpgSQL.dbname")
@@ -171,7 +171,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			# jar.file <- "C:\\Program Files\\H2\\bin\\h2.jar"
 			# jar.file <- system.file("h2.jar", package = "H2")
 			# m <- JDBC("org.h2.Driver", jar.file, identifier.quote = '"')
-			if (verbose) cat("sqldf: dbDriver(\"H2\")\n")
+			if (verbose) cat("sqldf: m <- dbDriver(\"H2\")\n")
 			# m <- H2()
 			m <- dbDriver("H2")
     		if (missing(dbname) || is.null(dbname)) dbname <- ":memory:"
@@ -184,7 +184,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 					dbConnect(m, jdbc.string)
 				}
 		} else {
-			if (verbose) cat("sqldf: dbDriver(\"SQLite\")\n")
+			if (verbose) cat("sqldf: m <- dbDriver(\"SQLite\")\n")
     		m <- dbDriver("SQLite")
     		if (missing(dbname)) dbname <- ":memory:"
     		dbPreExists <- dbname != ":memory:" && file.exists(dbname)
@@ -204,12 +204,9 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			}
 			options(sqldf.dll = dll)
 
-			if (verbose) {
-				cat("sqldf: connecting to database", dbname, "\n")
-			}
 			if (!identical(dll, FALSE)) {
 				if (verbose) {
-					cat("sqldf: dbConnect(m, dbname =\"", dbname, 
+					cat("sqldf: connection <- dbConnect(m, dbname = \"", dbname, 
 						"\", loadable.extensions = TRUE\n", sep = "")
 					cat("sqldf: select load_extension('", dll, "')\n", sep = "")
 				}
@@ -218,7 +215,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else {
-				cat("sqldf: dbConnect(m, dbname =\"", dbname, "\")\n", sep = "")
+				cat("sqldf: connection <- dbConnect(m, dbname = \"", dbname, "\")\n", sep = "")
 				connection <- dbConnect(m, dbname = dbname)
 			}
 			# if (require("RSQLite.extfuns")) init_extensions(connection)
@@ -270,7 +267,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 		if (!is.null(to.db) && is.function(to.db)) DF <- to.db(DF)
 		nam2 <- backquote.maybe(nam)
 		# if (verbose) cat("sqldf: writing", nam2, "to database\n")
-		if (verbose) cat("sqldf: dbWriteTable(connection, ", sQuote(nam2), ", DF, row.names = row.names)\n")
+		if (verbose) cat("sqldf: dbWriteTable(connection, '", nam2, "', ", nam, ", row.names = ", row.names, ")\n", sep = "")
 		dbWriteTable(connection, nam2, DF, row.names = row.names)
 	}
 
@@ -347,7 +344,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	if (drv == "sqlite" || drv == "mysql") {
 		for(xi in x) {
 			if (verbose) {
-				cat("sqldf: dbGetQuery:", xi, "\n")
+				cat("sqldf: dbGetQuery(connection, '", xi, "')\n", sep = "")
 			}
 			rs <- dbGetQuery(connection, xi)
 		}
@@ -357,7 +354,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				dbGetQueryWords <- c("select", "show", "call", "explain")
 				if (tolower(words.[[i]][1]) %in% dbGetQueryWords) {
 					if (verbose) {
-						cat("sqldf: dbGetQuery:", x[i], "\n")
+						cat("sqldf: dbGetQuery(connection, '", x[i], "')\n", sep = "")
 					}
 					rs <- dbGetQuery(connection, x[i])
 				} else {
