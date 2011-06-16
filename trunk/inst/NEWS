@@ -1,3 +1,7 @@
+Version 0.4-1
+
+o startup message giving database that will be used as default (if not sqlite)
+
 Version 0.4-0
 
 o the heuristic which assigns classes to columns for the data frame output
