@@ -215,7 +215,9 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else {
+				if (verbose) {
 				cat("sqldf: connection <- dbConnect(m, dbname = \"", dbname, "\")\n", sep = "")
+				}
 				connection <- dbConnect(m, dbname = dbname)
 			}
 			# if (require("RSQLite.extfuns")) init_extensions(connection)
