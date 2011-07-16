@@ -300,7 +300,9 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			# temporary filename for a file created to hold ...
 			filter.subs <- filter[-1]
 			# filter subs contains named elements of filter
-			filter.subs <- filter.subs[sapply(names(filter.subs), nzchar)]
+			if (length(filter.subs) > 0) {
+				filter.subs <- filter.subs[sapply(names(filter.subs), nzchar)]
+			}
 			filter.nms <- names(filter.subs)
 			# create temporary file names
 			filter.tempfiles <- sapply(filter.nms, tempfile)
@@ -332,11 +334,11 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				}
 				}
 			}
-			if (verbose) cat("sqldf: system(\"", cmd, "\")\n  ", sep = "")
+			if (verbose) cat("sqldf: system(\"", cmd, "\")\n", sep = "")
 			system(cmd)
 			for(fn in filter.tempfiles) file.remove(fn)
 		}
-		if (verbose) cat("sqldf: dbWriteTable(", args, ")\n")
+		if (verbose) cat("sqldf: dbWriteTable(", toString(args), ")\n")
 		do.call("dbWriteTable", args)
 	}
 
@@ -353,7 +355,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	} else {
 		for(i in seq_along(x)) {
 			if (length(words.[[i]]) > 0) {
-				dbGetQueryWords <- c("select", "show", "call", "explain")
+				dbGetQueryWords <- c("select", "show", "call", "explain", 
+					"with")
 				if (tolower(words.[[i]][1]) %in% dbGetQueryWords) {
 					if (verbose) {
 						cat("sqldf: dbGetQuery(connection, '", x[i], "')\n", sep = "")
