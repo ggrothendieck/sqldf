@@ -69,6 +69,9 @@ sqldf(x, stringsAsFactors = FALSE,
    returned data.frame.  The example just given could alternately be implemented
    using 
 	\code{sqldf("select a as x from DF", method = "Date")} 
+   Note that when \code{Date} is used in this way it assumes the database
+   contains the number of days since January 1, 1970.  If the date is in
+   the format \code{yyyy-mm-dd} then use \code{Date2} as the class.
   }
   \item{file.format}{A list whose components are passed to 
     \code{sqliteImportFile}.  Components may include \code{sep}, 
