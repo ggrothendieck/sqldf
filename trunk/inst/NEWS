@@ -1,3 +1,8 @@
+Version 0.4-2
+
+o read.csv and read.csv2 now pass nrows and field.types to RSQLite. (Previously
+  sqldf did but not these two routines.)
+
 Version 0.4-1.2
 
 o bug fixes
