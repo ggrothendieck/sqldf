@@ -86,10 +86,13 @@ test.all <- function() {
 	# }
 
 	# aggregate - avg conc and uptake by Plant and Type
+	# pgsql and h2 require double quote quoting 
+	# whereas sqlite and mysql can use backquote
+	# Species needs to be quoted in pgsql but not in the other data bases.
 	a8r <- aggregate(iris[1:2], iris[5], mean)
 	if (drv == "pgsql" || drv == "h2") {
-		a8s <- sqldf('select "Species", AVG("Sepal.Length") \"Sepal.Length\", 
-			AVG("Sepal.Width") \"Sepal.Width\" from iris 
+		a8s <- sqldf('select "Species", avg("Sepal.Length") \"Sepal.Length\", 
+			avg("Sepal.Width") \"Sepal.Width\" from iris 
 			group by "Species" order by "Species"')
 		checkEquals(a8r, a8s, check.attributes = FALSE)
 	} else {
@@ -109,9 +112,9 @@ test.all <- function() {
 			mean.Sepal.ratio = mean(Sepal.Length/Sepal.Width)))))
 	row.names(a9r) <- NULL
 	if (drv == "pgsql" || drv == "h2") {
-		a9s <- sqldf('select "Species", AVG("Sepal.Length") "mean.Sepal.Length",
-			AVG("Sepal.Width") "mean.Sepal.Width", 
-			AVG("Sepal.Length"/"Sepal.Width") "mean.Sepal.ratio" from iris
+		a9s <- sqldf('select "Species", avg("Sepal.Length") "mean.Sepal.Length",
+			avg("Sepal.Width") "mean.Sepal.Width", 
+			avg("Sepal.Length"/"Sepal.Width") "mean.Sepal.ratio" from iris
 			group by "Species" order by "Species"')
 			checkEquals(a9r, a9s, check.attributes = FALSE)
 	} else {
@@ -139,22 +142,22 @@ test.all <- function() {
 	# ave - rows for which v exceeds its group average where g is group
 	DF <- data.frame(g = rep(1:2, each = 5), t = rep(1:5, 2), v = 1:10)
 	a12r <- subset(DF, v > ave(v, g, FUN = mean))
-	Gavg <- sqldf("select g, AVG(v) as avg_v from DF group by g")
+	Gavg <- sqldf("select g, avg(v) as avg_v from DF group by g")
 	a12s <- sqldf("select DF.g, t, v from DF, Gavg where DF.g = Gavg.g and v > avg_v")
 	row.names(a12r) <- NULL
 	checkIdentical(a12r, a12s)
 
 	# same but reduce the two select statements to one using a subquery
-	a13s <- sqldf("select g, t, v from DF d1, (select g as g2, AVG(v) as avg_v from DF group by g) d2 where d1.g = g2 and v > avg_v")
+	a13s <- sqldf("select g, t, v from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) d2 where d1.g = g2 and v > avg_v")
 	checkIdentical(a12r, a13s)
 
 	# same but shorten using natural join
 	a14s <- sqldf("select d1.g, t, v from DF d1
 			natural join 
-			(select g, AVG(v) as avg_v from DF group by g) d2 where v > avg_v")
+			(select g, avg(v) as avg_v from DF group by g) d2 where v > avg_v")
 	checkIdentical(a12r, a14s)
 
-	# table - the *1 part is not actually needed in sqlite but is in h2
+	# table
 	a15r <- table(warpbreaks$tension, warpbreaks$wool)
 	if (drv == "pgsql") {
 		a15s <- sqldf("select 
@@ -162,7 +165,7 @@ test.all <- function() {
 					sum(cast(wool = 'B' as integer))
 			   from warpbreaks group by tension")
 	} else {
-		a15s <- sqldf("select SUM((wool = 'A') * 1), SUM((wool = 'B') * 1) 
+		a15s <- sqldf("select SUM(wool = 'A'), SUM(wool = 'B') 
 			   from warpbreaks group by tension")
 	}
 
@@ -197,9 +200,9 @@ test.all <- function() {
 	# centered moving average of length 7
 	if (drv == "pgsql" || drv == "h2") {
 		DF2 <- cbind(id = 1:nrow(DF), DF)
-		a18s <- sqldf("select MIN(a.x) x, AVG(b.x) movavgx from DF2 a, DF2 b 
+		a18s <- sqldf("select min(a.x) x, avg(b.x) movavgx from DF2 a, DF2 b 
 		   where a.id - b.id between -3 and 3 
-		   group by a.id having COUNT(*) = 7 
+		   group by a.id having count(*) = 7 
 		   order by a.id")
 	} else {
 		a18s <- sqldf("select a.x x, avg(b.x) movavgx from DF a, DF b 

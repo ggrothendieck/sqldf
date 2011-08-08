@@ -11,8 +11,8 @@ portion is processed by R so that files larger than R can otherwise
 handle can be accommodated.
 }
 \usage{
-read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, dbname = tempfile(), drv = "SQLite", ...)
-read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, dbname = tempfile(), drv = "SQLite", ...)
+read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types, dbname = tempfile(), drv = "SQLite", ...)
+read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types, dbname = tempfile(), drv = "SQLite", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +40,16 @@ Skip indicated number of lines in input file.
 }
   \item{filter}{
 If specified, this should be a shell/batch command that the input file is piped through.  For \code{read.csv2.sql} it is by default the following on non-Windows systems: \code{tr , .}.  This translates all commas in the file to dots. On Windows similar functionalty is provided but to do that using a vbscript file that is included with \code{sqldf} to emulate the \code{tr} command.
+}
+  \item{nrows}{
+Number of rows used to determine column types.  It defaults to 50.  Using 
+\code{Inf} causes it to use all rows for determining column types.
+This argument is rarely needed.
+}
+  \item{field.types}{
+A list whose names are the column names and whose
+contents are the SQLite types (not the R class names) of the
+columns.  This argument is rarely needed.
 }
   \item{dbname}{
 As in \code{sqldf} except that the default is \code{tempfile()}.
