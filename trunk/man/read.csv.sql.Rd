@@ -17,7 +17,7 @@ read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.na
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{file}{
-As in \code{read.csv}.
+A file path or a URL (beginning with \code{http://} or \code{ftp://}).
 }
   \item{sql}{
 character string holding an SQL statement.  The table representing the
@@ -43,16 +43,19 @@ If specified, this should be a shell/batch command that the input file is piped 
 }
   \item{nrows}{
 Number of rows used to determine column types.  It defaults to 50.  Using 
-\code{Inf} causes it to use all rows for determining column types.
+\code{-1} causes it to use all rows for determining column types.
 This argument is rarely needed.
 }
   \item{field.types}{
 A list whose names are the column names and whose
 contents are the SQLite types (not the R class names) of the
-columns.  This argument is rarely needed.
+columns.  Specifying these types improves how fast it takes.
+Unless speed is very important this argument is not normally used.
 }
   \item{dbname}{
 As in \code{sqldf} except that the default is \code{tempfile()}.
+Specifying \code{NULL} will put the database in memory which may improve speed
+but will limit the size of the database by the available memory.
 }
   \item{drv}{
 This argument is ignored. 

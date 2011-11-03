@@ -1,7 +1,13 @@
+Version 0.4-3
+
+o dbname = NULL can be used to force default behavior
+
+o in read.csv.sql and read.csv2.sql the file argument may optionally be a URL
+
 Version 0.4-2
 
-o read.csv and read.csv2 now pass nrows and field.types to RSQLite. (Previously
-  sqldf did but not these two routines.)
+o read.csv.sql and read.csv2.sql now handle dbWriteTable's nrows and 
+  field.types arguments.  (Previously sqldf did but not these two routines.)
 
 Version 0.4-1.2
 

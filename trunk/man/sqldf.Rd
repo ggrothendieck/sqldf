@@ -113,7 +113,8 @@ sqldf(x, stringsAsFactors = FALSE,
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{sqldf} checks whether \code{RpgSQL}, \code{RmySQL} or \code{RH2} 
    is loaded in that order and the driver corresponding to the first one
-   found is used.  If none are loaded then \code{"SQLite"} is used.}
+   found is used.  If none are loaded then \code{"SQLite"} is used. 
+   \code{dbname=NULL} causes the default to be used.}
   \item{user}{user name.  Not needed for embedded databases.}
   \item{password}{password. Not needed for embedded databases.}
   \item{host}{host.  Default of "localhost" is normally sufficient.}
