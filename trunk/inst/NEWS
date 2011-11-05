@@ -4,6 +4,10 @@ o dbname = NULL can be used to force default behavior
 
 o in read.csv.sql and read.csv2.sql the file argument may optionally be a URL
 
+o in read.csv.sql and read.csv2.sql the file argument may be omitted (or
+  equivalently NULL or NA or "") if filter is specified and no file is to to 
+  be input to the filter.
+
 Version 0.4-2
 
 o read.csv.sql and read.csv2.sql now handle dbWriteTable's nrows and 

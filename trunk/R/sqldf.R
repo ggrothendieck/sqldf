@@ -313,7 +313,9 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				cat(filter.subs[[nm]], file = filter.tempfiles[[nm]])
 				cmd <- gsub(nm, filter.tempfiles[[nm]], cmd, fixed = TRUE)
 			}
-			cmd <- sprintf('%s < "%s" > "%s"', cmd, Filename, Filename.tmp)
+			cmd <- if (nchar(Filename) > 0)
+				sprintf('%s < "%s" > "%s"', cmd, Filename, Filename.tmp)
+			else sprintf('%s > "%s"', cmd, Filename.tmp)
 
 			# on Windows platform preface command with cmd /c 
 			if (.Platform$OS == "windows") {
@@ -503,6 +505,8 @@ read.csv.sql <- function(file, sql = "select * from file",
 	if (!missing(field.types)) 
 		file.format <- append(file.format, list(field.types = field.types))
 	pf <- parent.frame()
+
+	if (missing(file) || is.null(file) || is.na(file)) file <- ""
 	
     ## filesheet
     tf <- NULL

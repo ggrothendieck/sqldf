@@ -17,7 +17,9 @@ read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.na
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{file}{
-A file path or a URL (beginning with \code{http://} or \code{ftp://}).
+A file path or a URL (beginning with \code{http://} or \code{ftp://}). If
+the \code{filter} argument is used and no file is to be input to the filter
+then \code{file} can be omitted, \code{NULL}, \code{NA} or \code{""}.
 }
   \item{sql}{
 character string holding an SQL statement.  The table representing the
