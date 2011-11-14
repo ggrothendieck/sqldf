@@ -41,7 +41,9 @@ Character which ends line.
 Skip indicated number of lines in input file.
 }
   \item{filter}{
-If specified, this should be a shell/batch command that the input file is piped through.  For \code{read.csv2.sql} it is by default the following on non-Windows systems: \code{tr , .}.  This translates all commas in the file to dots. On Windows similar functionalty is provided but to do that using a vbscript file that is included with \code{sqldf} to emulate the \code{tr} command.
+If specified, this should be a shell/batch command that the input file is piped through.  For \code{read.csv2.sql} it is by default the following on non-Windows systems: \code{tr , .}.  This translates all commas in the file to dots. On Windows similar functionalty is provided but to do that using a vbscript file that is included with \code{sqldf} to emulate the \code{tr} command.  There is also
+a gawk script included called \code{csv.awk} which can handle commas and
+quotes (which must be doubled) within double quoted fields. See Details.
 }
   \item{nrows}{
 Number of rows used to determine column types.  It defaults to 50.  Using 
@@ -90,6 +92,21 @@ all commas in the file to decimal points (i.e. to dots).
 On Windows, if the \code{filter} argument is used and if Rtools is detected
 in the registry then the Rtools bin directory is added to the search path
 facilitating use of those tools without explicitly setting any the path.
+A \code{gawk} script \code{csv.awk} is included in the sqldf package and the
+\code{AWKPATH} is set so that \code{csv.awk} is on it allowing it to be 
+referenced without a pathname. The \code{csv.awk} script
+supports the input variables \code{isep},
+\code{osep}, \code{quote}, \code{escape}, \code{newline} and \code{trim}.  
+The first two
+default to comma, the next two default to double quote and the last one
+defaults to \code{1}. The input file is assumed to use \code{isep} as
+the field separator and the output uses \code{osep}.  Quoted fields use the
+indicated quote character and quotes within quoted fields must be escaped
+using the indicated escape character.  Newlines may appear within quoted
+fields unless \code{newline} is the empty string.  White space is trimmed
+from the beginning and end of fields but this may be turned off by setting
+\code{trim=0}. See the example in the examples section.
+
 }
 \value{
 If the sql statement is a select statement then a data frame
@@ -98,9 +115,21 @@ is returned.
 
 \examples{
 \dontrun{
-write.table(iris, "iris.csv", sep = ",", quote = FALSE, row.names = FALSE)
+# might need to change eol
+write.csv(iris, "iris.csv", quote = FALSE, row.names = FALSE)
 iris2 <- read.csv.sql("iris.csv", 
-	sql = "select * from file where Sepal.Length > 5")
+	sql = "select * from file where Sepal.Length > 5", eol = "\n")
+
+write.csv(iris, "irisq.csv", quote = TRUE, row.names = FALSE)
+csv.awk <- system.file("csv.awk", package = "sqldf")
+irisq <- read.csv.sql("irisq.csv", sep = ";", eol = "\n",
+    filter = paste("gawk -v OFS=; -f", csv.awk))
+
+cat('A,B
+"Joe, Jr.","Mac ""The Knife"""
+', file = "temp.csv")
+temp.out <- read.csv.sql("temp.csv", sep = ";", eol = "\n",
+      filter = "gawk -v osep=; -f csv.awk")
 }
 }
 \keyword{ manip }

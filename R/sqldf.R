@@ -39,8 +39,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			data[[i]] 
 		} else {
 			fun_name <- paste("as", cls[i], sep = ".")
-			fun <- mget(fun_name, env = environment(), 
-				mode = "function", ifnotfound = NA, inherit = TRUE)[[1]]
+			fun <- mget(fun_name, envir = environment(), 
+				mode = "function", ifnotfound = NA, inherits = TRUE)[[1]]
 			if (identical(fun, NA)) data[[i]] else {
 				# strip _class off name
 				names(data)[i] <<- sub("__[^_]+$", "", names(data)[i])
@@ -61,8 +61,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			data[[i]] 
 		} else {
 			fun_name <- paste("as", cls[i], sep = ".")
-			fun <- mget(fun_name, env = environment(), 
-				mode = "function", ifnotfound = NA, inherit = TRUE)[[1]]
+			fun <- mget(fun_name, envir = environment(), 
+				mode = "function", ifnotfound = NA, inherits = TRUE)[[1]]
 			if (identical(fun, NA)) data[[i]] else {
 				# strip _class off name
 				names(data)[i] <<- sub("__[^_]+$", "", names(data)[i])

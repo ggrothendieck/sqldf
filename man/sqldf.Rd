@@ -92,7 +92,7 @@ sqldf(x, stringsAsFactors = FALSE,
     These subsequent components should each be a character
     vector which \code{sqldf} will read into a temporary file. The name of
     the temporary file will be replaced into the command.   For example,
-    \code{filter = list("gawk -f prog", prog = '{ gsub(",", ".") }')} . 
+    \code{filter = list("gawk -f prog", prog = '{ print gensub(/,/, ".", "g") }')} . 
     command line quoting which may vary among shells and Windows.
     Note that if the filter produces files with UNIX line endings on Windows
     then \code{eol} must be specified, as discussed above.
