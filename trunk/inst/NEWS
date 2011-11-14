@@ -1,3 +1,38 @@
+Version 0.4-5
+
+o NAMESPACE added
+
+o fixed an erroneous example in ?sqldf
+
+o appends the sqldf library directory to AWKPATH.  This allows gawk calls in
+  the filter argument of read.csv.sql to refer to awk programs that are 
+  supplied with sqldf without supplying the path.  (See discussion of AWKPATH 
+  in the gawk documentation.)
+
+o sqldf includes an awk program, csv.awk, to process csv files for use as 
+  a filter with read.csv.sql when its necessary to handle commas within quoted
+  fields and quotes within quoted fields (such quotes must be doubled).  The
+  following arguments (defaults shown) can be passed to csv.awk: isep = ",", 
+  osep = "\"", quote  "\"", escape = "\"", newline = "\\n", trim = 1. Note that
+  the escape character is used if quotes  are within quotes.  Newlines are also
+  allowed in fields between quotes.  If trim=1 then whitespace is trimmed from 
+  beginning and end of fields.
+
+    # write out test data and then read it back using read.csv.sql
+	cat('A,B\n"Joe, Jr.","Mac ""The Knife"""\n', file = "temp.csv")
+    temp.out <- read.csv.sql("temp.csv", sep = ";", eol = "\n",
+      filter = "gawk -v osep=; -f csv.awk")
+
+  (In most there are no commas or quotes in fields so this filter not needed. 
+  Also note that the above example assumes Windows console syntax and the 
+  the corresponding shell syntax needs to be used instead on UNIX.)
+
+
+Version 0.4-4
+
+o changes to eliminate the NOTE produced during build/INSTALL on Linux.  No
+  change in functionality visible to the user.
+
 Version 0.4-3
 
 o dbname = NULL can be used to force default behavior
