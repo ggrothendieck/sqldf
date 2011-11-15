@@ -1,5 +1,5 @@
 Package: sqldf
-Version: 0.4-5
+Version: 0.4-4
 Date: 2011-11-14
 Title: Perform SQL Selects on R Data Frames
 Author: G. Grothendieck <ggrothendieck@gmail.com>

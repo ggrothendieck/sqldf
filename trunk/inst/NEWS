@@ -1,4 +1,4 @@
-Version 0.4-5
+Version 0.4-4
 
 o NAMESPACE added
 
@@ -27,11 +27,7 @@ o sqldf includes an awk program, csv.awk, to process csv files for use as
   Also note that the above example assumes Windows console syntax and the 
   the corresponding shell syntax needs to be used instead on UNIX.)
 
-
-Version 0.4-4
-
-o changes to eliminate the NOTE produced during build/INSTALL on Linux.  No
-  change in functionality visible to the user.
+o changes to eliminate the NOTE produced during build/INSTALL on Linux.
 
 Version 0.4-3
 
