@@ -1,8 +1,6 @@
 
 .onLoad <- function(libname, pkgname) {
 
-	browser()
-
 	# append sqldf library directory to AWKPATH (. is always searched so it
 	# need not be specified)
 	sqldf.home <- normalizePath(file.path(libname, pkgname))
@@ -34,3 +32,5 @@
 	}
 }
 
+.onUnload <- function(libpath) {
+}
