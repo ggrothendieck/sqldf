@@ -1,3 +1,7 @@
+Version 0.4-5
+
+o fixed bug that occurred when times class columns were in output
+
 Version 0.4-4
 
 o NAMESPACE added
