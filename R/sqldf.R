@@ -482,7 +482,6 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 		else rs[[i]]
 	}
 	# debug(f)
-	browser()
 	rs2 <- lapply(seq_along(rs), auto)
 	rs[] <- rs2
 	rs
