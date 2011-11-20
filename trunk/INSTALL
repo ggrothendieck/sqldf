@@ -1,0 +1,9 @@
+
+sqldf is installed like any other R package using this command from within R:
+
+install.packages("sqldf")
+
+Although for most users this will not occur, if you do get a message
+about tcl being missing see FAQ #5 on the sqldf home page:
+http://sqldf.googlecode.com
+
