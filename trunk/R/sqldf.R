@@ -128,7 +128,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				}
     			dbDisconnect(connection)
     		}
-    	})
+    	}, add = TRUE)
 		if (request.close) {
 			if (identical(connection, getOption("sqldf.connection")))
 				options(sqldf.connection = NULL)
@@ -247,7 +247,14 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 
 	# words. is a list whose ith component contains vector of words in ith stmt
 	# words is all the words in one long vector without duplicates
+	has.tcltk <- require("tcltk")
+    if (!has.tcltk) {
+		gsubfn.engine.orig <- getOption("gsubfn.engine")
+		options(gsubfn.engine = "R")
+		on.exit(options(gsubfn.engine = gsubfn.engine.orig), add = TRUE)
+	}
 	words. <- words <- strapply(x, "[[:alnum:]._]+")
+	
 	if (length(words) > 0) words <- unique(unlist(words))
 	is.special <- sapply(
 		mget(words, envir, "any", NA, inherits = TRUE), 
@@ -516,7 +523,7 @@ read.csv.sql <- function(file, sql = "select * from file",
          substring(file, 1, 6) == "ftp://" ) {
 
         tf <- tempfile()
-		on.exit(unlink(tf))
+		on.exit(unlink(tf), add = TRUE)
         # if(verbose)
         # cat("Downloading",
         #      dQuote.ascii(file), " to ",

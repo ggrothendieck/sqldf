@@ -4,6 +4,8 @@ o fixed bug that occurred when times class columns were in output
 
 o added INSTALL file
 
+o improve tcltk checking.
+
 Version 0.4-4
 
 o NAMESPACE added

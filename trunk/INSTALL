@@ -75,23 +75,25 @@ drivers loaded and wish to explicitly specify one of them then use the
 drv=... argument of each sqldf call or set options(sqldf.driver=...) in R.
 The possible values of ... are "SQLite", "MySQL", "h2" or "pgSQL".
 
+See FAQ #7 on the sqldf home page (http://sqldf.googlecode.com) for more.
+
 
 PROBLEMS
 
 sqldf uses gsubfn which can optionally use the R tcltk package but can also
 run without that package substituting R code for it.  On Windows and most
 other R installations, tcltk comes with the core of R and so you automatically
-get it.  If the tcltk package not present it will be automatically detected 
-and it will automatically switch to R code.  There have been reports of 
-bad R builds in which R reports that it has tcltk capability even though its
-missing. In that case you will get an error message about tcltk being missing.
-To address this issue its easiest to just run this command to force R code:
+get it.  If the tcltk is package not present it will be automatically detected 
+and it will automatically switch to R code.  
+
+There have been reports of bad R builds in which R reports that it has tcltk
+capability even though its missing. In that case you will get an error message
+about tcltk being missing.  To address this issue its easiest to just run this
+command to force R code:
 
 	options(gsubfn.engine = "R")
 
-See FAQ #5 on the sqldf home page for details on this:
-
-    http://sqldf.googlecode.com
+See FAQ #5 on the sqldf home page (http://sqldf.googlecode.com) for more.
 
 
 MORE INFO
@@ -100,8 +102,11 @@ There is more information on sqldf on the sqldf home page:
 
 	http://sqldf.googlecode.com
 
-and in the help files:
+Note the TROUBLESHOOTING, FAQs and EXAMPLES sections there.
 
-	library(help = sqldf)
+There is also information in the help files:
 
+    library(help = sqldf)
+    ?sqldf
+    ?read.csv.sql
 
