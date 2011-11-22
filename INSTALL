@@ -38,6 +38,24 @@ that is included right in its R driver package.
 	DF <- data.frame(a = 1:3, b = 4:6)
 	sqldf("select * from DF")
 
+EXAMPLE OF INSTALLING AND USING WITH RPOSTGRESQL
+
+Install PostgreSQL.  The R driver, RPostgreSQL, has no special installation
+instructions:
+
+	install.packages("sqldf")
+	install.packages("RPostgreSQL")
+
+	library(RPostgreSQL)
+	library(sqldf)
+
+	# now we can use it with PostgreSQL, e.g.
+
+	sqldf("select * from iris limit 3")
+	DF <- data.frame(a = 1:3, b = 4:6)
+	# careful! Postgres translates everything not quoted to lower case
+	sqldf('select * from "DF"')
+
 
 DATABASES
 
