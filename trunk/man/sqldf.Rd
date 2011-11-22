@@ -10,7 +10,7 @@ sqldf(x, stringsAsFactors = FALSE,
    row.names = FALSE, envir = parent.frame(), 
    method = getOption("sqldf.method"),
    file.format = list(), dbname, drv = getOption("sqldf.driver"), 
-   user, password = "", host = "localhost",
+   user, password = "", host = "localhost", port,
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"),
    verbose = isTRUE(getOption("sqldf.verbose")))
 
@@ -105,19 +105,43 @@ sqldf(x, stringsAsFactors = FALSE,
    defaults to
    \code{":memory:"} which results in an embedded database. For MySQL this
    defaults to \code{getOption("RMysql.dbname")} and if that is not specified
-   then \code{"test"} is used.  For RpgSQL this 
+   then \code{"test"} is used.  
+   For RPostgreSQL this
+   defaults to \code{getOption("sqldf.RPostgreSQL.dbname")} and if that is 
+   not specified then \code{"test"} is used.
+   For RpgSQL this 
    defaults to \code{getOption("RpgSQL.dbname")} and if that is not specified
-   then \code{"test"} is used.}
-  \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"} or \code{"pgSQL"}.  
+   then \code{"test"} is used.
+}
+  \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"},
+   \code{"PostgreSQL"} or \code{"pgSQL"}.  
    If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
-   \code{sqldf} checks whether \code{RpgSQL}, \code{RmySQL} or \code{RH2} 
+   \code{sqldf} checks whether \code{RPostgreSQL}, \code{RpgSQL}, 
+   \code{RmySQL} or \code{RH2} 
    is loaded in that order and the driver corresponding to the first one
    found is used.  If none are loaded then \code{"SQLite"} is used. 
    \code{dbname=NULL} causes the default to be used.}
-  \item{user}{user name.  Not needed for embedded databases.}
-  \item{password}{password. Not needed for embedded databases.}
-  \item{host}{host.  Default of "localhost" is normally sufficient.}
+  \item{user}{user name.  Not needed for embedded databases. 
+    For RPostgreSQL
+    the default is taken from option \code{sqldf.RPostgreSQL.user} and
+    if that is not specified either then \code{"postgres"} is used.
+}
+  \item{password}{password. Not needed for embedded databases. 
+    For RPostgreSQL
+    the default is taken from option \code{sqldf.RPostgreSQL.password} and
+    if that is not specified then \code{"postgres"} is used.
+}
+  \item{host}{host.  Default of "localhost" is normally sufficient.
+    For RPostgreSQL
+    the default is taken from option \code{sqldf.RPostgreSQL.host} and
+    if that is not specified then \code{"test"} is used.
+
+}
+  \item{port}{port. For RPostgreSQL the default 
+   is taken from the option \code{sqldf.RPostgreSQL.port} and if that is not
+   specified then \code{5432} is used.
+}
   \item{dll}{Name of an SQLite loadable extension to automatically load.
     If found on PATH then it is 
 	automatically loaded and the SQLite functions it in will be accessible.}
