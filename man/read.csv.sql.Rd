@@ -11,8 +11,8 @@ portion is processed by R so that files larger than R can otherwise
 handle can be accommodated.
 }
 \usage{
-read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types, dbname = tempfile(), drv = "SQLite", ...)
-read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types, dbname = tempfile(), drv = "SQLite", ...)
+read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types, comment.char, dbname = tempfile(), drv = "SQLite", ...)
+read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types, comment.char, dbname = tempfile(), drv = "SQLite", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,6 +56,8 @@ contents are the SQLite types (not the R class names) of the
 columns.  Specifying these types improves how fast it takes.
 Unless speed is very important this argument is not normally used.
 }
+  \item{comment.char}{If specified this character and anything following it
+on any line of the input will be ignored.}
   \item{dbname}{
 As in \code{sqldf} except that the default is \code{tempfile()}.
 Specifying \code{NULL} will put the database in memory which may improve speed
