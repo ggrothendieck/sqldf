@@ -140,7 +140,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	# if con is missing then connection opened
 	if (request.open || request.nocon) {
     
-    	if (is.null(drv)) {
+    	if (is.null(drv) || drv == "") {
     		drv <- if ("package:RPostgreSQL" %in% search()) { "PostgreSQL"
     		} else if ("package:RpgSQL" %in% search()) { "pgSQL"
 			} else if ("package:RMySQL" %in% search()) { "MySQL" 
@@ -384,7 +384,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	# SQLite can process all statements using dbGetQuery.  
 	# Other databases process select/call/show with dbGetQuery and other 
 	# statements with dbSendQuery.
-	if (drv == "sqlite" || drv == "mysql") {
+	if (drv == "sqlite" || drv == "mysql" || drv = "postgresql") {
 		for(xi in x) {
 			if (verbose) {
 				cat("sqldf: dbGetQuery(connection, '", xi, "')\n", sep = "")
