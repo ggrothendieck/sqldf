@@ -114,11 +114,12 @@ sqldf(x, stringsAsFactors = FALSE,
    then \code{"test"} is used.
 }
   \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"},
-   \code{"PostgreSQL"} or \code{"pgSQL"}.  
+   \code{"PostgreSQL"} or \code{"pgSQL"} or any of those names prefaced with 
+   \code{"R"}.
    If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
    \code{sqldf} checks whether \code{RPostgreSQL}, \code{RpgSQL}, 
-   \code{RmySQL} or \code{RH2} 
+   \code{RMySQL} or \code{RH2} 
    is loaded in that order and the driver corresponding to the first one
    found is used.  If none are loaded then \code{"SQLite"} is used. 
    \code{dbname=NULL} causes the default to be used.}

@@ -147,8 +147,16 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     		} else if ("package:RH2" %in% search()) { "H2" 
     		} else "SQLite"
     	}
-    
+
+		drv <- sub("^R", "", drv)
+		pkg <- paste("R", drv, sep = "")
+		if (verbose) {
+			if (!is.loaded(pkg)) cat("sqldf: library(", pkg, ")\n", sep = "")
+			library(pkg, character.only = TRUE)
+		} else library(pkg, character.only = TRUE)
+
 		drv <- tolower(drv)
+
     	if (drv == "mysql") {
 			if (verbose) cat("sqldf: m <- dbDriver(\"MySQL\")\n")
     		m <- dbDriver("MySQL")
@@ -237,10 +245,12 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				if (verbose) {
 					cat("sqldf: connection <- dbConnect(m, dbname = \"", dbname, 
 						"\", loadable.extensions = TRUE\n", sep = "")
+					cat("sqldf: library(RSQLite.extfuns)\n")
 					cat("sqldf: select load_extension('", dll, "')\n", sep = "")
 				}
 				connection <- dbConnect(m, dbname = dbname, 
 					loadable.extensions = TRUE)
+				library("RSQLite.extfuns", character.only = TRUE)
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else {
@@ -384,7 +394,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	# SQLite can process all statements using dbGetQuery.  
 	# Other databases process select/call/show with dbGetQuery and other 
 	# statements with dbSendQuery.
-	if (drv == "sqlite" || drv == "mysql" || drv = "postgresql") {
+	if (drv == "sqlite" || drv == "mysql" || drv == "postgresql") {
 		for(xi in x) {
 			if (verbose) {
 				cat("sqldf: dbGetQuery(connection, '", xi, "')\n", sep = "")
