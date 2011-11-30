@@ -12,6 +12,8 @@ o the drv= argument of sqldf and the sqldf.driver= option can specify either
   the database name or the driver name (i.e. SQLite or RSQLite, H2 or RH2,
   etc.)
 
+o a possible bug regarding the loading of tcltk was fixed
+
 Version 0.4-5
 
 o fixed bug that occurred when times class columns were in output

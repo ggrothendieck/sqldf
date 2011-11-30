@@ -262,6 +262,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			# if (require("RSQLite.extfuns")) init_extensions(connection)
 			# load extension functions from RSQLite.extfuns
 			if (verbose) cat("sqldf: init_extensions(connection)\n")
+			library(RSQLite.extfuns)
 			init_extensions(connection)
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
@@ -286,13 +287,12 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 
 	# words. is a list whose ith component contains vector of words in ith stmt
 	# words is all the words in one long vector without duplicates
-	has.tcltk <- require("tcltk")
-    if (!has.tcltk) {
-		gsubfn.engine.orig <- getOption("gsubfn.engine")
-		options(gsubfn.engine = "R")
-		on.exit(options(gsubfn.engine = gsubfn.engine.orig), add = TRUE)
+	engine <- getOption("gsubfn.engine")
+	if (is.null(engine) || is.na(engine) || engine == "") {
+		has.tcltk <- require("tcltk")
+		engine <- if (has.tcltk) "tcl" else "R"
 	}
-	words. <- words <- strapply(x, "[[:alnum:]._]+")
+	words. <- words <- strapply(x, "[[:alnum:]._]+", engine = engine)
 	
 	if (length(words) > 0) words <- unique(unlist(words))
 	is.special <- sapply(
@@ -576,7 +576,6 @@ read.csv.sql <- function(file, sql = "select * from file",
 	p <- do.call(proto, list(pf, file = file(file)))
 	sqldf(sql, envir = p, file.format = file.format, dbname = dbname, drv = drv, ...)
 }
-
 
 read.csv2.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types,

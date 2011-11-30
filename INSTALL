@@ -8,8 +8,19 @@ RSQLite driver which includes SQLite itself so its particularly simple to
 install if you use sqlite.  (More info later on how to use one of the other
 supported databases.)
 
+sqldf can use one of 4 database systems:
+
+	- sqlite via RSQLite driver R package (which includes sqlite itself)
+	- H2 via RH2 driver R package (which includes H2 itself)
+	- PostgreSQL via the RpostgreSQL driver R package or the RpgSQL driver
+	- MySQL via the RMySQL driver R package
+
 
 EXAMPLE OF INSTALLING AND USING WITH SQLITE
+
+As SQLite itself is included right in the RSQLite driver and since sqldf
+automatically installs RSQLite this is the easiest to install.  Just install
+sqldf and there is nothing else to do:
 
 	install.packages("sqldf")
 
@@ -24,7 +35,8 @@ EXAMPLE OF INSTALLING AND USING WITH SQLITE
 EXAMPLE OF INSTALLING AND USING WITH RH2
 
 H2 is the next easiest to install because, like sqlite, its an embedded database
-that is included right in its R driver package.
+that is included right in its R driver package.  You only need to install 
+sqldf, java and RH2.
 
 	# install java runtime
 	install.packages("sqldf")
@@ -40,8 +52,9 @@ that is included right in its R driver package.
 
 EXAMPLE OF INSTALLING AND USING WITH RPOSTGRESQL
 
-Install PostgreSQL.  The R driver, RPostgreSQL, has no special installation
-instructions:
+First install PostgreSQL.  
+
+The R driver, RPostgreSQL, has no special installation instructions:
 
 	install.packages("sqldf")
 	install.packages("RPostgreSQL")
@@ -56,29 +69,18 @@ instructions:
 	# careful! Postgres translates everything not quoted to lower case
 	sqldf('select * from "DF"')
 
+MYSQL
 
-DATABASES
+To use MySQL, it must be installed separately and the RMySQL must be built
+by the user making it a bit more difficult to install than others.
 
-sqldf can use one of 4 database systems:
-
-	- sqlite via RSQLite driver R package (which includes sqlite itself)
-	- H2 via RH2 driver R package (which includes H2 itself)
-	- PostgreSQL via the RpgSQL driver R package
-	- MySQL via the RMySQL driver R package
-
-RSQLite is automatically installed when you install sqldf and loaded when you
-load sqldf so in the case of sqlite there is nothing else to do.  See example
-above.  Using H2 is also pretty easy since you don't have to separately install
-the database.  See example above.
-
-Unlike sqlite and H2 which are embedded databases, PostgreSQL and MySQL are
-client/server databases which must be separately installed in addition to
-installing their R drivers.
+MORE INFO
 
 There is installation info on the other databases on their CRAN web pages. See
 the Installation Info links on these pages:
 
   http://cran.r-project.org/package=RH2 
+  http://cran.r-project.org/package=RPostgreSQL
   http://cran.r-project.org/package=RpgSQL
   http://cran.r-project.org/package=RMySQL
 
@@ -107,7 +109,7 @@ and it will automatically switch to R code.
 There have been reports of bad R builds in which R reports that it has tcltk
 capability even though its missing. In that case you will get an error message
 about tcltk being missing.  To address this issue its easiest to just run this
-command to force R code:
+command to force it to use R code in place of tcltk:
 
 	options(gsubfn.engine = "R")
 
