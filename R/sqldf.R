@@ -148,7 +148,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     		} else "SQLite"
     	}
 
-		drv <- sub("^R", "", drv)
+		drv <- sub("^[Rr]", "", drv)
 		pkg <- paste("R", drv, sep = "")
 		if (verbose) {
 			if (!is.loaded(pkg)) cat("sqldf: library(", pkg, ")\n", sep = "")
@@ -430,14 +430,18 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 		return(do.call("colClass", list(rs, to.df)))
 	}
 	# process row_names
-	rs <- if ("row_names" %in% names(rs)) {
+	row_names_name <- grep("row[_.]names", names(rs), value = TRUE)
+	if (length(row_names_name) > 1) warning(paste("ambiguity regarding row names:", row_names_name))
+	row_names_name <- row_names_name[1]
+	# rs <- if ("row_names" %in% names(rs)) {
+	rs <- if (!is.na(row_names_name)) {
 		if (identical(row.names, FALSE)) {
 			# subset(rs, select = - row_names)
-			rs[names(rs) != "row_names"]
+			rs[names(rs) != row_names_name]
 		} else { 
-			rn <- rs$row_names
+			rn <- rs[[row_names_name]]
 			# rs <- subset(rs, select = - row_names)
-			rs <- rs[names(rs) != "row_names"]
+			rs <- rs[names(rs) != row_names_name]
 			if (all(regexpr("^[[:digit:]]*$", rn) > 0)) 
 				rn <- as.integer(rn)
 			rownames(rs) <- rn

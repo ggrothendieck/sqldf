@@ -13,7 +13,8 @@ test.all <- function() {
 
 	drv <- getOption("sqldf.driver") 
 	if (is.null(drv)) {
-		drv <- if ("package:RpgSQL" %in% search()) { "pgSQL"
+		drv <- if ("package:RPostgreSQL" %in% search()) { "PostgreSQL"
+			} else if ("package:RpgSQL" %in% search()) { "pgSQL"
 			} else if ("package:RMySQL" %in% search()) { "MySQL" 
 			} else if ("package:RH2" %in% search()) { "H2" 
 			} else "SQLite"
@@ -28,34 +29,37 @@ test.all <- function() {
 
 	# subset / like
 	a2r <- subset(CO2, grepl("^Qn", Plant))
-	if (drv == "pgsql") { # pgsql needs to have Plant quoted
+    class(a2r) <- "data.frame"
+	if (drv == "postgresql") { # pgsql needs quotes for Plant
+		a2s <- sqldf("select * from \"CO2\" where \"Plant\" like 'Qn%'")
+	} else if (drv == "pgsql") {
 		a2s <- sqldf("select * from CO2 where \"Plant\" like 'Qn%'")
 	} else a2s <- sqldf("select * from CO2 where Plant like 'Qn%'")
-	checkEquals(a2r, a2s, check.attributes = FALSE)
+	# checkEquals(a2r, a2s, check.attributes = FALSE)
+	checkIdentical(a2r, a2s)
 
 	data(farms, package = "MASS")
 	# subset / in
-	if (drv == "pgsql") { # pgsql needs to have Manag quoted
-		a3r <- subset(farms, Manag %in% c("BF", "HF"))
+	a3r <- subset(farms, Manag %in% c("BF", "HF"))
+	row.names(a3r) <- NULL
+	if (drv == "pgsql" || drv == "postgresql") { # pgsql needs quotes for Manag 
 		a3s <- sqldf("select * from farms where \"Manag\" in ('BF', 'HF')")
 	} else { 
-		a3r <- subset(farms, Manag %in% c("BF", "HF"))
 		a3s <- sqldf("select * from farms where Manag in ('BF', 'HF')")
 	}
-	row.names(a3r) <- NULL
 	checkIdentical(a3r, a3s)
 
 	# subset / multiple inequality constraints
 	a4r <- subset(warpbreaks, breaks >= 20 & breaks <= 30)
 	a4s <- sqldf("select * from warpbreaks where breaks between 20 and 30", 
 	   row.names = TRUE)
-	if (drv == "sqlite") {
-		checkIdentical(a4r, a4s)
-	} else checkEquals(a4r, a4s, check.attributes = FALSE)
+	if (drv == "h2" || drv == "pgsql" || drv == "postgresql") {
+		checkEquals(a4r, a4s, check.attributes = FALSE)
+	} else checkIdentical(a4r, a4s)
 
 		# subset
 		a5r <- subset(farms, Mois == 'M1')
-		if (drv == "pgsql") {
+		if (drv == "pgsql" || drv == "postgresql") {
 			a5s <- sqldf("select * from farms where \"Mois\" = 'M1'", 
 				row.names = TRUE)
 		} else a5s <- sqldf("select * from farms where Mois = 'M1'", row.names = TRUE)
@@ -66,7 +70,7 @@ test.all <- function() {
 
 		# subset
 		a6r <- subset(farms, Mois == 'M2')
-		if (drv == "pgsql") {
+		if (drv == "pgsql" || drv == "postgresql") {
 			a6s <- sqldf("select * from farms where \"Mois\" = 'M2'", row.names = TRUE)
 	 	} else {
 			a6s <- sqldf("select * from farms where Mois = 'M2'", row.names = TRUE)
@@ -90,10 +94,11 @@ test.all <- function() {
 	# whereas sqlite and mysql can use backquote
 	# Species needs to be quoted in pgsql but not in the other data bases.
 	a8r <- aggregate(iris[1:2], iris[5], mean)
-	if (drv == "pgsql" || drv == "h2") {
+	if (drv == "pgsql" || drv == "postgresql" || drv == "h2") {
 		a8s <- sqldf('select "Species", avg("Sepal.Length") \"Sepal.Length\", 
 			avg("Sepal.Width") \"Sepal.Width\" from iris 
 			group by "Species" order by "Species"')
+		if (drv == "postgresql") checkIdentical(a8r, a8s) else
 		checkEquals(a8r, a8s, check.attributes = FALSE)
 	} else {
 		a8s <- sqldf("select Species, avg(Sepal_Length) `Sepal.Length`, 
@@ -111,7 +116,7 @@ test.all <- function() {
 			mean.Sepal.Width = mean(Sepal.Width),
 			mean.Sepal.ratio = mean(Sepal.Length/Sepal.Width)))))
 	row.names(a9r) <- NULL
-	if (drv == "pgsql" || drv == "h2") {
+	if (drv == "pgsql" || drv == "postgresql" || drv == "h2") {
 		a9s <- sqldf('select "Species", avg("Sepal.Length") "mean.Sepal.Length",
 			avg("Sepal.Width") "mean.Sepal.Width", 
 			avg("Sepal.Length"/"Sepal.Width") "mean.Sepal.ratio" from iris
@@ -142,24 +147,37 @@ test.all <- function() {
 	# ave - rows for which v exceeds its group average where g is group
 	DF <- data.frame(g = rep(1:2, each = 5), t = rep(1:5, 2), v = 1:10)
 	a12r <- subset(DF, v > ave(v, g, FUN = mean))
-	Gavg <- sqldf("select g, avg(v) as avg_v from DF group by g")
-	a12s <- sqldf("select DF.g, t, v from DF, Gavg where DF.g = Gavg.g and v > avg_v")
+	if (drv == "postgresql") {
+		Gavg <- sqldf('select g, avg(v) as avg_v from "DF" group by g')
+		a12s <- sqldf('select "DF".g, t, v from "DF", "Gavg" where "DF".g = "Gavg".g and v > avg_v')
+	} else {
+		Gavg <- sqldf("select g, avg(v) as avg_v from DF group by g")
+		a12s <- sqldf("select DF.g, t, v from DF, Gavg where DF.g = Gavg.g and v > avg_v")
+	}
 	row.names(a12r) <- NULL
 	checkIdentical(a12r, a12s)
 
 	# same but reduce the two select statements to one using a subquery
-	a13s <- sqldf("select g, t, v from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) d2 where d1.g = g2 and v > avg_v")
+	a13s <- if (drv == "postgresql") {
+		sqldf('select g, t, v from "DF" d1, (select g as g2, avg(v) as avg_v from "DF" group by g) d2 where d1.g = g2 and v > avg_v')
+	} else {
+		sqldf("select g, t, v from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) d2 where d1.g = g2 and v > avg_v")
+	}
 	checkIdentical(a12r, a13s)
 
 	# same but shorten using natural join
-	a14s <- sqldf("select d1.g, t, v from DF d1
-			natural join 
-			(select g, avg(v) as avg_v from DF group by g) d2 where v > avg_v")
+	a14s <- if (drv == "postgresql") {
+		sqldf('select d1.g, t, v from "DF" d1 natural join 
+		  (select g, avg(v) as avg_v from "DF" group by g) d2 where v > avg_v')
+	} else { 
+		sqldf("select d1.g, t, v from DF d1 natural join 
+		  (select g, avg(v) as avg_v from DF group by g) d2 where v > avg_v")
+	}
 	checkIdentical(a12r, a14s)
 
 	# table
 	a15r <- table(warpbreaks$tension, warpbreaks$wool)
-	if (drv == "pgsql") {
+	if (drv == "pgsql" || drv == "postgresql") {
 		a15s <- sqldf("select 
 					sum(cast(wool = 'A' as integer)), 
 					sum(cast(wool = 'B' as integer))
@@ -174,7 +192,14 @@ test.all <- function() {
 	# reshape
 	t.names <- paste("t", unique(as.character(DF$t)), sep = "_")
 	a16r <- reshape(DF, direction = "wide", timevar = "t", idvar = "g", varying = list(t.names))
-	if (drv == "pgsql") {
+	if (drv == "postgresql") {
+		a16s <- sqldf("select g, 
+			sum(cast(t = 1 as integer) * v) t_1, 
+			sum(cast(t = 2 as integer) * v) t_2, 
+			sum(cast(t = 3 as integer) * v) t_3, 
+			sum(cast(t = 4 as integer) * v) t_4, 
+			sum(cast(t = 5 as integer) * v) t_5 from \"DF\" group by g")
+	} else if (drv == "pgsql") {
 		a16s <- sqldf("select g, 
 			sum(cast(t = 1 as integer) * v) t_1, 
 			sum(cast(t = 2 as integer) * v) t_2, 
@@ -191,16 +216,26 @@ test.all <- function() {
 
 	# order
 	a17r <- Formaldehyde[order(Formaldehyde$optden, decreasing = TRUE), ]
-	a17s <- sqldf("select * from Formaldehyde order by optden desc")
+	if (drv == "postgresql") {
+	a17s <- sqldf("select * from \"Formaldehyde\" order by optden desc") 
+	} else a17s <- sqldf("select * from Formaldehyde order by optden desc")
 	row.names(a17r) <- NULL
 	checkIdentical(a17r, a17s)
 
 	DF <- data.frame(x = rnorm(15, 1:15))
 	a18r <- data.frame(x = DF[4:12,], movavgx = rowMeans(embed(DF$x, 7)))
 	# centered moving average of length 7
-	if (drv == "pgsql" || drv == "h2") {
+	if (drv == "postgresql" || drv == "h2") {
 		DF2 <- cbind(id = 1:nrow(DF), DF)
-		a18s <- sqldf("select min(a.x) x, avg(b.x) movavgx from DF2 a, DF2 b 
+		a18s <- sqldf("select min(a.x) x, avg(b.x) movavgx 
+           from \"DF2\" a, \"DF2\" b 
+		   where a.id - b.id between -3 and 3 
+		   group by a.id having count(*) = 7 
+		   order by a.id")
+	} else if (drv == "pgsql") {
+		DF2 <- cbind(id = 1:nrow(DF), DF)
+		a18s <- sqldf("select min(a.x) x, avg(b.x) movavgx 
+           from DF2 a, DF2 b 
 		   where a.id - b.id between -3 and 3 
 		   group by a.id having count(*) = 7 
 		   order by a.id")
@@ -216,7 +251,9 @@ test.all <- function() {
 	# merge.  a19r and a19s are same except row order and row names
 	A <- data.frame(a1 = c(1, 2, 1), a2 = c(2, 3, 3), a3 = c(3, 1, 2))
 	B <- data.frame(b1 = 1:2, b2 = 2:1)
-	a19s <- sqldf("select * from A, B")
+	a19s <- if (drv == "postgresql") {
+		sqldf('select * from "A", "B"')
+	} else sqldf("select * from A, B")
 	a19r <- merge(A, B)
 	Sort <- function(DF) DF[do.call(order, DF),]
 	checkEquals(Sort(a19s), Sort(a19r), check.attributes = FALSE)
