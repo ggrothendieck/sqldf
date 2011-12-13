@@ -1,3 +1,7 @@
+Version 0.4-6.1
+
+o message regarding RPostgreSQL was not issued when RPostgreSQL is loaded
+
 Version 0.4-6
 
 o support for the RPostgreSQL driver was added

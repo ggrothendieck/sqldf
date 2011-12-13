@@ -17,7 +17,7 @@
 	drv <- getOption("sqldf.driver")
 	drv <- if (is.null(drv) || drv == "") {
 
-		if ("package:Rostgresql" %in% search()) { 
+		if ("package:RPostgreSQL" %in% search()) { 
 			"PostgreSQL"
 		} else if ("package:RpgSQL" %in% search()) { 
 			"pgSQL"
