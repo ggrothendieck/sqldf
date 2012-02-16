@@ -336,7 +336,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				Filename, "already in", dbname, "\n"))
 		}
 		args <- c(list(conn = connection, name = fo, value = Filename), 
-			modifyList(list(eol = eol, comment.char = ""), file.format))
+			modifyList(list(eol = eol, comment.char = "", quote = '"'), 
+            file.format))
 		args <- modifyList(args, as.list(attr(get(fo, envir), "file.format")))
 		filter <- args$filter
 		if (!is.null(filter)) {
