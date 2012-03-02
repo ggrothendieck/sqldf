@@ -7,10 +7,12 @@ sqldf <- function(x, stringsAsFactors = FALSE,
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"),
    verbose = isTRUE(getOption("sqldf.verbose"))) {
 
-   as.POSIXct.numeric <- function(x, origin = "1970-01-01 00:00:00", ...)
-      base::as.POSIXct.numeric(x, origin = origin, ...)
+   # as.POSIXct.numeric <- function(x, origin = "1970-01-01 00:00:00", ...)
+   #  base::as.POSIXct.numeric(x, origin = origin, ...)
+   as.POSIXct.numeric <- function(x, ...)
+      structure(x, class = c("POSIXct", "POSIXt"))
    as.POSIXct.character <- function(x) structure(as.numeric(x),
-	class = c("POSIXt", "POSIXct"))
+	class = c("POSIXct", "POSIXt"))
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
    as.Date2 <- function(x) UseMethod("as.Date2")
    as.Date2.character <- function(x) base:::as.Date.character(x)
