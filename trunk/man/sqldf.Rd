@@ -217,9 +217,6 @@ if they would have otherwise differed only in row names or use
 \code{all.equal} if the data portion is the same but attributes aside
 from row names differ.
 
-The SQLite code has been tested but the MySQL code has only been partly
-tested.  
-
 On MySQL the database must pre-exist.  Create a \code{c:\\my.cnf} file 
 on Windows or a \code{/etc/my.cnf}
 file on UNIX to contain information about the database.  This file may 
