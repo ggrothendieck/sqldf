@@ -71,7 +71,7 @@ The R driver, RPostgreSQL, has no special installation instructions:
 
 MYSQL
 
-To use MySQL, it must be installed separately and the RMySQL must be built
+To use MySQL, it must be installed separately and RMySQL must be built
 by the user making it a bit more difficult to install than others.
 
 MORE INFO
