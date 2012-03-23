@@ -195,6 +195,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			}
 			connection <- dbConnect(m, user = user, password, dbname = dbname,
 				host = host, port = port)
+		    if (verbose) cat(sprintf("sqldf: connection <- dbConnect(m, user='%s', password=<...>, dbname = '%s', host = '%s', port = '%s')\n", user, dbname, host, port))
     		dbPreExists <- TRUE
 		} else if (drv == "pgsql") {
 			if (verbose) cat("sqldf: m <- dbDriver(\"pgSQL\")\n")
@@ -287,14 +288,19 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 		dbPreExists <- attr(connection, "dbPreExists")
 	}
 
-	# words. is a list whose ith component contains vector of words in ith stmt
-	# words is all the words in one long vector without duplicates
+	# engine is "tcl" or "R".  
 	engine <- getOption("gsubfn.engine")
 	if (is.null(engine) || is.na(engine) || engine == "") {
-		has.tcltk <- require("tcltk")
-		engine <- if (has.tcltk) "tcl" else "R"
-	}
-	words. <- words <- strapply(x, "[[:alnum:]._]+", engine = engine)
+		engine <- if (require("tcltk")) "tcl" else "R"
+	} else if (engine == "tcl") require("tcltk")
+
+	# words. is a list whose ith component contains vector of words in ith stmt
+	# words is all the words in one long vector without duplicates
+	#
+	# If "tcl" is available use the faster strapplyc else strapply
+	words. <- words <- if (engine == "tcl") {
+		strapplyc(x, "[[:alnum:]._]+")
+	} else strapply(x, "[[:alnum:]._]+", engine = "R")
 	
 	if (length(words) > 0) words <- unique(unlist(words))
 	is.special <- sapply(
@@ -509,7 +515,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 					levs <- levels(df[[cn]])
 					if (all(u %in% levs))
 						return(factor(rs[[i]], levels = levels(df[[cn]]), 
-							order = TRUE))
+							ordered = TRUE))
 					else return(rs[[i]])
 				} else return(rs[[i]])
 			} else if (inherits(df[[cn]], "factor")) {

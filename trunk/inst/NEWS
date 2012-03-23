@@ -1,6 +1,17 @@
+Version 0.4-6.3
+
+o uses ByteCompile hence dependence on R 2.14.0 or higher
+
+o now uses strapplyc if tcltk available hence dependence on gsubfn 0.6 or higher
+
 Version 0.4-6.2
 
 o fixed time zone bug in dealing with POSIXct
+
+o added MASS to Suggests so that it passes R CMD check in R 2.15.0
+
+o RSQLite and RSQLite.extfuns are loaded at startup if there are no other
+  drivers supported by sqldf currently loaded
 
 Version 0.4-6.1
 
