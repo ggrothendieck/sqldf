@@ -21,8 +21,8 @@
 		msg <- paste("sqldf will default to using", drv)
 		packageStartupMessage(msg)
 	} else {
-		library(RSQLite)
-		library(RSQLite.extfuns)
+		(library)("RSQLite")
+		(library)("RSQLite.extfuns")
 	}
 }
 

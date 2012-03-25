@@ -259,7 +259,7 @@ and PostgreSQL.
 \examples{
 
 #
-# These ecamples show how to run a variety of data frame manipulations
+# These examples show how to run a variety of data frame manipulations
 # in R without SQL and then again with SQL
 #
 
