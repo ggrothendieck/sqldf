@@ -101,10 +101,10 @@ is returned.
 
 \examples{
 \dontrun{
-# might need to change eol
+# might need to specify eol= too depending on your system
 write.csv(iris, "iris.csv", quote = FALSE, row.names = FALSE)
 iris2 <- read.csv.sql("iris.csv", 
-	sql = "select * from file where Sepal.Length > 5", eol = "\n")
+	sql = "select * from file where Species = 'setosa' ")
 
 }
 }
