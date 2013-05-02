@@ -11,8 +11,8 @@ portion is processed by R so that files larger than R can otherwise
 handle can be accommodated.
 }
 \usage{
-read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types, comment.char, dbname = tempfile(), drv = "SQLite", ...)
-read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types, comment.char, dbname = tempfile(), drv = "SQLite", ...)
+read.csv.sql(file, sql = "select * from file", header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types, comment.char, colClasses, dbname = tempfile(), drv = "SQLite", ...)
+read.csv2.sql(file, sql = "select * from file", header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types, comment.char, colClasses, dbname = tempfile(), drv = "SQLite", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -28,7 +28,7 @@ test.all <- function() {
 	checkIdentical(a1r, a1s)
 
 	# subset / like
-	a2r <- subset(CO2, grepl("^Qn", Plant))
+	a2r <- subset(as.data.frame(CO2), grepl("^Qn", Plant))
     class(a2r) <- "data.frame"
 	if (drv == "postgresql") { # pgsql needs quotes for Plant
 		a2s <- sqldf("select * from \"CO2\" where \"Plant\" like 'Qn%'")
