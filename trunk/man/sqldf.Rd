@@ -109,16 +109,13 @@ sqldf(x, stringsAsFactors = FALSE,
    For RPostgreSQL this
    defaults to \code{getOption("sqldf.RPostgreSQL.dbname")} and if that is 
    not specified then \code{"test"} is used.
-   For RpgSQL this 
-   defaults to \code{getOption("RpgSQL.dbname")} and if that is not specified
-   then \code{"test"} is used.
 }
   \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"},
    \code{"PostgreSQL"} or \code{"pgSQL"} or any of those names prefaced with 
    \code{"R"}.
    If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
-   \code{sqldf} checks whether \code{RPostgreSQL}, \code{RpgSQL}, 
+   \code{sqldf} checks whether \code{RPostgreSQL}, 
    \code{RMySQL} or \code{RH2} 
    is loaded in that order and the driver corresponding to the first one
    found is used.  If none are loaded then \code{"SQLite"} is used. 

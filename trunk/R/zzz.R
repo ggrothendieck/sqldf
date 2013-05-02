@@ -1,5 +1,5 @@
 
-.onLoad <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname) {
 
 	drv <- getOption("sqldf.driver")
 	drv <- if (is.null(drv) || drv == "") {
@@ -21,8 +21,8 @@
 		msg <- paste("sqldf will default to using", drv)
 		packageStartupMessage(msg)
 	} else {
-		(library)("RSQLite")
-		(library)("RSQLite.extfuns")
+		loadNamespace("RSQLite")
+		loadNamespace("RSQLite.extfuns")
 	}
 }
 

@@ -549,7 +549,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 
 read.csv.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ",", row.names, eol, skip, filter, nrows, field.types,
-    comment.char, dbname = tempfile(), drv = "SQLite", ...) {
+    comment.char, colClasses, dbname = tempfile(), drv = "SQLite", ...) {
 	file.format <- list(header = header, sep = sep)
 	if (!missing(eol)) 
 		file.format <- append(file.format, list(eol = eol))
@@ -565,6 +565,8 @@ read.csv.sql <- function(file, sql = "select * from file",
 		file.format <- append(file.format, list(field.types = field.types))
 	if (!missing(comment.char)) 
 		file.format <- append(file.format, list(comment.char = comment.char))
+	if (!missing(colClasses))
+		file.format <- append(file.format, list(colClasses = colClasses))
 	pf <- parent.frame()
 
 	if (missing(file) || is.null(file) || is.na(file)) file <- ""
@@ -592,7 +594,7 @@ read.csv.sql <- function(file, sql = "select * from file",
 
 read.csv2.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types,
-    comment.char = "",
+    comment.char = "", colClasses,
     dbname = tempfile(), drv = "SQLite", ...) {
 
 	if (missing(filter)) {
@@ -604,5 +606,5 @@ read.csv2.sql <- function(file, sql = "select * from file",
 read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
 		nrows = nrows, field.types = field.types, comment.char = comment.char,
-		dbname = dbname, drv = drv)
+		colClasses = colClasses, dbname = dbname, drv = drv)
 }
