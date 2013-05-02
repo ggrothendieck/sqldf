@@ -594,7 +594,7 @@ read.csv.sql <- function(file, sql = "select * from file",
 
 read.csv2.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types,
-    comment.char = "", colClasses,
+    comment.char = "",
     dbname = tempfile(), drv = "SQLite", ...) {
 
 	if (missing(filter)) {
@@ -606,5 +606,5 @@ read.csv2.sql <- function(file, sql = "select * from file",
 read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
 		nrows = nrows, field.types = field.types, comment.char = comment.char,
-		colClasses = colClasses, dbname = dbname, drv = drv)
+		dbname = dbname, drv = drv)
 }
