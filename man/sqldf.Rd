@@ -214,13 +214,20 @@ if they would have otherwise differed only in row names or use
 \code{all.equal} if the data portion is the same but attributes aside
 from row names differ.
 
-On MySQL the database must pre-exist.  Create a \code{c:\\my.cnf} file 
-on Windows or a \code{/etc/my.cnf}
+On MySQL the database must pre-exist.  Create a \code{c:\\my.ini} 
+or \code{\%MYSQL_HOME\%\\my.ini} file on Windows or a \code{/etc/my.cnf}
 file on UNIX to contain information about the database.  This file may 
-include the username, password, database and port.  The password
-can be omitted if one has not been set and the database can be omitted if
-its passed as the \code{dbname} argument to \code{sqldf}.  The \code{port}
-argument can usually be omitted as well.  See \url{http://dev.mysql.com/doc/refman/5.0/en/option-files.html}.
+specify the username, password and port.  The password
+can be omitted if one has not been set.  If using a standard port
+setup then the \code{port} can be omitted as well.  
+The database is taken from the \code{dbname} argument of the \code{sqldf}
+command or if not set from \code{getOption("sqldf.dbname")} or if that option
+is not set it is assumed to be \code{"test"}.
+Note that MySQL does not use the \code{user}, \code{password}, \code{host}
+and code{port} arguments of sqldf.
+See \url{http://dev.mysql.com/doc/refman/5.6/en/option-files.html} for 
+additional locations that the configuration files can be placed as well
+as other information.
 
 In versions of the \code{DBI} package prior to \code{DBI 0.2-5}, 
 SQL reserved words such as 
@@ -340,11 +347,16 @@ row.names(a12r) <- NULL
 identical(a12r, a12s)
 
 # same but reduce the two select statements to one using a subquery
-a13s <- sqldf("select g, t, v from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) where d1.g = g2 and v > avg_v")
+a13s <- sqldf("select g, t, v 
+from DF d1, (select g as g2, avg(v) as avg_v from DF group by g) 
+where d1.g = g2 and v > avg_v")
 identical(a12r, a13s)
 
 # same but shorten using natural join
-a14s <- sqldf("select g, t, v from DF natural join (select g, avg(v) as avg_v from DF group by g) where v > avg_v")
+a14s <- sqldf("select g, t, v 
+from DF 
+natural join (select g, avg(v) as avg_v from DF group by g) 
+where v > avg_v")
 identical(a12r, a14s)
 
 # table
@@ -356,7 +368,14 @@ all.equal(as.data.frame.matrix(a15r), a15s, check.attributes = FALSE)
 # reshape
 t.names <- paste("t", unique(as.character(DF$t)), sep = "_")
 a16r <- reshape(DF, direction = "wide", timevar = "t", idvar = "g", varying = list(t.names))
-a16s <- sqldf("select g, sum((t == 1) * v) t_1, sum((t == 2) * v) t_2, sum((t == 3) * v) t_3, sum((t == 4) * v) t_4, sum((t == 5) * v) t_5 from DF group by g")
+a16s <- sqldf("select 
+	g, 
+	sum((t == 1) * v) t_1, 
+	sum((t == 2) * v) t_2, 
+	sum((t == 3) * v) t_3, 
+	sum((t == 4) * v) t_4, 
+	sum((t == 5) * v) t_5 
+from DF group by g")
 all.equal(a16r, a16s, check.attributes = FALSE)
 
 # order
