@@ -15,8 +15,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	class = c("POSIXct", "POSIXt"))
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
    as.Date2 <- function(x) UseMethod("as.Date2")
-   as.Date2.character <- function(x) base:::as.Date.character(x)
-   as.Date.numeric <- function(x, origin = "1970-01-01", ...) base::as.Date.numeric(x, origin = origin, ...)
+   as.Date2.character <- function(x) as.Date.character(x)
+   as.Date.numeric <- function(x, origin = "1970-01-01", ...) as.Date.numeric(x, origin = origin, ...)
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
@@ -253,7 +253,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				}
 				connection <- dbConnect(m, dbname = dbname, 
 					loadable.extensions = TRUE)
-				library("RSQLite.extfuns", character.only = TRUE)
+				## library("RSQLite.extfuns", character.only = TRUE)
 				s <- sprintf("select load_extension('%s')", dll)
 				dbGetQuery(connection, s)
 			} else {
@@ -265,7 +265,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			# if (require("RSQLite.extfuns")) init_extensions(connection)
 			# load extension functions from RSQLite.extfuns
 			if (verbose) cat("sqldf: init_extensions(connection)\n")
-			library(RSQLite.extfuns)
+			## library(RSQLite.extfuns)
 			init_extensions(connection)
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
@@ -594,7 +594,7 @@ read.csv.sql <- function(file, sql = "select * from file",
 
 read.csv2.sql <- function(file, sql = "select * from file", 
 	header = TRUE, sep = ";", row.names, eol, skip, filter, nrows, field.types,
-    comment.char = "",
+    comment.char = "", colClasses,
     dbname = tempfile(), drv = "SQLite", ...) {
 
 	if (missing(filter)) {
@@ -606,5 +606,5 @@ read.csv2.sql <- function(file, sql = "select * from file",
 read.csv.sql(file = file, sql = sql, header = header, sep = sep, 
 		row.names = row.names, eol = eol, skip = skip, filter = filter, 
 		nrows = nrows, field.types = field.types, comment.char = comment.char,
-		dbname = dbname, drv = drv)
+		colClasses = colClasses, dbname = dbname, drv = drv)
 }

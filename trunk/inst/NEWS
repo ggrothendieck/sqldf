@@ -1,10 +1,6 @@
 Version 0.4-7
 
-o fixed NOTEs that appears during package check
-
-o removed RpgSQL from Suggests
-
-o colClasses argument was missing from read.csv.sql/read.csv2.sql
+o misc changes to satisfy R CMD CHECK in R 3.0.2
 
 Version 0.4-6.5
 
