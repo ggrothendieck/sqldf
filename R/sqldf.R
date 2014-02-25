@@ -16,7 +16,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
    as.Date.character <- function(x) structure(as.numeric(x), class = "Date")
    as.Date2 <- function(x) UseMethod("as.Date2")
    as.Date2.character <- function(x) as.Date.character(x)
-   as.Date.numeric <- function(x, origin = "1970-01-01", ...) as.Date.numeric(x, origin = origin, ...)
+   as.Date.numeric <- function(x, origin = "1970-01-01", ...) base::as.Date.numeric(x, origin = origin, ...)
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
