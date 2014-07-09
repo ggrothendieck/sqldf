@@ -186,6 +186,27 @@ otherwise, all tables that were created are dropped in order to leave
 the database in the same state that it was before.  The database
 connection is terminated.}
 }
+
+\code{sqldf} supports the following R options for RPostgreSQL: 
+\code{"sqldf.RPostgreSQL.dbname"},
+\code{"sqldf.RPostgreSQL.user"},
+\code{"sqldf.RPostgreSQL.password"},
+\code{"sqldf.RPostgreSQL.host"} and
+\code{"sqldf.RPostgreSQL.port"} which have defaults \code{"test"},
+\code{"postgres"}, \code{"postgres"}, \code{"localhost"} and \code{5432},
+respectively.  It also supports
+\code{"sqldf.RPostgreSQL.other"} which is a list of named parameters.  These
+may include 
+\code{dbname},
+\code{user},
+\code{password},
+\code{host} and 
+\code{port}.
+Individually these take precdence over otherwise specified connection
+arguments.
+
+
+
 Warning. Although sqldf is usually used with on-the-fly databases
 which it automatically sets up and destroys if you wish to use it
 with existing databases be sure to back up your database prior to
