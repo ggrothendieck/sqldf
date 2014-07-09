@@ -196,7 +196,6 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			connection.args <- list(m, user = user, password,
 				dbname = dbname, host = host, port = port)
 			connection.args.other <- getOption("sqldf.RPostgreSQL.other")
-			browser()
 			if (!is.null(connection.args.other))
 			connection.args <- modifyList(connection.args,
 						connection.args.other)
