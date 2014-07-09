@@ -193,9 +193,24 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				port <- getOption("sqldf.RPostgreSQL.port")
 				if (is.null(port)) port <- 5432
 			}
-			connection <- dbConnect(m, user = user, password, dbname = dbname,
-				host = host, port = port)
-		    if (verbose) cat(sprintf("sqldf: connection <- dbConnect(m, user='%s', password=<...>, dbname = '%s', host = '%s', port = '%s')\n", user, dbname, host, port))
+			connection.args <- list(m, user = user, password,
+				dbname = dbname, host = host, port = port)
+			connection.args.other <- getOption("sqldf.RpostgreSQL.other")
+			browser()
+			if (!is.null(connection.args.other))
+			connection.args <- modifyList(connection.args,
+						connection.args.other)
+			connection <- do.call("dbConnect", connection.args)
+			# connection <- dbConnect(m, user = user, password, dbname = dbname,
+				# host = host, port = port)
+
+		    if (verbose) {
+			    cat(sprintf("sqldf: connection <- dbConnect(m, user='%s', password=<...>, dbname = '%s', host = '%s', port = '%s', ...)\n", user, dbname, host, port))
+			    if (!is.null(connection.args.other)) {
+				    cat("other connection arguments:\n")
+				    print(connection.args.other)
+			    }
+		    }
     		dbPreExists <- TRUE
 		} else if (drv == "pgsql") {
 			if (verbose) cat("sqldf: m <- dbDriver(\"pgSQL\")\n")

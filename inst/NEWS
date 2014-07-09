@@ -1,6 +1,10 @@
+Version 0.4-8
+
+o new R option "sqldf.RPostgresSQL.other"
+
 Version 0.4-7.1
 
-o bug fix involving dates
+o bug fix involving dates; also added corresponding unit test
 
 Version 0.4-7
 

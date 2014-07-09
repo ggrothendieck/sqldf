@@ -258,6 +258,20 @@ test.all <- function() {
 	Sort <- function(DF) DF[do.call(order, DF),]
 	checkEquals(Sort(a19s), Sort(a19r), check.attributes = FALSE)
 
+	if (drv != "postgresql") {
+
+	  # check Date class
+	  DF.Date <- structure(list(date = structure(c(-15676, -15648), 
+	   class = "Date"), x = c(2, 3), y = c(4, 5)), 
+	   .Names = c("date", "x", "y"), row.names = 1:2, class = "data.frame")
+	  g <- data.frame(date=as.Date(c("1927-01-31","1927-02-28")),x=c(2,3))
+	  h <- data.frame(date=as.Date(c("1927-01-31","1927-02-28")),y=c(4,5))
+	  final <- sqldf("select d1.*, d2.y 
+		       from g d1 left join h d2 on d1.date=d2.date")
+	  checkEquals(final, DF.Date)
+
+	}
+
 	# test sqlite system tables
 
 	if (drv == "sqlite") {
