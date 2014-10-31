@@ -8,7 +8,6 @@ exportPattern(".")
 import(
   DBI,
   RSQLite,
-  RSQLite.extfuns,
   gsubfn,
   proto,
   chron
