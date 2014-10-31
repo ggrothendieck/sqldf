@@ -250,20 +250,9 @@ See \url{http://dev.mysql.com/doc/refman/5.6/en/option-files.html} for
 additional locations that the configuration files can be placed as well
 as other information.
 
-In versions of the \code{DBI} package prior to \code{DBI 0.2-5}, 
-SQL reserved words such as 
-\code{time} and \code{date} were automatically translated to 
-\code{time__1} and \code{date__1}, etc. to prevent collisions.  The new version
-of \code{DBI} used with the current version of sqldf automatically quotes those
-variables instead so that the database will use the column names of \code{date}
-and code{time} instead of \code{date__1} and \code{time__1}.  
-The user moving from older versions of \code{sqldf} to this one 
-should be aware of this change in \code{DBI}.  
-
 If \code{getOption("sqldf.dll")} is specified
 then the named dll will be loaded as an SQLite loadable extension.  
-This is in addition to the extension found in the RSQLite.extfunctions 
-R package which is always loaded into SQLite.
+This is in addition to the extension functions included with RSQLite.
 
 }
 
@@ -329,8 +318,8 @@ identical(a7r[-1], a7s[-1])
 
 # aggregate - avg conc and uptake by Plant and Type
 a8r <- aggregate(iris[1:2], iris[5], mean)
-a8s <- sqldf("select Species, avg(Sepal_Length) `Sepal.Length`, 
-   avg(Sepal_Width) `Sepal.Width` from iris group by Species")
+a8s <- sqldf('select Species, avg("Sepal.Length") `Sepal.Length`, 
+   avg("Sepal.Width") `Sepal.Width` from iris group by Species')
 all.equal(a8r, a8s)
 
 # by - avg conc and total uptake by Plant and Type
@@ -340,10 +329,10 @@ a9r <- do.call(rbind, by(iris, iris[5], function(x) with(x,
 		mean.Sepal.Width = mean(Sepal.Width),
 		mean.Sepal.ratio = mean(Sepal.Length/Sepal.Width)))))
 row.names(a9r) <- NULL
-a9s <- sqldf("select Species, avg(Sepal_Length) `mean.Sepal.Length`,
-	avg(Sepal_Width) `mean.Sepal.Width`, 
-	avg(Sepal_Length/Sepal_Width) `mean.Sepal.ratio` from iris
-	group by Species")
+a9s <- sqldf('select Species, avg("Sepal.Length") `mean.Sepal.Length`,
+	avg("Sepal.Width") `mean.Sepal.Width`, 
+	avg("Sepal.Length"/"Sepal.Width") `mean.Sepal.ratio` from iris
+	group by Species')
 all.equal(a9r, a9s)
 
 # head - top 3 breaks
@@ -459,28 +448,28 @@ readLines("iris3.dat")
 
 # set up file connection
 iris3 <- file("iris3.dat")
-sqldf("select * from iris3 where Sepal_Width > 3")
+sqldf('select * from iris3 where "Sepal.Width" > 3')
 
 # using a non-default separator
 # file.format can be an attribute of file object or an arg passed to sqldf
 write.table(head(iris, 3), "iris3.dat", sep = ";", quote = FALSE)
 iris3 <- file("iris3.dat")
-sqldf("select * from iris3 where Sepal_Width > 3", file.format = list(sep = ";"))
+sqldf('select * from iris3 where "Sepal.Width" > 3', file.format = list(sep = ";"))
 
 # same but pass file.format through attribute of file object
 attr(iris3, "file.format") <- list(sep = ";")
-sqldf("select * from iris3 where Sepal_Width > 3")
+sqldf('select * from iris3 where "Sepal.Width" > 3')
 
 # copy file straight to disk without going through R
 # and then retrieve portion into R  
-sqldf("select * from iris3 where Sepal_Width > 3", dbname = tempfile())
+sqldf('select * from iris3 where "Sepal.Width" > 3', dbname = tempfile())
 
 ### same as previous example except it allows multiple queries against
 ### the database.  We use iris3 from before.  This time we use an
 ### in memory SQLite database.
 
 sqldf() # open a connection
-sqldf("select * from iris3 where Sepal_Width > 3")
+sqldf('select * from iris3 where "Sepal.Width" > 3')
 
 # At this point we have an iris3 variable in both
 # the R workspace and in the SQLite database so we need to
@@ -489,8 +478,8 @@ sqldf("select * from iris3 where Sepal_Width > 3")
 # by default and fail since sqldf would prevent it from 
 # overwriting the version already in the database to protect
 # the user from inadvertent errors.
-sqldf("select * from main.iris3 where Sepal_Width > 4")
-sqldf("select * from main.iris3 where Sepal_Width < 4")
+sqldf('select * from main.iris3 where "Sepal.Width" > 4')
+sqldf('select * from main.iris3 where "Sepal_Width" < 4')
 sqldf() # close connection
 
 ### another way to do this is a mix of sqldf and RSQLite statements
@@ -500,11 +489,11 @@ sqldf() # close connection
 
 con <- sqldf()
 # this iris3 refers to the R variable and file
-sqldf("select * from iris3 where Sepal_Width > 3")
+sqldf('select * from iris3 where "Sepal.Width" > 3')
 sqldf("select count(*) from iris3")
 # these iris3 refer to the database table
-dbGetQuery(con, "select * from iris3 where Sepal_Width > 4")
-dbGetQuery(con, "select * from iris3 where Sepal_Width < 4")
+dbGetQuery(con, 'select * from iris3 where "Sepal.Width" > 4')
+dbGetQuery(con, 'select * from iris3 where "Sepal.Width" < 4')
 sqldf()
 
 }

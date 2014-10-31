@@ -11,6 +11,7 @@
 
 test.all <- function() {
 
+	# set drv
 	drv <- getOption("sqldf.driver") 
 	if (is.null(drv)) {
 		drv <- if ("package:RPostgreSQL" %in% search()) { "PostgreSQL"
@@ -94,7 +95,7 @@ test.all <- function() {
 	# whereas sqlite and mysql can use backquote
 	# Species needs to be quoted in pgsql but not in the other data bases.
 	a8r <- aggregate(iris[1:2], iris[5], mean)
-	if (drv == "pgsql" || drv == "postgresql" || drv == "h2") {
+	if (drv == "pgsql" || drv == "postgresql" || drv == "h2" || drv == "sqlite") {
 		a8s <- sqldf('select "Species", avg("Sepal.Length") \"Sepal.Length\", 
 			avg("Sepal.Width") \"Sepal.Width\" from iris 
 			group by "Species" order by "Species"')
@@ -116,7 +117,7 @@ test.all <- function() {
 			mean.Sepal.Width = mean(Sepal.Width),
 			mean.Sepal.ratio = mean(Sepal.Length/Sepal.Width)))))
 	row.names(a9r) <- NULL
-	if (drv == "pgsql" || drv == "postgresql" || drv == "h2") {
+	if (drv == "pgsql" || drv == "postgresql" || drv == "h2" || drv == "sqlite") {
 		a9s <- sqldf('select "Species", avg("Sepal.Length") "mean.Sepal.Length",
 			avg("Sepal.Width") "mean.Sepal.Width", 
 			avg("Sepal.Length"/"Sepal.Width") "mean.Sepal.ratio" from iris

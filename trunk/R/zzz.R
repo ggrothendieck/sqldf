@@ -22,7 +22,6 @@
 		packageStartupMessage(msg)
 	} else {
 		loadNamespace("RSQLite")
-		loadNamespace("RSQLite.extfuns")
 	}
 }
 
