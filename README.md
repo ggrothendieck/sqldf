@@ -3347,9 +3347,3 @@ Links[](#Links)
 [Visual Representation of SQL
 Joins](http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins)
 
-[Terms](/projecthosting/terms.html) -
-[Privacy](http://www.google.com/privacy.html) - [Project Hosting
-Help](/p/support/)
-
-Powered by [Google Project
-Hosting](http://code.google.com/projecthosting/)
