@@ -146,11 +146,12 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     		} else if ("package:RpgSQL" %in% search()) { "pgSQL"
 			} else if ("package:RMySQL" %in% search()) { "MySQL" 
     		} else if ("package:RH2" %in% search()) { "H2" 
+    		} else if ("package:MonetDB.R" %in% search()) { "MonetDB" 
     		} else "SQLite"
     	}
 
-		drv <- sub("^[Rr]", "", drv)
-		pkg <- paste("R", drv, sep = "")
+		drv <- sub("(^[Rr]|\\.R$)", "", drv)
+		pkg <- if (drv =="MonetDB") "MonetDB.R" else paste("R", drv, sep = "")
 		if (verbose) {
 			if (!is.loaded(pkg)) cat("sqldf: library(", pkg, ")\n", sep = "")
 			library(pkg, character.only = TRUE)
@@ -236,6 +237,12 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 					# dbConnect(m, jdbc.string, "sa", "")
 					dbConnect(m, jdbc.string)
 				}
+		} else if (drv == "monetdb") {
+			if (verbose) cat("sqldf: m <- dbDriver(\"MonetDB\")\n")
+			m <- dbDriver("MonetDB")
+    		if (missing(dbname) || is.null(dbname)) dbname <- "demo"
+    		dbPreExists <- TRUE
+			connection <- do.call("dbConnect", c(list(drv=m), getOption("sqldf.MonetDB.R.params"), list()))
 		} else {
 			if (verbose) cat("sqldf: m <- dbDriver(\"SQLite\")\n")
     		m <- dbDriver("SQLite")
@@ -325,7 +332,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			# so only include those added so far
 			dfnames <- head(dfnames, i-1)
 			stop(paste("sqldf:", "table", nam, 
-				"already in", dbname, "\n"))
+				"already in", if(!missing(dbname)) dbname else "database", "\n"))
 		}
 		# check if the nam2 processing works with MySQL
 		# if not then ensure its only applied to SQLite
