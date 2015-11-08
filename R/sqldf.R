@@ -20,15 +20,14 @@ sqldf <- function(x, stringsAsFactors = FALSE,
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
-
-   # nam2 code is duplicated above.  Needs to be factored out.
    backquote.maybe <- function(nam) {
 		if (drv == "h2") { nam
 		} else if (drv == "mysql") { nam
 		} else if (drv == "pgsql") { nam
 		} else if (drv == "postgresql") { nam
+		} else if (drv == "monetdb") { nam
 		} else {
-			if (regexpr(".", nam, fixed = TRUE)) {
+			if (regexpr(".", nam, fixed = TRUE) > 0) {
 				paste("`", nam, "`", sep = "")
 			} else nam
 		}
@@ -292,6 +291,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 		else if (inherits(connection, "pgSQLConnection")) "pgSQL"
 		else if (inherits(connection, "MySQLConnection")) "MySQL"
 		else if (inherits(connection, "H2Connection")) "H2"
+		else if (inherits(connection, "MonetDBConnection")) "MonetDB"
 		else "SQLite"
 		drv <- tolower(drv)
 		dbPreExists <- attr(connection, "dbPreExists")
