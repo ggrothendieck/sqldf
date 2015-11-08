@@ -242,7 +242,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			m <- dbDriver("MonetDB")
     		if (missing(dbname) || is.null(dbname)) dbname <- "demo"
     		dbPreExists <- TRUE
-			connection <- do.call("dbConnect", c(list(drv=m), getOption("sqldf.MonetDB.R.params"), list()))
+			connection <- do.call("dbConnect", c(list(drv=m), getOption("sqldf.MonetDB.R.params", list())))
 		} else {
 			if (verbose) cat("sqldf: m <- dbDriver(\"SQLite\")\n")
     		m <- dbDriver("SQLite")
