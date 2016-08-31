@@ -20,20 +20,6 @@ sqldf <- function(x, stringsAsFactors = FALSE,
    as.dates.character <- function(x) structure(as.numeric(x), class = c("dates", "times"))
    as.times.character <- function(x) structure(as.numeric(x), class = "times")
 
-
-   # nam2 code is duplicated above.  Needs to be factored out.
-   backquote.maybe <- function(nam) {
-		if (drv == "h2") { nam
-		} else if (drv == "mysql") { nam
-		} else if (drv == "pgsql") { nam
-		} else if (drv == "postgresql") { nam
-		} else {
-			if (regexpr(".", nam, fixed = TRUE)) {
-				paste("`", nam, "`", sep = "")
-			} else nam
-		}
-	}
-
    name__class <- function(data, ...) {
 	if (is.null(data)) return(data)
 	cls <- sub(".*__([^_]+)|.*", "\\1", names(data))
@@ -114,11 +100,10 @@ sqldf <- function(x, stringsAsFactors = FALSE,
     			# data base pre-existing
 
     			for (nam in dfnames) {
-					nam2 <- backquote.maybe(nam)
 					if (verbose) {
-						cat("sqldf: dbRemoveTable(connection, ", nam2, ")\n")
+						cat("sqldf: dbRemoveTable(connection, ", nam, ")\n")
 					}
-					dbRemoveTable(connection, nam2)
+					dbRemoveTable(connection, nam)
 				}
     			for (fo in fileobjs) {
 					if (verbose) {
@@ -327,14 +312,13 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			stop(paste("sqldf:", "table", nam, 
 				"already in", dbname, "\n"))
 		}
-		# check if the nam2 processing works with MySQL
+		# check if the nam processing works with MySQL
 		# if not then ensure its only applied to SQLite
 		DF <- as.data.frame(get(nam, envir))
 		if (!is.null(to.db) && is.function(to.db)) DF <- to.db(DF)
-		nam2 <- backquote.maybe(nam)
-		# if (verbose) cat("sqldf: writing", nam2, "to database\n")
-		if (verbose) cat("sqldf: dbWriteTable(connection, '", nam2, "', ", nam, ", row.names = ", row.names, ")\n", sep = "")
-		dbWriteTable(connection, nam2, DF, row.names = row.names)
+		# if (verbose) cat("sqldf: writing", nam, "to database\n")
+		if (verbose) cat("sqldf: dbWriteTable(connection, '", nam, "', ", nam, ", row.names = ", row.names, ")\n", sep = "")
+		dbWriteTable(connection, nam, DF, row.names = row.names)
 	}
 
 	# process file objects
