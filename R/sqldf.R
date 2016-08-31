@@ -324,7 +324,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	# process file objects
 	fileobjs <- if (is.null(file.format)) { character(0)
 	} else {
-		eol <- if (.Platform$OS == "windows") "\r\n" else "\n"
+		eol <- if (.Platform$OS.type == "windows") "\r\n" else "\n"
 		words[is.special == 2]
 	}
 	for(i in seq_along(fileobjs)) {
@@ -366,7 +366,7 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 			else sprintf('%s > "%s"', cmd, Filename.tmp)
 
 			# on Windows platform preface command with cmd /c 
-			if (.Platform$OS == "windows") {
+			if (.Platform$OS.type == "windows") {
 				cmd <- paste("cmd /c", cmd)
 				if (FALSE) {
 				key <- "SOFTWARE\\R-core"
@@ -588,7 +588,7 @@ read.csv2.sql <- function(file, sql = "select * from file",
     colClasses, dbname = tempfile(), drv = "SQLite", ...) {
 
 	if (missing(filter)) {
-		filter <- if (.Platform$OS == "windows")
+		filter <- if (.Platform$OS.type == "windows")
 			paste("cscript /nologo", normalizePath(system.file("trcomma2dot.vbs", package = "sqldf")))
 		else "tr , ."
 	}
