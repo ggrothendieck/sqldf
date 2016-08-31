@@ -99,90 +99,90 @@ database is to be tested (SQLite is the default) and running:
 
 [For Those New to R](#For_Those_New_to_R)
 
-[News](#News)
+[News](#news)
 
-[Troubleshooting](#Troubleshooting)
+[Troubleshooting](#troubleshooting)
 
 -   [Problem is that installer gives message that sqldf is not
-    available](#Problem_is_that_installer_gives_message_that_sqldf_is_not_availa)
+    available](#problem_is_that_installer_gives_message_that_sqldf_is_not_availa)
 -   [Problem with no argument form of sqldf -
-    sqldf()](#Problem_with_no_argument_form_of_sqldf_-_sqldf())
--   [Problem involvling tcltk](#Problem_involvling_tcltk)
+    sqldf()](#problem_with_no_argument_form_of_sqldf_-_sqldf())
+-   [Problem involvling tcltk](#problem_involvling_tcltk)
 
-[FAQ](#FAQ)
+[FAQ](#faq)
 
 -   [1. How does sqldf handle classes and
-    factors?](#1._How_does_sqldf_handle_classes_and_factors?)
+    factors?](#1-how-does-sqldf-handle-classes-and-factors)
 -   [2. Why does sqldf seem to mangle certain variable
-    names?](#2._Why_does_sqldf_seem_to_mangle_certain_variable_names?)
+    names?](#2-why-does-sqldf-seem-to-mangle-certain-variable-names)
 -   [3. Why does sqldf("select var(x) from DF") not
-    work?](#3._Why_does_sqldf("select_var(x)_from_DF")_not_work?)
+    work?](#3-why-does-sqldfselect-varx-from-df-not-work)
 -   [4. How does sqldf work with "Date" class
-    variables?](#4._How_does_sqldf_work_with_"Date"_class_variables?)
+    variables?](#4-how-does-sqldf-work-with-date-class-variables)
 -   [5. I get a message about the tcltk package being
-    missing.](#5._I_get_a_message_about_the_tcltk_package_being_missing.)
+    missing.](#5-i-get-a-message-about-the-tcltk-package-being-missing)
 -   [6. Why are there problems when we use table names or column names
     that are the same except for
-    case?](#6._Why_are_there_problems_when_we_use_table_names_or_column_name)
+    case?](#6-why-are-there-problems-when-we-use-table-names-or-column-name)
 -   [7. Why are there messages about
-    MySQL?](#7._Why_are_there_messages_about_MySQL?)
+    MySQL?](#7-why-are-there-messages-about-mysql)
 -   [8. Why am I having problems with
-    update?](#8._Why_am_I_having_problems_with_update?)
+    update?](#8-why-am-I-having-problems-with-update)
 -   [9. How do I examine the layout that SQLite uses for a table? which
     tables are in the database? which databases are
-    attached?](#9._How_do_I_examine_the_layout_that_SQLite_uses_for_a_table?_whi)
+    attached?](#9-how-do-i-examine-the-layout-that-sqlite-uses-for-a-table-which-tables-are-in-the-database-which-databases-are-attached)
 -   [10. What are some of the differences between using SQLite and H2
     with
-    sqldf?](#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
+    sqldf?](#10-what-are-some-of-the-differences-between-using-sqlite-and-h2-with-sqldf)
 -   [11. Why am I having difficulty reading a data file using SQLite and
-    sqldf?](#11._Why_am_I_having_difficulty_reading_a_data_file_using_SQLite)
+    sqldf?](#11-why-am-i-having-difficulty-reading-a-data-file-using-sqlite-and-sqldf)
 -   [12. How does one use sqldf with
-    PostgreSQL?](#12._How_does_one_use_sqldf_with_PostgreSQL?)
+    PostgreSQL?](#12-how-does-one-use-sqldf-with-postgresql)
 -   [13. How does one deal with quoted fields in read.csv.sql
-    ?](#13._How_does_one_deal_with_quoted_fields_in_read.csv.sql_?)
+    ?](#13-how-does-one-deal-with-quoted-fields-in-readcsvsql)
 -   [14. How does one read files where numeric NAs are represented as
     missing empty
-    fields?](#14._How_does_one_read_files_where_numeric_NAs_are_represented_as)
+    fields?](#14-how-does-one-read-files-where-numeric-nas-are-represented-as-missing-empty-fields)
 -   [15. Why do certain calculations come out as integer rather than
-    double?](#15._Why_do_certain_calculations_come_out_as_integer_rather_than)
+    double?](#15-why-do-certain-calculations-come-out-as-integer-rather-than-double)
 -   [16. How can one read a file off the net or a csv file in a zip
-    file?](#16._How_can_one_read_a_file_off_the_net_or_a_csv_file_in_a_zip_f)
+    file?](#16-how-can-one-read-a-file-off-the-net-or-a-csv-file-in-a-zip-file)
 
-[Examples](#Examples)
+[Examples](#examples)
 
 -   [Example 1. Ordering and
-    Limiting](#Example_1._Ordering_and_Limiting)
+    Limiting](#example-1-ordering-and-limiting)
 -   [Example 2. Averaging and
-    Grouping](#Example_2._Averaging_and_Grouping)
--   [Example 3. Nested Select](#Example_3._Nested_Select)
--   [Example 4. Join](#Example_4._Join)
--   [Example 5. Insert Variables](#Example_5._Insert_Variables)
--   [Example 6. File Input](#Example_6._File_Input)
--   [Example 7. Nested Select](#Example_7._Nested_Select)
+    Grouping](#example-2-averaging-and-grouping)
+-   [Example 3. Nested Select](#example-3-nested-select)
+-   [Example 4. Join](#example-4-join)
+-   [Example 5. Insert Variables](#example-5-insert-variables)
+-   [Example 6. File Input](#example-6-file-input)
+-   [Example 7. Nested Select](#example-7-nested-select)
 -   [Example 8. Specifying File
-    Format](#Example_8._Specifying_File_Format)
+    Format](#example-8-specifying-file-format)
 -   [Example 9. Working with
-    Databases](#Example_9.__Working_with_Databases)
+    Databases](#example-9-working-with-databases)
 -   [Example 10. Persistent
-    Connections](#Example_10._Persistent_Connections)
+    Connections](#example-10-persistent-connections)
 -   [Example 11. Between and
-    Alternatives](#Example_11._Between_and_Alternatives)
+    Alternatives](#example-11-between-and-alternatives)
 -   [Example 12. Combine two files in permanent
-    database](#Example_12._Combine_two_files_in_permanent_database)
+    database](#example-12-combine-two-files-in-permanent-database)
 -   [Example 13. read.csv.sql and
-    read.csv2.sql](#Example_13._read.csv.sql_and_read.csv2.sql)
+    read.csv2.sql](#example-13-readcsvsql-and-readcsv2sql)
 -   [Example 14. Use of spatialite library
-    functions](#Example_14._Use_of_spatialite_library_functions)
+    functions](#example-14-use-of-spatialite-library-functions)
 -   [Example 15. Use of RSQLite.extfuns library
-    functions](#Example_15._Use_of_RSQLite.extfuns_library_functions)
--   [Example 16. Moving Average](#Example_16._Moving_Average)
--   [Example 17. Lag](#Example_17._Lag)
--   [Example 17. MySQL Schema
-    Information](#Example_17._MySQL_Schema_Information)
+    functions](#example-15-use-of-rsqliteextfuns-library-functions)
+-   [Example 16. Moving Average](#example-16-moving-average)
+-   [Example 17. Lag](#example-17-lag)
+-   [Example 18. MySQL Schema
+    Information](#Example-18-mysql-schema-information)
 
-[Links](#Links)
+[Links](#links)
 
-Overview[](#Overview)
+Overview[](#overview)
 =====================
 
 [sqldf](http://cran.r-project.org/web/packages/sqldf/index.html) is an R
@@ -3272,7 +3272,7 @@ library(sqldf)
 sqldf("select *, lag(y) over (partition by id order by tvar) from DF")
 ~~~~
 
-Example 17. MySQL Schema Information[](#Example_17._MySQL_Schema_Information)
+Example 18. MySQL Schema Information[](#Example_18._MySQL_Schema_Information)
 -----------------------------------------------------------------------------
 
 ~~~~ {.prettyprint}
