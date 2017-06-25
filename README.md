@@ -1,8 +1,11 @@
 *To write it, it took three months; to conceive it – three minutes; to
 collect the data in it – all my life.* [F. Scott
-Fitzgerald](http://en.wikipedia.org/wiki/F._Scott_Fitzgerald)
+Fitzgerald](https://en.wikipedia.org/wiki/F._Scott_Fitzgerald)
 
 **Latest News**
+
+sqldf 0.4-11 supports RSQLite 2.0.  read.csv.sql now support https and
+ftps.
 
 ​(1) sqldf 0.4-10 is on CRAN now. This is a bug fix release to provide
 further compatibility with the new version of RSQLite. Note that this
@@ -17,19 +20,19 @@ checkpoint("2014-10-08")
 ~~~~
 
 as discussed here:
-[http://stackoverflow.com/questions/26571232/sqldf-not-working-after-update](http://stackoverflow.com/questions/26571232/sqldf-not-working-after-update)
+[https://stackoverflow.com/questions/26571232/sqldf-not-working-after-update](http://stackoverflow.com/questions/26571232/sqldf-not-working-after-update)
 
 ​(2) The new RSQLite 1.0.0 changes how it deals with dots in names. They
 are no longer translated to underscores.
 
 ​(3) There is now an [sqldf discussion
-group](http://groups.google.com/group/sqldf) to discuss sqldf (and other
+group](https://groups.google.com/group/sqldf) to discuss sqldf (and other
 of my packages).
 
 **Introduction**
 
-[sqldf](http://cran.r-project.org/web/packages/sqldf/index.html) is an R
-package for runing [SQL statements](http://en.wikipedia.org/wiki/SQL) on
+[sqldf](https://cran.r-project.org/web/packages/sqldf/index.html) is an R
+package for runing [SQL statements](https://en.wikipedia.org/wiki/SQL) on
 R data frames, optimized for convenience. The user simply specifies an
 SQL statement in R using data frame names in place of table names and a
 database with appropriate table layouts/schema is automatically created,
@@ -38,40 +41,40 @@ specified SQL statement is performed, the result is read back into R and
 the database is deleted all automatically behind the scenes making the
 database's existence transparent to the user who only specifies the SQL
 statement. Surprisingly this can at times
-[be](http://stackoverflow.com/questions/1727772/quickly-reading-very-large-tables-as-dataframes-in-r/1820610#1820610)
-[even](http://groups.google.com/group/manipulatr/browse_thread/thread/3affbdc5efca9143/d19d7b97ac023ee8?pli=1)
+[be](https://stackoverflow.com/questions/1727772/quickly-reading-very-large-tables-as-dataframes-in-r/1820610#1820610)
+[even](https://groups.google.com/group/manipulatr/browse_thread/thread/3affbdc5efca9143/d19d7b97ac023ee8?pli=1)
 [faster](https://stat.ethz.ch/pipermail/r-help/2009-December/221456.html)
 [than](https://stat.ethz.ch/pipermail/r-help/2009-December/221513.html)
-[the](http://stackoverflow.com/questions/14283566/specific-for-loop-too-slow-in-r/14287476#14287476)
+[the](https://stackoverflow.com/questions/14283566/specific-for-loop-too-slow-in-r/14287476#14287476)
 corresponding pure R calculation (although the purpose of the project is
 convenience and not speed). [This
-link](http://brusers.tumblr.com/post/59706993506/data-manipulation-with-sqldf-paul)
+link](https://brusers.tumblr.com/post/59706993506/data-manipulation-with-sqldf-paul)
 suggests that for aggregations over highly granular columns that sqldf
 is faster than another alternative tried. `sqldf` is free software
 published under the GNU General Public License that can be downloaded
-from [CRAN](http://cran.r-project.org/web/packages/sqldf/index.html).
+from [CRAN](https://cran.r-project.org/web/packages/sqldf/index.html).
 
-sqldf supports (1) the [SQLite](http://www.sqlite.org) backend database
-(by default), (2) the [H2](http://www.h2database.com) java database, (3)
-the [PostgreSQL](http://www.postgresql.org) database and (4) sqldf 0.4-0
-onwards also supports [MySQL](http://www.mysql.org). SQLite, H2, MySQL
+sqldf supports (1) the [SQLite](https://www.sqlite.org) backend database
+(by default), (2) the [H2](https://www.h2database.com) java database, (3)
+the [PostgreSQL](https://www.postgresql.org) database and (4) sqldf 0.4-0
+onwards also supports [MySQL](https://www.mysql.org). SQLite, H2, MySQL
 and PostgreSQL are free software. SQLite and H2 are embedded serverless
 zero administration databases that are included right in the R driver
 packages,
-[RSQLite](http://cran.r-project.org/web/packages/RSQLite/index.html) and
-[RH2](http://cran.r-project.org/web/packages/RH2/index.html), so that
+[RSQLite](https://cran.r-project.org/web/packages/RSQLite/index.html) and
+[RH2](https://cran.r-project.org/web/packages/RH2/index.html), so that
 there is no separate installation for either one. A number of [high
-profile projects](http://www.sqlite.org/famous.html) use SQLite. (Also
-see this [lecture](http://www.viddler.com/explore/rentzsch/videos/25/).)
+profile projects](https://www.sqlite.org/famous.html) use SQLite. (Also
+see this [lecture](https://www.viddler.com/explore/rentzsch/videos/25/).)
 H2 is a java database which contains a large collection of SQL functions
 and supports Date and other data types. It is the most popular database
 package among [scala
-packages](http://www.takipiblog.com/2013/12/26/the-top-100-most-popular-scala-libraries-based-on-10000-github-projects/).
+packages](https://www.takipiblog.com/2013/12/26/the-top-100-most-popular-scala-libraries-based-on-10000-github-projects/).
 PostgreSQL is a client/server database and unlike SQLite and H2 must be
 separately installed but it has a particularly powerful version of SQL,
 e.g. its
-[window](http://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](http://developer.postgresql.org/pgdocs/postgres/functions-window.html),
+[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
+[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html),
 so the extra installation work can be worth it. sqldf supports the
 `RPostgreSQL` driver in R. Like PostgreSQL, MySQL is a client server
 database that must be installed independently so its not as easy to
@@ -80,14 +83,14 @@ back end for web sites.
 
 The information below mostly concerns the default SQLite database. The
 use of H2 with sqldf is discussed in [FAQ
-\#10](http://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
+\#10](https://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
 which discusses differences between using sqldf with SQLite and H2 and
 also shows how to modify the code in the [Examples](#Examples) section
 to use sqldf/H2 rather than sqldf/SQLite. There is some information on
 using PostgreSQL with sqldf in [FAQ
-\#12](http://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
+\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
 and an example in [Example 17.
-Lag](http://code.google.com/p/sqldf/#Example_17._Lag) . The unit tests
+Lag](https://code.google.com/p/sqldf/#Example_17._Lag) . The unit tests
 provide examples that can work with all five data base drivers (covering
 four databases) supported by sqldf. They are run by loading whichever
 database is to be tested (SQLite is the default) and running:
@@ -185,12 +188,12 @@ database is to be tested (SQLite is the default) and running:
 Overview[](#overview)
 =====================
 
-[sqldf](http://cran.r-project.org/web/packages/sqldf/index.html) is an R
-package for running [SQL statements](http://en.wikipedia.org/wiki/SQL)
+[sqldf](https://cran.r-project.org/web/packages/sqldf/index.html) is an R
+package for running [SQL statements](https://en.wikipedia.org/wiki/SQL)
 on R data frames, optimized for convenience. `sqldf` works with the
-[SQLite](http://www.sqlite.org/), [H2](http://www.h2database.com),
-[PostgreSQL](http://www.postgresql.org) or
-[MySQL](http://dev.mysql.com/doc/) databases. SQLite has the least
+[SQLite](https://www.sqlite.org/), [H2](http://www.h2database.com),
+[PostgreSQL](https://www.postgresql.org) or
+[MySQL](https://dev.mysql.com/doc/) databases. SQLite has the least
 prerequisites to install. H2 is just as easy if you have Java installed
 and also supports Date class and a few additional functions. PostgreSQL
 notably supports Windowing functions providing the SQL analogue of the R
@@ -199,11 +202,11 @@ web sites.
 
 More information can be found from within R by installing and loading
 the sqldf package and then entering
-[?sqldf](http://cran.r-project.org/web/packages/sqldf/sqldf.pdf) and
-[?read.csv.sql](http://sqldf.googlecode.com/svn/trunk/man/sqldf-package.Rd).
+[?sqldf](https://cran.r-project.org/web/packages/sqldf/sqldf.pdf) and
+[?read.csv.sql](https://sqldf.googlecode.com/svn/trunk/man/sqldf-package.Rd).
 A number of [examples](#Examples) are on this page and more examples are
 accessible from within R in the examples section of the
-[?sqldf](http://cran.r-project.org/web/packages/sqldf/sqldf.pdf) help
+[?sqldf](https://cran.r-project.org/web/packages/sqldf/sqldf.pdf) help
 page.
 
 As seen from this example which uses the built in `BOD` data frame:
@@ -235,23 +238,23 @@ It can be used for:
     examples 6e, 6f below show how to read random portions of a file)
 
 In the case of SQLite it consists of a thin layer over the
-[RSQLite](http://cran.r-project.org/web/packages/RSQLite)
-[DBI](http://cran.r-project.org/web/packages/DBI) interface to SQLite
+[RSQLite](https://cran.r-project.org/web/packages/RSQLite)
+[DBI](https://cran.r-project.org/web/packages/DBI) interface to SQLite
 itself.
 
 In the case of H2 it works on top of the
-[RH2](http://cran.r-project.org/web/packages/RH2)
-[DBI](http://cran.r-project.org/web/packages/DBI) driver which in turn
+[RH2](https://cran.r-project.org/web/packages/RH2)
+[DBI](https://cran.r-project.org/web/packages/DBI) driver which in turn
 uses RJDBC and JDBC to interface to H2 itself.
 
 In the case of PostgreSQL it works on top of the
-[RPostgreSQL](http://cran.r-project.org/web/packages/RPostgreSQL)
-[DBI](http://cran.r-project.org/web/packages/DBI) driver.
+[RPostgreSQL](https://cran.r-project.org/web/packages/RPostgreSQL)
+[DBI](https://cran.r-project.org/web/packages/DBI) driver.
 
 There is also some untested code in sqldf for use with the
-[MySQL](http://www.mysql.com) database using the
-[RMySQL](http://cran.r-project.org/web/packages/RMySQL)
-[DBI](http://cran.r-project.org/web/packages/DBI) driver.
+[MySQL](https://www.mysql.com) database using the
+[RMySQL](https://cran.r-project.org/web/packages/RMySQL)
+[DBI](https://cran.r-project.org/web/packages/DBI) driver.
 
 Citing sqldf[](#Citing_sqldf)
 =============================
@@ -268,7 +271,7 @@ For Those New to R[](#For_Those_New_to_R)
 =========================================
 
 If you have not used R before and want to try sqldf with SQLite, [google
-for single letter R](http://www.r-project.org), download R, install it
+for single letter R](https://www.r-project.org), download R, install it
 on Windows, Mac or UNIX/Linux and then start R and at R console enter
 this:
 
@@ -290,7 +293,7 @@ sqldf("select avg(a) mean, variance(a) var from DF") # see example 15
 ~~~~
 
 To try it with H2 rather than SQLite the process is similar. Ensure that
-you have the [java](http://java.sun.com) runtime installed, install R as
+you have the [java](https://java.sun.com) runtime installed, install R as
 above and start R. From within R enter this ensuring that the version of
 RH2 that you have is RH2 0.1-2.6 or later:
 
@@ -321,43 +324,43 @@ translates dots in column names to underscores.
 January 20, 2014. sqldf 0.4-7 released to address changes in R for R
 3.0.
 
-March 28, 2012. [sqldf 0.4-6.4](http://cran.r-project.org/package=sqldf)
-has been uploaded to [CRAN](http://cran.r-project.org/package=sqldf).
-See [NEWS file](http://cran.r-project.org/web/packages/sqldf/NEWS).
+March 28, 2012. [sqldf 0.4-6.4](https://cran.r-project.org/package=sqldf)
+has been uploaded to [CRAN](https://cran.r-project.org/package=sqldf).
+See [NEWS file](https://cran.r-project.org/web/packages/sqldf/NEWS).
 
 December 19, 2011. [sqldf
-0.4-6.1](http://cran.r-project.org/package=sqldf) has been uploaded to
-[CRAN](http://cran.r-project.org/package=sqldf). It fixes a minor bug.
+0.4-6.1](https://cran.r-project.org/package=sqldf) has been uploaded to
+[CRAN](https://cran.r-project.org/package=sqldf). It fixes a minor bug.
 
 December 10, 2011. [sqldf
-0.4-6](http://cran.r-project.org/package=sqldf) has been uploaded to
+0.4-6](https://cran.r-project.org/package=sqldf) has been uploaded to
 CRAN. See [NEWS
-file](http://cran.r-project.org/web/packages/sqldf/NEWS).
+file](https://cran.r-project.org/web/packages/sqldf/NEWS).
 
 December 1, 2011. Some changes to [FAQ
-\#4](http://code.google.com/p/sqldf/#4._How_does_sqldf_work_with_"Date"_class_variables?)
+\#4](https://code.google.com/p/sqldf/#4._How_does_sqldf_work_with_"Date"_class_variables?)
 have been made to incorporate the improvements in RSQLite 0.11.0 .
 
 November 28, 2011. [RH2
-0.1-2.8](http://cran.r-project.org/web/packages/RH2/index.html) has been
+0.1-2.8](https://cran.r-project.org/web/packages/RH2/index.html) has been
 uploaded to CRAN. It includes a new version, 1.3.162, of H2.
 
 November 22, 2011.
-[RPostgreSQL](http://cran.r-project.org/web/packages/RPostgreSQL/)
+[RPostgreSQL](https://cran.r-project.org/web/packages/RPostgreSQL/)
 support has been added to sqldf in the [sqldf development
-version](http://code.google.com/p/sqldf/source/checkout).
+version](https://code.google.com/p/sqldf/source/checkout).
 
 November 21, 2011. [sqldf
-0.4-5](http://cran.r-project.org/web/packages/sqldf/index.html) is now
+0.4-5](https://cran.r-project.org/web/packages/sqldf/index.html) is now
 on CRAN and should propagate to the mirrors shortly. See
-[NEWS](http://cran.r-project.org/web/packages/sqldf/NEWS).
+[NEWS](https://cran.r-project.org/web/packages/sqldf/NEWS).
 
 November 15, 2011. [sqldf
-0.4-4](http://cran.r-project.org/web/packages/sqldf/index.html) has been
+0.4-4](https://cran.r-project.org/web/packages/sqldf/index.html) has been
 uploaded to CRAN. The primary [new
-feature](http://cran.r-project.org/web/packages/sqldf/NEWS) is the
+feature](https://cran.r-project.org/web/packages/sqldf/NEWS) is the
 inclusion of a gawk program,
-[csv.awk](http://sqldf.googlecode.com/svn/trunk/inst/csv.awk), which can
+[csv.awk](https://sqldf.googlecode.com/svn/trunk/inst/csv.awk), which can
 transform input files by removing quotes surrounding fields, unescaping
 embedded quotes and replacing field separators with different
 separators. See the example
@@ -366,72 +369,72 @@ also see `?sqldf` from within R. Added later: Note that a bug was found
 in this awk program -- try the `csvfix` program instead.
 
 November 5, 2011. [sqldf
-0.4-3](http://cran.r-project.org/web/packages/sqldf/index.html) has been
+0.4-3](https://cran.r-project.org/web/packages/sqldf/index.html) has been
 uploaded to CRAN. This version allows the `file` argument to be omitted
 in `read.csv.sql` if `filter` is specified and no file input is needed.
 (Previously it had to be specified as "NUL" or "/dev/null" depending on
-OS.) Also, if the `file` argument begins with "http:" or "ftp:" in those
+OS.) Also, if the `file` argument begins with "https:" or "ftp:" in those
 commands then it first downloads the file before reading it into sqlite.
 See [FAQ
-\#16](http://code.google.com/p/sqldf/#16._How_can_one_read_a_file_off_the_net_or_a_csv_file_in_a_zip_f).
+\#16](https://code.google.com/p/sqldf/#16._How_can_one_read_a_file_off_the_net_or_a_csv_file_in_a_zip_f).
 
 October 20, 2011. [RH2
-0.1-2.7](http://cran.r-project.org/web/packages/RH2/index.html) has been
+0.1-2.7](https://cran.r-project.org/web/packages/RH2/index.html) has been
 uploaded to CRAN. This version is a bug fix release.
 
 August 8, 2011. [sqldf
-0.4-2](http://cran.r-project.org/web/packages/sqldf/index.html) has been
+0.4-2](https://cran.r-project.org/web/packages/sqldf/index.html) has been
 uploaded to CRAN. This version adds the `nrows` and `field.types`
 arguments to `read.csv.sql` and `read.csv2.sql`.
 
 July 30, 2011. [RH2
-0.1-2.6](http://cran.r-project.org/web/packages/RH2/index.html) has been
+0.1-2.6](https://cran.r-project.org/web/packages/RH2/index.html) has been
 uploaded to CRAN. This version corrects a documentation bug.
 
 July 23, 2011. RH2 0.1-2.5 is on [on
-CRAN](http://cran.r-project.org/web/packages/RH2/index.html). It should
+CRAN](https://cran.r-project.org/web/packages/RH2/index.html). It should
 appear on the mirrors shortly. A significant change in RH2 is that it
 includes H2 1.3.158 which no longer requires that built in function
 names be upper case.
 
 July 23, 2011. sqldf 0.4-1.2 is on [on
-CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). It
+CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). It
 should appear on the mirrors shortly. This version is a bug fix version.
 
 June 28, 2011. sqldf 0.4-1 is [on
-CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). See
-[NEWS](http://cran.r-project.org/web/packages/sqldf/NEWS) for changes.
+CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). See
+[NEWS](https://cran.r-project.org/web/packages/sqldf/NEWS) for changes.
 
 June 15, 2011. sqldf 0.4-0 is [on
-CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). See
-[NEWS](http://cran.r-project.org/web/packages/sqldf/NEWS) for a list of
+CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). See
+[NEWS](https://cran.r-project.org/web/packages/sqldf/NEWS) for a list of
 changes.
 
 May 24, 2011. The [development version of
-sqldf](http://code.google.com/p/sqldf/source/checkout) now has MySQL
+sqldf](https://code.google.com/p/sqldf/source/checkout) now has MySQL
 support. It now also has a unit test suite that can be used with svUnit.
 The test suite works with any of RSQLite, RH2, RMySQL and RpgSQL driver
 packages.
 
 May 11, 2011. A new version of the
-[RpgSQL](http://cran.r-project.org/web/packages/RpgSQL/index.html)
+[RpgSQL](https://cran.r-project.org/web/packages/RpgSQL/index.html)
 postgresql driver supported by sqldf is now on CRAN. See the RpgSQL
-[NEWS](http://cran.r-project.org/web/packages/RpgSQL/NEWS) file.
+[NEWS](https://cran.r-project.org/web/packages/RpgSQL/NEWS) file.
 
 March 7, 2011. A new version of the
-[RH2](http://cran.r-project.org/web/packages/RH2/index.html) driver,
+[RH2](https://cran.r-project.org/web/packages/RH2/index.html) driver,
 version 0.1-2.3, has been uploaded to CRAN. It includes a workaround for
 the problem that the RJDBC driver which RH2 uses reads NULLs into R in
 numeric database fields as 0. This change fixes that so that they are
 read into R as NA.
 
 December 16, 2010. A new example has been added below. See [Example 17.
-Lag](http://code.google.com/p/sqldf/#Example_17._Lag) .
+Lag](https://code.google.com/p/sqldf/#Example_17._Lag) .
 
 October 2, 2010. A new version of the
-[RpgSQL](http://cran.r-project.org/web/packages/RpgSQL/index.html)
+[RpgSQL](https://cran.r-project.org/web/packages/RpgSQL/index.html)
 postgresql driver supported by sqldf is now on CRAN. See the RpgSQL
-[NEWS](http://cran.r-project.org/web/packages/RpgSQL/NEWS) file.
+[NEWS](https://cran.r-project.org/web/packages/RpgSQL/NEWS) file.
 
 August 30, 2010. The development source allows the `to.df` argument of
 `sqldf` to be a function or the character string `"name__class"` (as
@@ -477,18 +480,18 @@ into `sqldf`. e.g.
 
 August 21, 2010. A new example has been added below. See [Example 16.
 Moving
-Average](http://code.google.com/p/sqldf/#Example_16._Moving_Average) .
+Average](https://code.google.com/p/sqldf/#Example_16._Moving_Average) .
 
 June 5, 2010. A new example has been added below. See [Example 15. Use
 of RSQLite.extfuns package library
-functions](http://code.google.com/p/sqldf/#Example_15._Use_of_RSQLite.extfuns_library_functions)
+functions](https://code.google.com/p/sqldf/#Example_15._Use_of_RSQLite.extfuns_library_functions)
 .
 
 June 5, 2010. Version 0.3-5 of sqldf has been uploaded to CRAN. See
-[NEWS file](http://sqldf.googlecode.com/svn/trunk/inst/NEWS).
+[NEWS file](https://sqldf.googlecode.com/svn/trunk/inst/NEWS).
 
 April 16, 2010. Added [example 4j Per Group Min and
-Max](http://pages.citebite.com/c2p3y1i2y2btv) on this page.
+Max](https://pages.citebite.com/c2p3y1i2y2btv) on this page.
 
 March 16, 2010. gsubfn which sqldf depends on has come out with a new
 version, gsubfn 0.5-1, that can run without tcltk. That means sqldf can
@@ -498,9 +501,9 @@ available.
 
 March 15, 2010. sqldf discussed in this January 2010 [Spanish language
 blog
-post](http://analisisydecision.es/monografico-paquete-sqldf-si-sabes-sql-sabes-r/)
+post](https://analisisydecision.es/monografico-paquete-sqldf-si-sabes-sql-sabes-r/)
 ([English
-translation](http://translate.google.com/translate?hl=en&sl=es&u=http://analisisydecision.es/monografico-paquete-sqldf-si-sabes-sql-sabes-r/&prev=http://blogsearch.google.com/blogsearch%3Fhl%3Den%26ie%3DUTF-8%26q%3Dsqldf%26lr%3D%26sa%3DN))
+translation](https://translate.google.com/translate?hl=en&sl=es&u=http://analisisydecision.es/monografico-paquete-sqldf-si-sabes-sql-sabes-r/&prev=http://blogsearch.google.com/blogsearch%3Fhl%3Den%26ie%3DUTF-8%26q%3Dsqldf%26lr%3D%26sa%3DN))
 .
 
 March 12, 2010. [this
@@ -511,27 +514,27 @@ solves the same problem also using sqldf but this time with PostgreSQL
 making use of PostgreSQL's windowing functions.
 
 February 13, 2010. New versions: [sqldf version
-0.3-4](http://cran.r-project.org/web/packages/sqldf/index.html), and
+0.3-4](https://cran.r-project.org/web/packages/sqldf/index.html), and
 [RH2 version
-0.1-2](http://cran.r-project.org/web/packages/RH2/index.html) (DBI/RJDBC
-driver for [H2 database](http://www.h2databasec.com)) have been uploaded
+0.1-2](https://cran.r-project.org/web/packages/RH2/index.html) (DBI/RJDBC
+driver for [H2 database](https://www.h2databasec.com)) have been uploaded
 to CRAN. Also a new package [RpgSQL version
-0.1-1](http://cran.r-project.org/web/packages/RpgSQL/index.html)
-(DBI/RJDBC driver for [PostgreSQL database](http://www.postgresql.org))
+0.1-1](https://cran.r-project.org/web/packages/RpgSQL/index.html)
+(DBI/RJDBC driver for [PostgreSQL database](https://www.postgresql.org))
 has been uploaded to CRAN. The default action of sqldf (if `sqldf`'s
 `drv=` argument is not used and if the `"sqldf.driver"` global option is
 not used) is to use PostgreSQL if RpgSQL is loaded or H2 if RH2 is
 loaded or SQLite otherwise. The main change in sqldf is that all [H2
-statements](http://www.h2database.com/html/grammar.html) are now
+statements](https://www.h2database.com/html/grammar.html) are now
 supported, not just those statements that return results. The packages
 should become accessible from the [CRAN main
-site](http://cran.r-project.org/) and the
-[mirrors](http://cran.r-project.org/mirrors.html) shortly.
+site](https://cran.r-project.org/) and the
+[mirrors](https://cran.r-project.org/mirrors.html) shortly.
 
 February 7, 2010. New versions of [sqldf version
-0.3-3](http://cran.r-project.org/web/packages/sqldf/index.html), and
+0.3-3](https://cran.r-project.org/web/packages/sqldf/index.html), and
 [RH2 version
-0.1-1](http://cran.r-project.org/web/packages/RH2/index.html) (R driver
+0.1-1](https://cran.r-project.org/web/packages/RH2/index.html) (R driver
 for H2 database) have been uploaded to CRAN. They are primarily bug fix
 versions. Notable bugs that were eliminated were associated with the use
 of the persistence feature (using sqldf without any arguments) and the
@@ -543,68 +546,68 @@ Feburary 6, 2010. Added example [Example
 
 February 1, 2010. sqldf 0.3-2 is now in the svn repository and has been
 uploaded to CRAN. It now also supports the
-[H2](http://www.h2database.com) embedded java database. This database
-has some [SQL functions](http://www.h2database.com/html/functions.html)
+[H2](https://www.h2database.com) embedded java database. This database
+has some [SQL functions](https://www.h2database.com/html/functions.html)
 not available in SQLite. For more info see [FAQ
-\#10](http://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H).
+\#10](https://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H).
 
 January 27, 2010. Added [FAQ
-\#9](http://code.google.com/p/sqldf/#9._How_do_I_examine_the_layout_that_SQLite_uses_for_a_table?)
+\#9](https://code.google.com/p/sqldf/#9._How_do_I_examine_the_layout_that_SQLite_uses_for_a_table?)
 on examining table layouts.
 
 January 26, 2010. Added [FAQ
-\#8](http://code.google.com/p/sqldf/#8._Why_am_I_having_problems_with_update?)
+\#8](https://code.google.com/p/sqldf/#8._Why_am_I_having_problems_with_update?)
 on update.
 
 January 24, 2010. Added [FAQ
-\#7](http://code.google.com/p/sqldf/#7._Why_are_there_messages_about_MySQL?)
+\#7](https://code.google.com/p/sqldf/#7._Why_are_there_messages_about_MySQL?)
 on MySQL.
 
 January 22, 2010. Added [FAQ
-\#6](http://code.google.com/p/sqldf/#6._Why_are_there_problems_when_we_use_table_names_or_column_name)
+\#6](https://code.google.com/p/sqldf/#6._Why_are_there_problems_when_we_use_table_names_or_column_name)
 on case sensitivity.
 
 January 15, 2010. sqldf listed in Drew Conway's top 10 [Must-Have R
-Packages for Social Scientists](http://www.drewconway.com/zia/?p=1614)
+Packages for Social Scientists](https://www.drewconway.com/zia/?p=1614)
 in a December 2009 post on his Zero Intelligence Agents blog. sqldf was
 also mentioned in November in
-[dataspora](http://dataspora.com/blog/sql-is-dead-long-live-sql/) by
+[dataspora](https://dataspora.com/blog/sql-is-dead-long-live-sql/) by
 Michael E. Driscoll and is the subject of a blog post in [Cerebral
-Mastication](http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/)
+Mastication](https://www.cerebralmastication.com/2009/11/loading-big-data-into-r/)
 by J. D. Long. sqldf is also recommended for a particular application in
-[stackoverflow](http://stackoverflow.com/questions/1169551/sql-like-functionality-in-r)
+[stackoverflow](https://stackoverflow.com/questions/1169551/sql-like-functionality-in-r)
 and Juliet Jacobson discusses why it fits in with her work flow
 [here](https://stat.ethz.ch/pipermail/r-help/2010-January/224579.html).
 Also some recent tweets on sqldf can be found
-[here](http://twitter.com/ozjimbob/status/6479231902) and
-[here](http://twitter.com/zenogantner/status/2453139516).
+[here](https://twitter.com/ozjimbob/status/6479231902) and
+[here](https://twitter.com/zenogantner/status/2453139516).
 
 December 28, 2009. New bug fix release `sqldf 0.2-1` on
-[CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). See
-[NEWS file](http://sqldf.googlecode.com/svn/trunk/inst/NEWS).
+[CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). See
+[NEWS file](https://sqldf.googlecode.com/svn/trunk/inst/NEWS).
 
 December 26, 2009. Folded the Bugs section into [FAQ
-\#4](http://code.google.com/p/sqldf/#4._How_does_sqldf_work_with_"Date"_class_variables?)
+\#4](https://code.google.com/p/sqldf/#4._How_does_sqldf_work_with_"Date"_class_variables?)
 since this is more of an explanation of how to use dates in SQLite than
 a bug. That section has been further expanded to show how to use SQLite
-[date and time functions](http://www.sqlite.org/lang_datefunc.html) to
+[date and time functions](https://www.sqlite.org/lang_datefunc.html) to
 solve some problems involving the R `Date` class.
 
 December 22, 2009. `sqldf 0.2-0` has been released and is available on
-[CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). It now
+[CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). It now
 works with the latest version of `DBI`, `DBI 0.2-5` (which quotes column
 names that are SQL reserved words instead of appending `__1` to their
 name so the mangling of column names that are SQL reserved words is
 gone). Also `sqldf 0.2-0` supports the `libspatial-1.dll` SQLite
 loadable extension which gives the user access to several dozen new SQL
 functions listed here:
-[http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html](http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html).
+[https://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html](http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html).
 The user must download this dll and place it in their path if they want
 to use these functions. (If this is not done `sqldf` will still work but
 without those new functions.) Also new `filter=` arg on `read.csv.sql`
 and new `read.csv2.sql` command. For more details see this
 [announcement](https://stat.ethz.ch/pipermail/r-packages/2009/001083.html)
-and the [NEWS file](http://sqldf.googlecode.com/svn/trunk/inst/NEWS).
+and the [NEWS file](https://sqldf.googlecode.com/svn/trunk/inst/NEWS).
 
 December 9, 2009. Titus von der Malsburg [posted on
 r-help](https://stat.ethz.ch/pipermail/r-help/2009-December/221456.html)
@@ -616,7 +619,7 @@ the fastest. Marek Jared
 a variation on the problem, which included making it self-contained, and
 reached the same conclusion. (Added later: there are also some
 performance results
-[here](http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).)
+[here](https://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).)
 Since `sqldf` must build a database, transfer data frames to it, perform
 the operations, transfer the result back and destroy the database it
 created we would not expect it to be the fastest possible solution
@@ -635,11 +638,11 @@ August 30, 2009. Added Example 4f temporal join to this page.
 
 June 16, 2009. Added `read.csv2.sql` to development version. It is like
 `read.csv.sql` except that `sep` defaults to ";" . See [Example
-13b](http://code.google.com/p/sqldf/#Example_13._read.csv.sql) at the
+13b](https://code.google.com/p/sqldf/#Example_13._read.csv.sql) at the
 end of this page.
 
 June 7, 2009. Version 0.1-5 of
-[sqldf](http://cran.r-project.org/web/packages/sqldf/index.html) is now
+[sqldf](https://cran.r-project.org/web/packages/sqldf/index.html) is now
 on CRAN and should propagate to the mirrors shortly. `read.csv.sql` is
 new. See [Example 13](#Example_13._read.csv.sqlExample) below.
 
@@ -649,13 +652,13 @@ May 16, 2009. Example 6g added below.
 
 April 22, 2009. Added example 4e (left join) in the Examples section
 below. [Example 4
-section](http://code.google.com/p/sqldf/#Example_4._Join)
+section](https://code.google.com/p/sqldf/#Example_4._Join)
 
 March 29, 2009. Added example 7c in the Examples section below. [Example
-7 section](http://code.google.com/p/sqldf/#Example_7._Nested_Select)
+7 section](https://code.google.com/p/sqldf/#Example_7._Nested_Select)
 
 March 25, 2009. Added to
-[FAQ](http://code.google.com/p/sqldf/#3._Why_does_sqldf(%22select_var(x)_from_DF%22)_not_work?)
+[FAQ](https://code.google.com/p/sqldf/#3._Why_does_sqldf(%22select_var(x)_from_DF%22)_not_work?)
 3 showing how to use `group_concat` to apply `R` functions.
 
 March 17, 2009. Added Example 4d, temporal join, in Examples section
@@ -665,16 +668,16 @@ February 20, 2009. Added Example 12. Combine two files in permanent
 database.
 
 February 5, 2009. Added to [FAQ
-2](http://code.google.com/p/sqldf/#2._Why_does_sqldf_seem_to_mangle_certain_variable_names?)
+2](https://code.google.com/p/sqldf/#2._Why_does_sqldf_seem_to_mangle_certain_variable_names?)
 and created new [Example
-11](http://code.google.com/p/sqldf/#Example_11._Between_and_Alternatives)
+11](https://code.google.com/p/sqldf/#Example_11._Between_and_Alternatives)
 thanks to Michael Rehberg.
 
 January 16, 2009. Added new FAQ section below and incorporated old
 Heuristic section into it as question 1.
 
 December 10, 2008. sqldf 0.1-4 uploaded to
-[CRAN](http://cran.r-project.org/web/packages/sqldf/index.html)
+[CRAN](https://cran.r-project.org/web/packages/sqldf/index.html)
 
 November 19, 2008. Minor improvements to this web page.
 
@@ -710,33 +713,33 @@ rows from a file without reading the entire file into R.
 August 29, 2007. Expanded Example 6 below.
 
 August 11, 2007. Changes in the [development version of
-sqldf](http://code.google.com/p/sqldf/source) are that the sql argument,
+sqldf](https://code.google.com/p/sqldf/source) are that the sql argument,
 `x` can now be a vector with one component per sql command. Each will be
 executed in turn and result of last one returned.
 
 August 7, 2007. Changes in the [development version of
-sqldf](http://code.google.com/p/sqldf/source) are:
+sqldf](https://code.google.com/p/sqldf/source) are:
 
 -   supports reading large input files straight to the database (as
     opposed to reading them into R and then writing them to the
     database). See Example 6 below (which is also at end of
-    [sqldf.Rd](http://sqldf.googlecode.com/svn/trunk/man/sqldf.Rd)).
+    [sqldf.Rd](https://sqldf.googlecode.com/svn/trunk/man/sqldf.Rd)).
 -   argument list has been modified somewhat (although the most common
     usage is still only to specify a single argument, the SQL select
     statement) and
 -   it has been partially tested with MySQL (previously only SQLite).
 
 July 31, 2007. sqldf 0.1-1 (replacing sqldf 0.1-0) is on
-[CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). See
-[NEWS file](http://sqldf.googlecode.com/svn/trunk/inst/NEWS) for
+[CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). See
+[NEWS file](https://sqldf.googlecode.com/svn/trunk/inst/NEWS) for
 changes.
 
 Troubleshooting[](#Troubleshooting)
 ===================================
 
 sqldf has been
-[extensively](http://cran.r-project.org/web/checks/check_results_sqldf.html)
-[tested](http://code.google.com/p/sqldf/source/browse/trunk/inst/unitTests/runit.all.R)
+[extensively](https://cran.r-project.org/web/checks/check_results_sqldf.html)
+[tested](https://code.google.com/p/sqldf/source/browse/trunk/inst/unitTests/runit.all.R)
 with multiple architectures and database back ends but there are no
 guarantees.
 
@@ -744,7 +747,7 @@ Problem is that installer gives message that sqldf is not available[](#Problem_i
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 See
-[http://stackoverflow.com/questions/27772756/sqldf-doesnt-install-on-ubuntu-14-04](http://stackoverflow.com/questions/27772756/sqldf-doesnt-install-on-ubuntu-14-04)
+[https://stackoverflow.com/questions/27772756/sqldf-doesnt-install-on-ubuntu-14-04](http://stackoverflow.com/questions/27772756/sqldf-doesnt-install-on-ubuntu-14-04)
 
 Problem with no argument form of sqldf - sqldf()[](#Problem_with_no_argument_form_of_sqldf_-_sqldf())
 -----------------------------------------------------------------------------------------------------
@@ -785,7 +788,7 @@ options line in your `.Rprofile`, is all that is needed to get sqldf to
 work without the tcltk package and tcl/tk itself in most cases; however,
 this does have the downside that it will use the R engine which is
 slower. An alternative, is to rebuild R yourself as discussed here:
-[http://permalink.gmane.org/gmane.comp.lang.r.fedora/235](http://permalink.gmane.org/gmane.comp.lang.r.fedora/235)
+[https://permalink.gmane.org/gmane.comp.lang.r.fedora/235](http://permalink.gmane.org/gmane.comp.lang.r.fedora/235)
 
 If the above does not resolve the problem then read the more detailed
 discussion below.
@@ -795,7 +798,7 @@ some way and the main way to fix thiat is to fix your installation of R.
 This will not only affect sqldf but also many other R packages so
 information on installing them can also help here. In particular
 [installation information for the Rcmdr
-package](http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html)
+package](https://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html)
 may be useful since its likely that if you can install Rcmdr then you
 can also install sqldf.
 
@@ -843,11 +846,11 @@ packageVersion("gsubfn")
 
 -   using an old version of R, sqldf or some other software. If that is
     the problem upgrade to the most recent versions [on
-    CRAN](http://cran.r-project.org/web/packages/sqldf/index.html). Also
+    CRAN](https://cran.r-project.org/web/packages/sqldf/index.html). Also
     be sure you are using the latest versions of other packages used by
     sqldf. If you are getting NAMESPACE errors then this is likely the
     problem. You can find the current version of R
-    [here](http://cran.r-project.org/mirrors.html) and then install
+    [here](https://cran.r-project.org/mirrors.html) and then install
     sqldf from within R using `install.packages("sqldf")` . If you
     already have the current version of R and have installed the
     packages you want then you can update your installed packages to the
@@ -880,7 +883,7 @@ in which case all sqldf calls will use sqlite. See [FAQ
     change the name of the data frame to one without a dot.
 
 -   as recommended in the
-    [INSTALL](http://cran.r-project.org/web/packages/sqldf/INSTALL) file
+    [INSTALL](https://cran.r-project.org/web/packages/sqldf/INSTALL) file
     its better to install sqldf using `install.packages("sqldf")` and
     **not** `install.packages("sqldf", dep = TRUE)` since the latter
     will try to pull in every R database driver package supported by
@@ -891,10 +894,10 @@ in which case all sqldf calls will use sqlite. See [FAQ
     additional ones just install them separately.
 
 -   Mac users. According to
-    [http://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
+    [https://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
     Tcl/Tk comes with R 3.0.0 and later but if you are using an earlier
     version of R look at [this
-    link](http://r.789695.n4.nabble.com/sqldf-hanging-on-macintosh-works-on-windows-tt3022193.html#a3022397)
+    link](https://r.789695.n4.nabble.com/sqldf-hanging-on-macintosh-works-on-windows-tt3022193.html#a3022397)
     .
 
 FAQ[](#FAQ)
@@ -1000,12 +1003,12 @@ The SQL statement passed to sqldf must be a valid SQL statement
 understood by the database. The functions that are understood include
 simple SQLite functions and aggregate SQLite functions and functions in
 the
-[RSQLite.extfuns](http://code.google.com/p/sqldf/#Example_15._Use_of_RSQLite.extfuns_library_functions)
+[RSQLite.extfuns](https://code.google.com/p/sqldf/#Example_15._Use_of_RSQLite.extfuns_library_functions)
 package. Thus in this case in place of var(x) one could use variance(x)
 from the RSQLite.extfuns package. For SQLite functions see the lists of
-[core functions](http://www.sqlite.org/lang_corefunc.html), [aggregate
-functions](http://www.sqlite.org/lang_aggfunc.html) and [date and time
-functions](http://www.sqlite.org/lang_datefunc.html).
+[core functions](https://www.sqlite.org/lang_corefunc.html), [aggregate
+functions](https://www.sqlite.org/lang_aggfunc.html) and [date and time
+functions](https://www.sqlite.org/lang_datefunc.html).
 
 If each group is not too large we can use group\_concat to return all
 group members and then later use `apply` in `R` to use R functions to
@@ -1122,9 +1125,9 @@ Also note this code:
 4 2009-08-04 5
 ~~~~
 
-See [date and time functions](http://www.sqlite.org/lang_datefunc.html)
+See [date and time functions](https://www.sqlite.org/lang_datefunc.html)
 for more information. An example using times but not dates can be found
-[here](http://stackoverflow.com/questions/8185201/merge-records-over-time-interval/8187602#8187602)
+[here](https://stackoverflow.com/questions/8185201/merge-records-over-time-interval/8187602#8187602)
 and some discussion on using POSIXct can be found
 [here](https://groups.google.com/d/msg/sqldf/N-Xci-eKy3Y/faLa1siY6xYJ) .
 
@@ -1147,7 +1150,7 @@ tcl/tk itself.
 Mac. This should not occur on **recent** versions of R on Mac. If it
 does occur upgrade your R installation to a recent version. If you must
 use an older version of R on the Mac then get tcl/tk here:
-[http://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
+[https://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
 
 UNIX/Linux. If you don't already have tcl/tk itself on your system try
 this to install it like this (thanks to Eric Iversion):
@@ -1303,10 +1306,10 @@ Try these approaches to get the indicated meta data:
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
 sqldf will use the H2 database instead of sqlite if the
-[RH2](http://cran.r-project.org/web/packages/RH2/) package is loaded.
+[RH2](https://cran.r-project.org/web/packages/RH2/) package is loaded.
 Features supported by H2 not supported by SQLite include Date class
 columns and certain
-[functions](http://www.h2database.com/html/functions.html) such as
+[functions](https://www.h2database.com/html/functions.html) such as
 VAR\_SAMP, VAR\_POP, STDDEV\_SAMP, STDDEV\_POP, various XML functions
 and CSVREAD.
 
@@ -1359,7 +1362,7 @@ translates "Sepal Length" to Sepal.Length .
 
 -   file objects are not supported. They are not really needed because
     H2 supports a
-    [CSVREAD](http://www.h2database.com/html/functions.html#csvread)
+    [CSVREAD](https://www.h2database.com/html/functions.html#csvread)
     function. Note that on Windows one can use the R notation \~ to
     refer to the home directory when specifying filenames if using
     SQLite but not with CSVREAD in H2.
@@ -1552,7 +1555,7 @@ sqldf("select * from a where
 
 
 # 8. In H2 one uses csvread rather than file and file.format. See:
-# http://www.h2database.com/html/functions.html#csvread
+# https://www.h2database.com/html/functions.html#csvread
 
 numStr <- as.character(1:100)
 DF <- data.frame(a = c(numStr, "Hello"))
@@ -1699,7 +1702,7 @@ sqldf('select *, rank() over  (partition by "Group_A", "Group_B" order by "Value
 ~~~~
 
 For another example using `over` and `partition by` see: [this cumsum
-example](http://stackoverflow.com/questions/8559485/r-cumulative-sum-by-group-in-sqldf/8561324#8561324)
+example](https://stackoverflow.com/questions/8559485/r-cumulative-sum-by-group-in-sqldf/8561324#8561324)
 
 Also note that `log` and `log10` in R correspond to `ln` and `log`,
 respectively, in PostgreSQL.
@@ -1726,7 +1729,7 @@ read.csv.sql("myfile.csv", filter = list('gawk -f prog', prog = '{ gsub(/"/, "")
 ~~~~
 
 Another program to look at is the
-[csvfix](http://code.google.com/p/csvfix/) program (this is a free
+[csvfix](https://code.google.com/p/csvfix/) program (this is a free
 external program -- not an R program). For example suppose we have
 commas in two contexts: (1) as separators between fields and within
 double quoted fields. To handle that case we can use `csvfix` to
@@ -1866,7 +1869,7 @@ Use `read.csv.sql` and specify the URL of the file:
 
 ~~~~ {.prettyprint}
 # 1
-URL <- "http://www.wnba.com/liberty/media/NYL2011ScheduleV3.csv"
+URL <- "https://www.wnba.com/liberty/media/NYL2011ScheduleV3.csv"
 DF <- read.csv.sql(URL, eol = "\r")
 ~~~~
 
@@ -1874,8 +1877,8 @@ Since files off the net could have any end of line be careful to specify
 it properly for the file of interest.
 
 As an alternative one could use the filter argument. To use this `wget`
-([download](http://wget.addictivecode.org/FrequentlyAskedQuestions?action=show&redirect=Faq#download),
-[Windows](http://gnuwin32.sourceforge.net/packages/wget.htm)) must be
+([download](https://wget.addictivecode.org/FrequentlyAskedQuestions?action=show&redirect=Faq#download),
+[Windows](https://gnuwin32.sourceforge.net/packages/wget.htm)) must be
 present on the system command path.
 
 ~~~~ {.prettyprint}
@@ -1891,7 +1894,7 @@ DF <- read.csv.sql(filter = "7z x -so anscombe.zip 2>NUL")
 ~~~~
 
 In the line of code above it is assumed that `7z`
-([download](http://www.7-zip.org/download.html)) is present and on the
+([download](https://www.7-zip.org/download.html)) is present and on the
 system command path. The example is for Windows. On UNIX use `/dev/null`
 in place of `NUL`.
 
@@ -1903,7 +1906,7 @@ DF <- read.csv.sql(filter = "tar xOfz anscombe.tar.gz")
 
 assuming that tar is available on our path. (Normally tar is available
 on Linux and on Windows its available as part of the
-[Rtools](http://cran.r-project.org/bin/windows/Rtools/) distribution on
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/) distribution on
 CRAN.)
 
 Note that `filter` causes the filtered output to be stored in a
@@ -1918,15 +1921,15 @@ Examples[](#Examples)
 
 These examples illustrate usage of both sqldf and SQLite. For sqldf with
 H2 see [FAQ
-\#10](http://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H).
+\#10](https://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H).
 For PostgreSQL see
-[FAQ\#12](http://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?).
+[FAQ\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?).
 Also the `"sqldf-unitTests"` demo that comes with sqldf works under
 sqldf with SQLite, H2, PostgreSQL and MySQL. David L. Reiner has created
 some further examples
-[here](http://files.meetup.com/1625815/crug_sqldf_05-01-2013.pdf) and
+[here](https://files.meetup.com/1625815/crug_sqldf_05-01-2013.pdf) and
 Paul Shannon has examples
-[here](http://brusers.tumblr.com/post/59706993506/data-manipulation-with-sqldf-paul).
+[here](https://brusers.tumblr.com/post/59706993506/data-manipulation-with-sqldf-paul).
 
 Example 1. Ordering and Limiting[](#Example_1._Ordering_and_Limiting)
 ---------------------------------------------------------------------
@@ -1995,12 +1998,12 @@ naming:
 ~~~~
 
 Note that PostgreSQL is the only free database that supports
-[window](http://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](http://developer.postgresql.org/pgdocs/postgres/functions-window.html)
+[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
+[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html)
 (similar to `ave` function in R) which would allow a different
 formulation of the above. For more on using sqldf with PostgreSQL see
 [FAQ
-\#12](http://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
+\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
 
 ~~~~ {.prettyprint}
 > library(RPostgreSQL)
@@ -2049,7 +2052,7 @@ PostgreSQL corresponds to `ave` in R):
 ~~~~
 
 Here is some sample data with the correlated subquery from this
-[Wikipedia page](http://en.wikipedia.org/wiki/Correlated_subquery):
+[Wikipedia page](https://en.wikipedia.org/wiki/Correlated_subquery):
 
 ~~~~ {.prettyprint}
 Emp <- data.frame(emp = letters[1:24], salary = 1:24, dept = rep(c("A", "B", "C"), each = 8))
@@ -2293,7 +2296,7 @@ Here is an [another example of a self
 join](https://stat.ethz.ch/pipermail/r-help/2011-February/269680.html)
 to create pairs which is followed by a second self join to produce pairs
 of pairs. This [stackoverflow
-example](http://stackoverflow.com/questions/11448133/double-merge-two-data-frames-in-r)
+example](https://stackoverflow.com/questions/11448133/double-merge-two-data-frames-in-r)
 illustrates an sqldf triple join in which one table participates twice.
 
 Example 4h. Join nearby times. There is an example of joining records
@@ -2303,7 +2306,7 @@ and
 [answer](https://stat.ethz.ch/pipermail/r-help/attachments/20100320/4ccb548f/attachment.pl)
 . Also taking successive differences involves joining adjacent times and
 this is illustrated
-[here](http://stackoverflow.com/questions/6695673/find-standard-deviation-of-first-differences-of-series-defined-with-group-by-usin)
+[here](https://stackoverflow.com/questions/6695673/find-standard-deviation-of-first-differences-of-series-defined-with-group-by-usin)
 .
 
 Here is an example where we align time series Sy to series Sx by
@@ -2335,7 +2338,7 @@ all.equal(out.sqldf[,2], out1) # TRUE
 
 Example 4i. Speeding up joins with indexes. Here is an example of
 speeding up a join by using indexes on a single join column
-[here](http://statcompute.wordpress.com/2013/06/09/improve-the-efficiency-in-joining-data-with-index/)
+[here](https://statcompute.wordpress.com/2013/06/09/improve-the-efficiency-in-joining-data-with-index/)
 and [here](https://stat.ethz.ch/pipermail/r-help/2010-March/232688.html)
 and on two join columns below. Note that the `create index` statements
 in each example also has the effect of reading in the data frames into
@@ -2422,7 +2425,7 @@ automatically converted to `"Date"` class by the sqldf heuristic because
 there is an input column that has the same name.
 
 ~~~~ {.prettyprint}
-> URL <- "http://ichart.finance.yahoo.com/table.csv?s=GOOG&a=07&b=19&c=2004&d=03&e=16&f=2010&g=d&ignore=.csv"
+> URL <- "https://ichart.finance.yahoo.com/table.csv?s=GOOG&a=07&b=19&c=2004&d=03&e=16&f=2010&g=d&ignore=.csv"
 > DF25 <- read.csv(URL, nrows = 25)
 > DF25$Date <- as.Date(DF25$Date)
 > 
@@ -2454,12 +2457,12 @@ the second Stackoverflow link below:
 ~~~~
 
 Also see [this Xaprb
-link](http://www.xaprb.com/blog/2007/03/14/how-to-find-the-max-row-per-group-in-sql-without-subqueries/)
+link](https://www.xaprb.com/blog/2007/03/14/how-to-find-the-max-row-per-group-in-sql-without-subqueries/)
 for an approach without subqueries and for more discussion see [this
 stackoverflow
-link](http://stackoverflow.com/questions/121387/sql-fetch-the-row-which-has-the-max-value-for-a-column)
+link](https://stackoverflow.com/questions/121387/sql-fetch-the-row-which-has-the-max-value-for-a-column)
 and [this stackoverflow
-link](http://stackoverflow.com/questions/1140254/postgresql-vlookup).
+link](https://stackoverflow.com/questions/1140254/postgresql-vlookup).
 The last link shows how to use analytical queries which are available in
 PostgreSQL -- the PostgreSQL database, like SQLite and H2, is supported
 by sqldf.
@@ -2468,7 +2471,7 @@ Example 5. Insert Variables[](#Example_5._Insert_Variables)
 -----------------------------------------------------------
 
 Here is an example of inserting evaluated variables into a query using
-[gsubfn](http://code.google.com/p/gsubfn/) quasi-perl-style string
+[gsubfn](https://code.google.com/p/gsubfn/) quasi-perl-style string
 interpolation. gsubfn is used by sqldf so its already loaded. Note that
 we must use the `fn$` prefix to invoke the interpolation functionality:
 
@@ -2527,7 +2530,7 @@ format is only partly supported -- quotes are not regarded as special.
 In addition to the examples below there is an example
 [here](https://stat.ethz.ch/pipermail/r-help/2009-May/199991.html) and
 another one with performance results
-[here](http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).
+[here](https://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).
 
 ~~~~ {.prettyprint}
 > # Example 6a.
@@ -2552,7 +2555,7 @@ another one with performance results
 >
 > # Example 6b.
 > # similar but uses disk - useful if file were large
-> # According to http://www.sqlite.org/whentouse.html
+> # According to https://www.sqlite.org/whentouse.html
 > # SQLite can handle files up to several dozen gigabytes.
 > # (Note in this case readTable and readTableIndex in R.utils
 > # package or read.table from the base of R, setting the colClasses 
@@ -2996,8 +2999,8 @@ iris.csv2 <- read.csv2.sql("iris2.csv", sql = 'select * from file where "Sepal.L
 # Example 13c. Use of filter= to process fixed field widths.
 
 # This example assumes gawk is available for use as a filter:
-# http://www.icewalkers.com/Linux/Software/514530/Gawk.html
-# http://gnuwin32.sourceforge.net/packages/gawk.htm
+# https://www.icewalkers.com/Linux/Software/514530/Gawk.html
+# https://gnuwin32.sourceforge.net/packages/gawk.htm
 
 library(sqldf)
 cat("112333
@@ -3041,7 +3044,7 @@ DF2 <- fn$read.csv.sql("anscombe.dat", sql = "select `nms[j]` from file")
 Also see this
 [example](https://stat.ethz.ch/pipermail/r-help/2010-November/260931.html)
 and this further
-[example](http://stackoverflow.com/questions/6966723/how-to-allocate-append-a-large-column-of-date-objects-to-a-data-frame/6966771#6966771).
+[example](https://stackoverflow.com/questions/6966723/how-to-allocate-append-a-large-column-of-date-objects-to-a-data-frame/6966771#6966771).
 The latter illustrates the use of the `method=` argument.
 
 Example 14. Use of spatialite library functions[](#Example_14._Use_of_spatialite_library_functions)
@@ -3061,7 +3064,7 @@ sure that it has been put there before starting sqldf.)
 > library(sqldf)
 > # stddev_pop is a function in spatialite library similar to sd in R
 > # Note bug: spatialite has stddev_pop and stddev_samp reversed and ditto for var_pop and var_samp.  More on bug at:
-> # http://groups.google.com/group/spatialite-users/msg/182f1f629c922607
+> # https://groups.google.com/group/spatialite-users/msg/182f1f629c922607
 > sqldf("select avg(demand), stddev_pop(demand) from BOD")
   avg(demand) stddev_pop(demand)
 1    14.83333           4.630623
@@ -3074,12 +3077,12 @@ Example 15. Use of RSQLite.extfuns library functions[](#Example_15._Use_of_RSQLi
 
 The RSQLite.extfuns are automatically loaded (as sqldf now depends on
 the
-[RSQLite.extfuns](http://cran.r-project.org/web/packages/RSQLite.extfuns/index.html)
+[RSQLite.extfuns](https://cran.r-project.org/web/packages/RSQLite.extfuns/index.html)
 R package which includes Liam Healy's extension functions for SQLite).
 In addition to all the [core
-functions](http://www.sqlite.org/lang_corefunc.html), [date
-functions](http://www.sqlite.org/lang_datefunc.html) and [aggregate
-functions](http://www.sqlite.org/lang_aggfunc.html) that SQLite itself
+functions](https://www.sqlite.org/lang_corefunc.html), [date
+functions](https://www.sqlite.org/lang_datefunc.html) and [aggregate
+functions](https://www.sqlite.org/lang_aggfunc.html) that SQLite itself
 provides, the following extension functions are available for use within
 SQL select statements: **Math:** acos, asin, atan, atn2, atan2, acosh,
 asinh, atanh, difference, degrees, radians, cos, sin, tan, cot, cosh,
@@ -3088,7 +3091,7 @@ floor, pi. **String:** replicate, charindex, leftstr, rightstr, ltrim,
 rtrim, trim, replace, reverse, proper, padl, padr, padc, strfilter.
 **Aggregate:** stdev, variance, mode, median, lower\_quartile,
 upper\_quartile. See the bottom of
-[http://www.sqlite.org/contrib/](http://www.sqlite.org/contrib/) for
+[https://www.sqlite.org/contrib/](http://www.sqlite.org/contrib/) for
 more info on these extension functions.
 
 ~~~~ {.prettyprint}
@@ -3258,8 +3261,8 @@ DD <-
 ~~~~
 
 In PostgreSQL's
-[window](http://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](http://developer.postgresql.org/pgdocs/postgres/functions-window.html)
+[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
+[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html)
 (similar to R's `ave` function) makes reference to other rows
 particularly easy. Below we repeat the SQLite example in PostgreSQL
 (except that the following fills with NA):
@@ -3284,7 +3287,7 @@ sqldf("show tables")
 
 The following SQL statements to query the MySQL table schemas are taken
 from the [blog of Christophe
-Ladroue](http://chrisladroue.com/2012/03/a-graphical-overview-of-your-mysql-database/):
+Ladroue](https://chrisladroue.com/2012/03/a-graphical-overview-of-your-mysql-database/):
 
 ~~~~ {.prettyprint}
 library(RMySQL)
@@ -3304,7 +3307,7 @@ sqldf("SELECT TABLE_SCHEMA,TABLE_NAME,TABLE_ROWS,DATA_LENGTH
 
 The following SQL statement to query the MySQL table schemas are taken
 from [the MySQL Performance
-Blog](http://www.mysqlperformanceblog.com/2008/03/17/researching-your-mysql-table-sizes/):
+Blog](https://www.mysqlperformanceblog.com/2008/03/17/researching-your-mysql-table-sizes/):
 
 ~~~~ {.prettyprint}
 # Find total number of tables, rows, total data in index size
@@ -3345,5 +3348,5 @@ Links[](#Links)
 ===============
 
 [Visual Representation of SQL
-Joins](http://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins)
+Joins](https://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins)
 

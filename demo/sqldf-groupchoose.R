@@ -44,7 +44,6 @@ DFo <- sqldf("select * from DF order by
 sqldf("select * from DFo group by Date")
 
 #################################
-# Here is a second different way to do it in sqldf
 # Another way to do it also using sqldf is via nested selects like this using
 # the same DF as above
 #################################

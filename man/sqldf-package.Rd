@@ -13,8 +13,8 @@ contains more information and examples.
 }
 \references{ 
 The \link{sqldf} help page contains the primary documentation.
-The sqldf home page \url{http://sqldf.googlecode.com} contains
-links to SQLite pages that may be helpful in formulating queries.
+The sqldf github home page \url{https://github.com/ggrothendieck/sqldf} 
+contains links to SQLite pages that may be helpful in formulating queries.
 }
 \keyword{ package }
 

@@ -265,7 +265,7 @@ This is in addition to the extension functions included with RSQLite.
   
 }
 \references{ 
-The sqldf home page \url{http://sqldf.googlecode.com} contains
+The sqldf home page \url{https://github.com/ggrothendieck/sqldf} contains
 more examples as well as links to SQLite pages that may be helpful in 
 formulating queries.  It also containers pointers to using sqldf with H2
 and PostgreSQL.

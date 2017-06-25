@@ -1,132 +1,72 @@
+INSTALLING FROM CRAN
 
-sqldf is installed like any other R package using this command from within R:
+sqldf is installed from CRAN like this:
 
 	install.packages("sqldf")
 
 This will download and install sqldf and all its dependencies including the
-RSQLite driver which includes SQLite itself so its particularly simple to
-install if you use sqlite.  (More info later on how to use one of the other
-supported databases.)
-
-sqldf can use one of 4 database systems:
-
-	- sqlite via RSQLite driver R package (which includes sqlite itself)
-	- H2 via RH2 driver R package (which includes H2 itself)
-	- PostgreSQL via the RpostgreSQL driver R package or the RpgSQL driver
-	- MySQL via the RMySQL driver R package
+RSQLite driver.  The RSQLite driver includes SQLite itself so  the single
+line given above is all that is needed to install everything you need.
 
 
-EXAMPLE OF INSTALLING AND USING WITH SQLITE
+INSTALLING FROM GITHUB
 
-As SQLite itself is included right in the RSQLite driver and since sqldf
-automatically installs RSQLite this is the easiest to install.  Just install
-sqldf and there is nothing else to do:
+The development version of sqldf can be installed from github like this:
 
-	install.packages("sqldf")
-
-	library(sqldf)
-
-	# now we can use it with sqlite, e.g.
-	sqldf("select * from iris limit 3")
-	DF <- data.frame(a = 1:3, b = 4:6)
-	sqldf("select * from DF")
+	library(devtools)
+	install_github("ggrothendieck/sqldf")
 
 
-EXAMPLE OF INSTALLING AND USING WITH RH2
+BACKENDS
 
-H2 is the next easiest to install because, like sqlite, its an embedded database
-that is included right in its R driver package.  You only need to install 
-sqldf, java and RH2.
+sqldf can also be used with alternate backends: H2, PostgreSQL and MySQL.
 
-	# install java runtime
-	install.packages("sqldf")
-	install.packages("RH2")
+H2 is the next easiest to install since the H2 software itself is included 
+right in the RH2 R package providing the driver. Just install RH2 (which
+in turn requires that you install java).
 
-	library(RH2)
-	library(sqldf)
-
-	# now we can use it with H2, e.g.
-	sqldf("select * from iris limit 3")
-	DF <- data.frame(a = 1:3, b = 4:6)
-	sqldf("select * from DF")
-
-EXAMPLE OF INSTALLING AND USING WITH RPOSTGRESQL
-
-First install PostgreSQL.  
-
-The R driver, RPostgreSQL, has no special installation instructions:
-
-	install.packages("sqldf")
-	install.packages("RPostgreSQL")
-
-	library(RPostgreSQL)
-	library(sqldf)
-
-	# now we can use it with PostgreSQL, e.g.
-
-	sqldf("select * from iris limit 3")
-	DF <- data.frame(a = 1:3, b = 4:6)
-	# careful! Postgres translates everything not quoted to lower case
-	sqldf('select * from "DF"')
-
-MYSQL
-
-To use MySQL, it must be installed separately and RMySQL must be built
-by the user making it a bit more difficult to install than others.
-
-MORE INFO
-
-There is installation info on the other databases on their CRAN web pages. See
-the Installation Info links on these pages:
-
-  http://cran.r-project.org/package=RH2 
-  http://cran.r-project.org/package=RPostgreSQL
-  http://cran.r-project.org/package=RpgSQL
-  http://cran.r-project.org/package=RMySQL
-
-
-RUNNING
-
-If RH2, RpgSQL or RMySQL is loaded, e.g. library(RH2), then sqldf will notice 
-it and use that database so there is nothing to specify.  
-
-The following is typically unnecessary but if you have multiple database
-drivers loaded and wish to explicitly specify one of them then use the
-drv=... argument of each sqldf call or set options(sqldf.driver=...) in R.
-The possible values of ... are "SQLite", "MySQL", "h2" or "pgSQL".
-
-See FAQ #7 on the sqldf home page (http://sqldf.googlecode.com) for more.
+See FAQ #12 on the sqldf github home page for information on installng and 
+using PostgreSQL with sqldf.
+https://github.com/ggrothendieck/sqldf
 
 
 PROBLEMS
 
-sqldf uses gsubfn which can optionally use the R tcltk package but can also
-run without that package substituting R code for it.  On Windows and most
-other R installations, tcltk comes with the core of R and so you automatically
-get it.  If the tcltk is package not present it will be automatically detected 
-and it will automatically switch to R code.  
+sqldf uses gsubfn which can optionally use the R tcltk package but can also run
+without that package substituting R code for it.  On Windows and most other R
+installations, the tcltk package comes with the core of R and so you
+automatically have it intalled it when you install R itself.  If the tcltk
+package is not present this fact will be automatically detected and it will
+automatically switch to R code.  
 
 There have been reports of bad R builds in which R reports that it has tcltk
-capability even though its missing. In that case you will get an error message
-about tcltk being missing.  To address this issue its easiest to just run this
-command to force it to use R code in place of tcltk:
-
+capability even though it is missing. In that case you will get an error message
+about tcltk being missing.  To address this issue it is easiest to just run this
+command prior to sqldf to force gsubfn to use R code in place of tcltk:
 	options(gsubfn.engine = "R")
 
-See FAQ #5 on the sqldf home page (http://sqldf.googlecode.com) for more.
+See FAQ #5 on the sqldf github home page for more info.
+https://github.com/ggrothendieck/sqldf
 
 
 MORE INFO
 
-There is more information on sqldf on the sqldf home page:
-
-	http://sqldf.googlecode.com
-
+There is more information on sqldf on the sqldf github home page.
 Note the TROUBLESHOOTING, FAQs and EXAMPLES sections there.
+
+    https://github.com/ggrothendieck/sqldf
 
 There is also information in the help files:
 
     library(help = sqldf)
     ?sqldf
     ?read.csv.sql
+
+There is also info on the individual driver packages here:
+
+  http://cran.r-project.org/package=RSQLite
+  http://cran.r-project.org/package=RH2 
+  http://cran.r-project.org/package=RPostgreSQL
+  http://cran.r-project.org/package=RMySQL
+
 

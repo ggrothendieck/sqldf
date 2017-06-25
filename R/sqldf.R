@@ -285,8 +285,8 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 	# engine is "tcl" or "R".  
 	engine <- getOption("gsubfn.engine")
 	if (is.null(engine) || is.na(engine) || engine == "") {
-		engine <- if (require("tcltk")) "tcl" else "R"
-	} else if (engine == "tcl") require("tcltk")
+		engine <- if (requireNamespace("tcltk", quietly = TRUE)) "tcl" else "R"
+	} else if (engine == "tcl") requireNamespace("tcltk", quietly = TRUE)
 
 	# words. is a list whose ith component contains vector of words in ith stmt
 	# words is all the words in one long vector without duplicates
@@ -564,8 +564,10 @@ read.csv.sql <- function(file, sql = "select * from file",
 	
     ## filesheet
     tf <- NULL
-    if ( substring(file, 1, 7) == "http://" ||
-         substring(file, 1, 6) == "ftp://" ) {
+    if ( substring(file, 1, 7) == "http://"  ||
+         substring(file, 1, 8) == "https://" ||
+         substring(file, 1, 6) == "ftp://"  ||
+         substring(file, 1, 7) == "ftps://" ) {
 
         tf <- tempfile()
 		on.exit(unlink(tf), add = TRUE)

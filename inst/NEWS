@@ -1,3 +1,9 @@
+Version 0.4-11
+
+o modifications for RSQLite 2.0.0 
+
+o read.csv.sql now accepts https and ftps
+
 Version 0.4-10
 
 o more modifications for RSQLite 1.0.0 

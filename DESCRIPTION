@@ -1,6 +1,6 @@
 Package: sqldf
-Version: 0.4-10
-Date: 2014-10-31
+Version: 0.4-11
+Date: 2017-06-23
 Title: Perform SQL Selects on R Data Frames
 Author: G. Grothendieck <ggrothendieck@gmail.com>
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
@@ -14,11 +14,11 @@ Description: The sqldf function is typically passed a single argument which is
     files into R even if the original files are larger than R itself 
     can handle.  RSQLite, RH2, RMySQL and RPostgreSQL backends are supported.
 ByteCompile: true
-Depends: R (>= 3.1.0), gsubfn (>= 0.6), proto, RSQLite (>= 1.0.0)
+Depends: R (>= 3.1.0), gsubfn (>= 0.6), proto, RSQLite
 Suggests: RH2, RMySQL, RPostgreSQL, svUnit, tcltk, MASS
-Imports: DBI (>= 0.2-5), chron
+Imports: DBI, chron
 Description: Manipulate R data frames using SQL.
 License: GPL-2
 BugReports: http://groups.google.com/group/sqldf
-URL: http://sqldf.googlecode.com
+URL: https://github.com/ggrothendieck/sqldf
 
