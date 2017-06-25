@@ -1,5 +1,0 @@
-
-- read.csv.sql for H2, MySQL and pgSQL
-- MySQL & pgSQL should create and drop database if test database missing
-- support csvJDBC?
-
