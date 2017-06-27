@@ -1,7 +1,7 @@
 Package: sqldf
 Version: 0.4-11
 Date: 2017-06-23
-Title: Perform SQL Selects on R Data Frames
+Title: Manipulate R Data Frames Using SQL
 Author: G. Grothendieck <ggrothendieck@gmail.com>
 Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
 Description: The sqldf function is typically passed a single argument which is
@@ -17,8 +17,7 @@ ByteCompile: true
 Depends: R (>= 3.1.0), gsubfn (>= 0.6), proto, RSQLite
 Suggests: RH2, RMySQL, RPostgreSQL, svUnit, tcltk, MASS
 Imports: DBI, chron
-Description: Manipulate R data frames using SQL.
 License: GPL-2
-BugReports: http://groups.google.com/group/sqldf
-URL: https://github.com/ggrothendieck/sqldf
+BugReports: https://github.com/ggrothendieck/sqldf/issues
+URL: https://github.com/ggrothendieck/sqldf, https://groups.google.com/group/sqldf
 
