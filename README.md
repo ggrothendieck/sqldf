@@ -1274,6 +1274,8 @@ UNIX depending on your shell):
 read.csv.sql("myfile.csv", filter = 'tr.exe -d \'^"\' ' )
 ~~~~
 
+or using `gawk`:
+
 ~~~~ {.prettyprint}
 # TODO: fix this example
 read.csv.sql("myfile.csv", filter = list('gawk -f prog', prog = '{ gsub(/"/, ""); print }') )
@@ -1288,7 +1290,7 @@ like this with csvfix:
 read.csv.sql("myfile.csv", filter = 'csvfix echo -smq' )
 ~~~~
 
-As another csfix example, suppose we have commas in two contexts: (1) as
+As another csvfix example, suppose we have commas in two contexts: (1) as
 separators between fields and within double quoted fields. To handle that case
 we can use `csvfix` to translate the separators to semicolon stripping off the
 double quotes at the same time (assuming we have installed `csvfix` and we have
