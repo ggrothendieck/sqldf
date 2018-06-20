@@ -184,10 +184,10 @@ page.
 
 As seen from this example which uses the built in `BOD` data frame:
 
-~~~~ {.prettyprint}
+```r
 library(sqldf)
 sqldf("select * from BOD where Time > 4")
-~~~~
+```
 
 with `sqldf` the user is freed from having to do the following, all of
 which are automatically done:
@@ -235,10 +235,10 @@ Citing sqldf[](#Citing_sqldf)
 To get information on how to cite `sqldf` in papers, issue the R
 commands:
 
-~~~~ {.prettyprint}
+```r
 library(sqldf)
 citation("sqldf")
-~~~~
+```
 
 For Those New to R[](#For_Those_New_to_R)
 =========================================
@@ -248,7 +248,7 @@ for single letter R](https://www.r-project.org), download R, install it
 on Windows, Mac or UNIX/Linux and then start R and at R console enter
 this:
 
-~~~~ {.prettyprint}
+```r
 # installs everything you need to use sqldf with SQLite
 # including SQLite itself
 install.packages("sqldf")
@@ -263,14 +263,14 @@ sqldf("select Species, count(*) from iris group by Species")
 DF <- data.frame(a = 1:5, b = letters[1:5])
 sqldf("select * from DF")
 sqldf("select avg(a) mean, variance(a) var from DF") # see example 15
-~~~~
+```
 
 To try it with H2 rather than SQLite the process is similar. Ensure that
 you have the [java](https://java.sun.com) runtime installed, install R as
 above and start R. From within R enter this ensuring that the version of
 RH2 that you have is RH2 0.1-2.6 or later:
 
-~~~~ {.prettyprint}
+```r
 # installs everything including H2
 install.packages("sqldf", dep = TRUE)
 # load RH2 driver and sqldf into workspace
@@ -284,7 +284,7 @@ sqldf("select Species, count(*) from iris group by Species")
 DF <- data.frame(a = 1:5, b = letters[1:5])
 sqldf("select * from DF")
 sqldf("select avg(a) mean, var_samp(a) var from DF")
-~~~~
+```
 
 Troubleshooting[](#Troubleshooting)
 ===================================
@@ -310,10 +310,10 @@ connection. If you have forgotten whether the last `sqldf()` opened or
 closed the connection this code will close it if it is open and
 otherwise do nothing:
 
-~~~~ {.prettyprint}
+```r
    # close an old connection if it exists
    if (!is.null(getOption("sqldf.connection"))) sqldf()
-~~~~
+```
 
 Thanks to Chris Davis
 [https://groups.google.com/d/msg/sqldf/-YAvaJnlRrY/7nF8tpBnrcAJ](https://groups.google.com/d/msg/sqldf/-YAvaJnlRrY/7nF8tpBnrcAJ)
@@ -331,9 +331,9 @@ only need to upgrade to the latest version of R. If upgrading to the
 latest version of R does not help then using this line will usually
 allow it to work even without the tcltk package and tcl/tk itself:
 
-~~~~ {.prettyprint}
+```r
 options(gsubfn.engine = "R")
-~~~~
+```
 
 Running the above `options` line before using `sqldf`, e.g. put that
 options line in your `.Rprofile`, is all that is needed to get sqldf to
@@ -392,9 +392,9 @@ first place. Be sure you are using gsubfn 0.6-4 or later if you use this
 option since prior versions of gsubfn had a bug which could interfere
 with the use of this option. To check your version of gsubfn:
 
-~~~~ {.prettyprint}
+```r
 packageVersion("gsubfn")
-~~~~
+```
 
 -   using an old version of R, sqldf or some other software. If that is
     the problem upgrade to the most recent versions [on
@@ -491,22 +491,22 @@ underscores so that SQL statements can reference such columns unquoted.
 Also note that certain names are SQL keywords. These can be found using
 this code:
 
-~~~~ {.prettyprint}
+```r
 .SQL92Keywords
-~~~~
+```
 
 Note that using such names can sometimes result in an error message such
 as:
 
-~~~~ {.prettyprint}
+```r
 Error in sqliteExecStatement(con, statement, bind.data) :
  RS-DBI driver: (error in statement: no such column: ...)
-~~~~
+```
 
 which appears to suggest that there is no column but that is because it
 has a different name than expected. For an example of what happens:
 
-~~~~ {.prettyprint}
+```r
 > # this only applies to old versions of sqldf and DBI
 > # based on example by Adrian Dragulescu
 > DF <- data.frame(index=1:12, date=rep(c(Sys.Date()-1, Sys.Date()), 6),
@@ -546,7 +546,7 @@ has a different name than expected. For an example of what happens:
 10 10 2009-01-17 A -0.67
 11 11 2009-01-16 B  2.49
 12 12 2009-01-17 C -0.63
-~~~~
+```
 
 3. Why does sqldf("select var(x) from DF") not work?[](#3._Why_does_sqldf("select_var(x)_from_DF")_not_work?)
 -------------------------------------------------------------------------------------------------------------
@@ -567,7 +567,7 @@ group members and then later use `apply` in `R` to use R functions to
 aggregate results. For example, in the following we summarize the data
 using `sqldf` and then `apply` a function based on `var`:
 
-~~~~ {.prettyprint}
+```r
 > DF <- data.frame(a = 1:8, g = gl(2, 4))
 > out <- sqldf("select group_concat(a) groupa from DF group by g")
 > out
@@ -579,7 +579,7 @@ using `sqldf` and then `apply` a function based on `var`:
    groupa      var
 1 1,2,3,4 1.666667
 2 5,6,7,8 1.666667
-~~~~
+```
 
 4. How does sqldf work with "Date" class variables?[](#4._How_does_sqldf_work_with_"Date"_class_variables?)
 -----------------------------------------------------------------------------------------------------------
@@ -587,7 +587,7 @@ using `sqldf` and then `apply` a function based on `var`:
 The H2 database has specific support for Date class variables so with H2
 Date class variables work as expected:
 
-~~~~ {.prettyprint}
+```r
 > library(RH2) # driver support for dates was added in RH2 version 0.1-2
 > library(sqldf)
 > test1 <- data.frame(sale_date = as.Date(c("2008-08-01", "2031-01-09",
@@ -597,7 +597,7 @@ Date class variables work as expected:
 > sqldf("select MAX(sale_date) from test1")
   MAX..sale_date..
 1       2031-01-09
-~~~~
+```
 
 In R, `Date` class dates are stored internally as the number of days
 since 1970-01-01 -- often referred to as the UNIX Epoch. (They are
@@ -617,7 +617,7 @@ you name the output column the same name as an input column which has
 `"Date"` class then it will correctly infer that the output is to be of
 class `"Date"` as well.
 
-~~~~ {.prettyprint}
+```r
 > library(sqldf)
 > test1 <- data.frame(sale_date = as.Date(c("2008-08-01", "2031-01-09",
 + "1990-01-03", "2007-02-03", "1997-01-03", "2004-02-04")))
@@ -641,11 +641,11 @@ class `"Date"` as well.
 > sqldf("select max(sale_date) sale_date from test1")
    sale_date
 1 2031-01-09
-~~~~
+```
 
 Also note this code:
 
-~~~~ {.prettyprint}
+```r
 > library(sqldf)
 > DF <- data.frame(a = Sys.Date() + 1:5, b = 1:5)
 > DF
@@ -675,7 +675,7 @@ Also note this code:
 2 2009-08-02 3
 3 2009-08-03 4
 4 2009-08-04 5
-~~~~
+```
 
 See [date and time functions](https://www.sqlite.org/lang_datefunc.html)
 for more information. An example using times but not dates can be found
@@ -707,9 +707,9 @@ use an older version of R on the Mac then get tcl/tk here:
 UNIX/Linux. If you don't already have tcl/tk itself on your system try
 this to install it like this (thanks to Eric Iversion):
 
-~~~~ {.prettyprint}
+```r
 sudo apt-get install tck-dev tk-dev
-~~~~
+```
 
 Also see this message by Rolf Turner:
 [https://stat.ethz.ch/pipermail/r-help/2011-April/274424.html](https://stat.ethz.ch/pipermail/r-help/2011-April/274424.html).
@@ -717,9 +717,9 @@ Also see this message by Rolf Turner:
 In some cases it may be possible to bypass the need for tcltk and tcl/tk
 altogether by running this command before you run sqldf:
 
-~~~~ {.prettyprint}
+```r
 options(gsubfn.engine = "R")
-~~~~
+```
 
 In that case the gsubfn package will use alternate R code instead of
 tcltk (however, it will be slightly slower).
@@ -748,7 +748,7 @@ as SQLite is concerned. Note that in the example below it did produce a
 warning that something is wrong although that might not be the case in
 all situations.
 
-~~~~ {.prettyprint}
+```r
 > a <- data.frame(x = 1:2)
 > A <- data.frame(y = 11:12)
 > sqldf("select * from a a1, A a2")
@@ -760,7 +760,7 @@ all situations.
 Warning message:
 In value[[3L]](cond) :
   RS-DBI driver: (error in statement: table `A` already exists)
-~~~~
+```
 
 7. Why are there messages about MySQL?[](#7._Why_are_there_messages_about_MySQL?)
 ---------------------------------------------------------------------------------
@@ -791,14 +791,14 @@ to the table as `DF` (without qualifying it as being in `main`) sqldf
 would have fetched `DF` from our R workspace rather than using the
 updated one in the sqlite database.
 
-~~~~ {.prettyprint}
+```r
 > DF <- data.frame(a = 1:3, b = c(3, NA, 5))
 > sqldf(c("update DF set b = a where b is null", "select * from main.DF"))
  a b
 1 1 3
 2 2 2
 3 3 5
-~~~~
+```
 
 One other problem can arise if the data has factors. Here we would
 normally get the wrong result because we are asking it to add a value to
@@ -806,7 +806,7 @@ column `b` that is not among the factor levels in `b` but by using
 `method = "raw"` we can tell it not to automatically assign classes to
 the result.
 
-~~~~ {.prettyprint}
+```r
 > DF <- data.frame(a = 1:3, b = factor(c(3, NA, 5))); DF
  a    b
 1 1    3
@@ -817,7 +817,7 @@ the result.
 1 1 3
 2 2 2
 3 3 5
-~~~~
+```
 
 Another way around this is to avoid the entire problem in the first
 place by not using a factor for `b`. If we had defined column `b` as
@@ -829,7 +829,7 @@ specify `method = "raw"`.
 
 Try these approaches to get the indicated meta data:
 
-~~~~ {.prettyprint}
+```r
 > # a. what is the layout of the BOD table?
 > sqldf("pragma table_info(BOD)")
   cid   name type notnull dflt_value pk
@@ -852,7 +852,7 @@ Try these approaches to get the indicated meta data:
 > sqldf("select sqlite_version()")
   sqlite_version()
 1           3.7.17
-~~~~
+```
 
 10. What are some of the differences between using SQLite and H2 with sqldf?[](#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
 -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -871,7 +871,7 @@ Here are some commands. The meta commands here are specific to H2 (for
 SQLite's meta data commands see
 [FAQ\#9](#9._How_do_I_examine_the_layout_that_SQLite_uses_for_a_table?_whi)):
 
-~~~~ {.prettyprint}
+```r
 library(RH2) # this package contains the H2 database and an R driver
 library(sqldf)
 sqldf("select avg(demand) mean, stddev_pop(demand) from BOD where Time > 4")
@@ -884,20 +884,20 @@ sqldf("select * FROM INFORMATION_SCHEMA.indexes")
 sqldf("select VALUE from INFORMATION_SCHEMA.SETTINGS where NAME = 'info.VERSION'") 
 sqldf("show columns from BOD")
 sqldf("select H2VERSION()") # this requires a later version of H2 than comes with RH2
-~~~~
+```
 
 If RH2 is loaded then it will use H2 so if you wish to use SQLite
 anyways then either use the drv= argument to sqldf:
 
-~~~~ {.prettyprint}
+```r
 sqldf("select * from BOD", drv = "SQLite")
-~~~~
+```
 
 or set the following global option:
 
-~~~~ {.prettyprint}
+```r
 options(sqldf.driver = "SQLite")
-~~~~
+```
 
 When using H2:
 
@@ -933,7 +933,7 @@ does not support the operation the SQLite code is given instead. Note
 that this section is a bit out of date and some of the items that it
 says are not supported actually are supported now.
 
-~~~~ {.prettyprint}
+```r
 # 1
 sqldf('select * from iris order by "Sepal.Length" desc limit 3')
 
@@ -1179,7 +1179,7 @@ from seqdf LEFT JOIN boundsdf ON (seqdf.thetime BETWEEN boundsdf.thestart AND bo
 # 12 combine two files - not supported by RH2 ###
 
 # 13 see #8
-~~~~
+```
 
 11. Why am I having difficulty reading a data file using SQLite and sqldf?[](#11._Why_am_I_having_difficulty_reading_a_data_file_using_SQLite)
 ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1188,9 +1188,9 @@ SQLite is fussy about line endings. Note the `eol` argument to
 `read.csv.sql` can be used to specify line endings if they are different
 than the normal line endings on your platform. e.g.
 
-~~~~ {.prettyprint}
+```r
 read.csv.sql("myfile.dat", eol = "\n")
-~~~~
+```
 
 `eol` can also be used as a component to the sqldf `file.format`
 argument.
@@ -1205,17 +1205,17 @@ Make sure that you have created an empty database, e.g. `"test"`. The
 createdb program that comes with PostgreSQL can be used for that. e.g.
 from the console/shell create a database called test like this:
 
-~~~~ {.prettyprint}
+```r
 createdb --help
 createdb --username=postgres test
-~~~~
+```
 
 Here is an example using RPostgreSQL and after that we show an example
 using RpgSQL. The `options` statement shown below can be entered directy
 or alternately can be put in your `.Rprofile.` The values shown here are
 actually the defaults:
 
-~~~~ {.prettyprint}
+```r
 options(sqldf.RPostgreSQL.user = "postgres", 
   sqldf.RPostgreSQL.password = "postgres",
   sqldf.RPostgreSQL.dbname = "test",
@@ -1251,7 +1251,7 @@ sqldf('select count(*) from "DF" ')
 sqldf('select *, rank() over  (partition by "Group_A", "Group_B" order by "Value") 
        from "DF" 
        order by "Group_A", "Group_B", "Group_C" ')
-~~~~
+```
 
 For another example using `over` and `partition by` see: [this cumsum
 example](https://stackoverflow.com/questions/8559485/r-cumulative-sum-by-group-in-sqldf/8561324#8561324)
@@ -1270,25 +1270,25 @@ quotes from it at the same time on Windows try this assuming you have
 Rtools installed and on your path (or the corresponding `tr` syntax on
 UNIX depending on your shell):
 
-~~~~ {.prettyprint}
+```r
 read.csv.sql("myfile.csv", filter = 'tr.exe -d \'^"\' ' )
-~~~~
+```
 
 or using `gawk`:
 
-~~~~ {.prettyprint}
+```r
 # TODO: fix this example
 read.csv.sql("myfile.csv", filter = list('gawk -f prog', prog = '{ gsub(/"/, ""); print }') )
-~~~~
+```
 
 Another program to look at is the
 [csvfix](https://code.google.com/p/csvfix/) program (this is a free
 external program -- not an R program).  For example, the above could be done
 like this with csvfix:
 
-~~~~ {.prettyprint}
+```r
 read.csv.sql("myfile.csv", filter = 'csvfix echo -smq' )
-~~~~
+```
 
 As another csvfix example, suppose we have commas in two contexts: (1) as
 separators between fields and within double quoted fields. To handle that case
@@ -1296,9 +1296,9 @@ we can use `csvfix` to translate the separators to semicolon stripping off the
 double quotes at the same time (assuming we have installed `csvfix` and we have
 put it in our path):
 
-~~~~ {.prettyprint}
+```r
 read.csv.sql("myfile.csv", sep = ";", filter = "csvfix write_dsv -s ;")` .
-~~~~
+```
 
 14. How does one read files where numeric NAs are represented as missing empty fields?[](#14._How_does_one_read_files_where_numeric_NAs_are_represented_as)
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1306,7 +1306,7 @@ read.csv.sql("myfile.csv", sep = ";", filter = "csvfix write_dsv -s ;")` .
 Translate the empty fields to some number that will represent NA and
 then fix it up on the R end.
 
-~~~~ {.prettyprint}
+```r
 # The problem is that SQLite's read routine regards empty
 # fields as zero length character strings rather than NA.
 # We handle that by replacing such strings with -999, say,
@@ -1336,14 +1336,14 @@ DF <- read.csv.sql("x.txt", sep = "\t", eol = "\n", filter = "gawk -f x.awk")
 # replace -999's with NA
 
 is.na(DF) <- DF == -999
-~~~~
+```
 
 Another program that can be used in filters is the free csvfix . For
 example, suppose that csvfix is on our path and that NA values are
 represented as NA in numeric fields. We would like to convert them to
 -999 and then later remove them.
 
-~~~~ {.prettyprint}
+```r
 Lines <- "a,b
 3,NA
 4,65"
@@ -1352,20 +1352,20 @@ cat(Lines, file = "myfile.csv")
 filter <- 'csvfix map -fv ,NA -tv ,-999 myfile.csv | csvfix write_dsv -s ,'
 DF <- read.csv.sql(filter = filter)
 is.na(DF) <- DF == -999
-~~~~
+```
 
 Another way in which the input file can be malformed is that not every
 line has the same number of fields. In that case `csvfx pad -n` can be
 used to pad it out as in this example:
 
-~~~~ {.prettyprint}
+```r
 Lines <- "a,b,c
 a,b,
 a,b
 q,r,t"
 cat(Lines, file = "c.csv")
 DF <- read.csv.sql(filter = "csvfix pad -n 3 c.csv | csvfix write_dsv -s ,")
-~~~~
+```
 
 15. Why do certain calculations come out as integer rather than double?[](#15._Why_do_certain_calculations_come_out_as_integer_rather_than)
 -------------------------------------------------------------------------------------------------------------------------------------------
@@ -1373,7 +1373,7 @@ DF <- read.csv.sql(filter = "csvfix pad -n 3 c.csv | csvfix write_dsv -s ,")
 SQLite/RSQLite, h2/RH2, PostgreSQL all perform integer division on
 integers; however, RMySQL/MySQL performs real division.
 
-~~~~ {.prettyprint}
+```r
 > DF <- data.frame(a = 1:2, b = 2:1)
 > str(DF) # columns are integer
 'data.frame':   2 obs. of  2 variables:
@@ -1419,18 +1419,18 @@ integers; however, RMySQL/MySQL performs real division.
   quotient
 1      0.5
 2      2.0
-~~~~
+```
 
 16. How can one read a file off the net or a csv file in a zip file?[](#16._How_can_one_read_a_file_off_the_net_or_a_csv_file_in_a_zip_f)
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 Use `read.csv.sql` and specify the URL of the file:
 
-~~~~ {.prettyprint}
+```r
 # 1
 URL <- "https://www.wnba.com/liberty/media/NYL2011ScheduleV3.csv"
 DF <- read.csv.sql(URL, eol = "\r")
-~~~~
+```
 
 Since files off the net could have any end of line be careful to specify
 it properly for the file of interest.
@@ -1440,17 +1440,17 @@ As an alternative one could use the filter argument. To use this `wget`
 [Windows](http://gnuwin32.sourceforge.net/packages/wget.htm)) must be
 present on the system command path.
 
-~~~~ {.prettyprint}
+```r
 # 2 - same URL as above
 DF <- read.csv.sql(eol = "\r", filter = paste("wget -O - ", URL))
-~~~~
+```
 
 Here is an example of reading a zip file which contains a single file
 that is a `csv` :
 
-~~~~ {.prettyprint}
+```r
 DF <- read.csv.sql(filter = "7z x -so anscombe.zip 2>NUL")
-~~~~
+```
 
 In the line of code above it is assumed that `7z`
 ([download](http://www.7-zip.org/download.html)) is present and on the
@@ -1459,9 +1459,9 @@ in place of `NUL`.
 
 If we had a `.tar.gz` file it could be done like this:
 
-~~~~ {.prettyprint}
+```r
 DF <- read.csv.sql(filter = "tar xOfz anscombe.tar.gz")
-~~~~
+```
 
 assuming that tar is available on our path. (Normally tar is available
 on Linux and on Windows its available as part of the
@@ -1500,7 +1500,7 @@ RSQLite driver convert that to `Sepal_Length`; however, newer versions
 do not. After installing sqldf in R, just type the first two lines into
 the R console (without the \>):
 
-~~~~ {.prettyprint}
+```r
 > library(sqldf)
 > sqldf('select * from iris order by "Sepal.Length" desc limit 3')
 
@@ -1508,7 +1508,7 @@ the R console (without the \>):
 1          7.9         3.8          6.4         2.0 virginica
 2          7.7         3.8          6.7         2.2 virginica
 3          7.7         2.6          6.9         2.3 virginica
-~~~~
+```
 
 Example 2. Averaging and Grouping[](#Example_2._Averaging_and_Grouping)
 -----------------------------------------------------------------------
@@ -1516,14 +1516,14 @@ Example 2. Averaging and Grouping[](#Example_2._Averaging_and_Grouping)
 Here is an example which processes an SQL select statement whose
 functionality is similar to the R aggregate function.
 
-~~~~ {.prettyprint}
+```r
 > sqldf('select Species, avg("Sepal.Length") from iris group by Species")
 
      Species avg(Sepal.Length)
 1     setosa             5.006
 2 versicolor             5.936
 3  virginica             6.588
-~~~~
+```
 
 Example 3. Nested Select[](#Example_3._Nested_Select)
 -----------------------------------------------------
@@ -1533,7 +1533,7 @@ Length among those rows where Sepal Length exceeds the average Sepal
 Length for that Species. Note the use of a subquery and explicit column
 naming:
 
-~~~~ {.prettyprint}
+```r
 > sqldf("select iris.Species '[Species]', 
 +       avg(\"Sepal.Length\") '[Avg of SLs > avg SL]'
 +    from iris, 
@@ -1554,7 +1554,7 @@ naming:
 1     setosa     5.313636
 2 versicolor     6.375000
 3  virginica     7.159091
-~~~~
+```
 
 Note that PostgreSQL is the only free database that supports
 [window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
@@ -1564,7 +1564,7 @@ formulation of the above. For more on using sqldf with PostgreSQL see
 [FAQ
 \#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
 
-~~~~ {.prettyprint}
+```r
 > library(RPostgreSQL)
 > library(sqldf)
 > tmp <- sqldf('select 
@@ -1596,24 +1596,24 @@ formulation of the above. For more on using sqldf with PostgreSQL see
 1     setosa 5.313636
 2 versicolor 6.375000
 3  virginica 7.159091
-~~~~
+```
 
 which in R corresponds to this R code (i.e. `partition...over` in
 PostgreSQL corresponds to `ave` in R):
 
-~~~~ {.prettyprint}
+```r
 > tmp <- with(iris, Sepal.Length - ave(Sepal.Length, iris, FUN = mean))
 > aggregate(Sepal.Length ~ Species, subset(tmp, above.mean > 0), mean)
      Species Sepal.Length
 1     setosa     5.313636
 2 versicolor     6.375000
 3  virginica     7.159091
-~~~~
+```
 
 Here is some sample data with the correlated subquery from this
 [Wikipedia page](https://en.wikipedia.org/wiki/Correlated_subquery):
 
-~~~~ {.prettyprint}
+```r
 Emp <- data.frame(emp = letters[1:24], salary = 1:24, dept = rep(c("A", "B", "C"), each = 8))
 
 sqldf("SELECT *
@@ -1621,7 +1621,7 @@ sqldf("SELECT *
  WHERE salary > (SELECT avg(salary)
     FROM Emp
     WHERE dept = e1.dept)")
-~~~~
+```
 
 Example 4. Join[](#Example_4._Join)
 -----------------------------------
@@ -1631,7 +1631,7 @@ i.imgur.com/1m55Wqo.jpg. (SQLite does not support right joins but the
 other databases sqldf supports do.) We define a new data frame, `Abbr`,
 join it with `iris` and perform the aggregation:
 
-~~~~ {.prettyprint}
+```r
 > # Example 4a.
 > Abbr <- data.frame(Species = levels(iris$Species), 
 +    Abbr = c("S", "Ve", "Vi"))
@@ -1643,7 +1643,7 @@ join it with `iris` and perform the aggregation:
 1    S             5.006
 2   Ve             5.936
 3   Vi             6.588
-~~~~
+```
 
 Although the above is probably the shortest way to write it in SQL,
 using `natural join` can be a bit dangerous since one must be very sure
@@ -1654,7 +1654,7 @@ as intended since the `row_names` columns would participate in the join.
 An alternate and safer way to write this would be with `join` and
 `using`:
 
-~~~~ {.prettyprint}
+```r
 > # Example 4b.
 > sqldf('select Abbr, avg("Sepal.Length") 
 +   from iris join Abbr using(Species) group by Species')
@@ -1663,11 +1663,11 @@ An alternate and safer way to write this would be with `join` and
 1    S             5.006
 2   Ve             5.936
 3   Vi             6.588
-~~~~
+```
 
 or with a `where` clause:
 
-~~~~ {.prettyprint}
+```r
 > # Example 4c.
 > sqldf('select Abbr, avg("Sepal.Length") from iris, Abbr
 +    where iris.Species = Abbr.Species group by iris.Species')
@@ -1676,12 +1676,12 @@ or with a `where` clause:
 1    S             5.006
 2   Ve             5.936
 3   Vi             6.588
-~~~~
+```
 
 or a temporal join where the goal is, for each Species/station\_id pair,
 to join the records with the closest date/times.
 
-~~~~ {.prettyprint}
+```r
 > # Example 4d. Temporal Join
 > # see: https://stat.ethz.ch/pipermail/r-help/2009-March/191938.html
 >
@@ -1722,14 +1722,14 @@ to join the records with the closest date/times.
 4 SpeciesA (06/23/08 13:43:11)        BDT     3.90
 5 SpeciesC (06/23/08 13:55:11)        ANH     2.25
 6 SpeciesC (06/23/08 13:55:11)        BDT     3.82
-~~~~
+```
 
 A similar but slightly simpler example can be found
 [here](https://stat.ethz.ch/pipermail/r-sig-finance/2010q2/006077.html).
 
 Here is an example of a left join:
 
-~~~~ {.prettyprint}
+```r
 > # Example 4e. Left Join
 > # https://stat.ethz.ch/pipermail/r-help/2009-April/195882.html
 > #
@@ -1783,9 +1783,9 @@ Here is an example of a left join:
 4 194073197  P1005 0.021088  0
 5 194073197  P1006 0.021088  2
 6 194073197  P1007 0.021088 NA
-~~~~
+```
 
-~~~~ {.prettyprint}
+```r
 > # Example 4f.  Another temporal join.
 > # join DF2 to row in DF for which DF.tt and DF2.tt are closest
 > 
@@ -1818,13 +1818,13 @@ Here is an example of a left join:
   tt tt.1    d tt.2  d.1   dd
 1  3    2 10.3    3 19.0 19.0
 2  6    5 15.6    7 19.8 19.8
-~~~~
+```
 
 Example 4g. Self Join. There is an example of a self-join here:
 [problem](https://stat.ethz.ch/pipermail/r-help/2010-March/232314.html)
 and answer here:
 
-~~~~ {.prettyprint}
+```r
 > DF <- structure(list(Actor = c("Jim", "Bob", "Bob", "Larry", "Alice", "Tom", "Tom", "Tom", "Alice", "Nancy"), Act = c("A", "A", "C",                                                                           "D", "C", "F", "D", "A", "B", "B")), .Names = c("Actor", "Act"                                                                                ), class = "data.frame", row.names = c(NA, -10L))
 
 > subset(unique(merge(DF, DF, by = 2)), Actor.x < Actor.y)
@@ -1847,7 +1847,7 @@ and answer here:
 4   B Alice Nancy
 5   C Alice   Bob
 6   D Larry   Tom
-~~~~
+```
 
 to Raj Morejoys for correction.
 
@@ -1873,7 +1873,7 @@ averaging all points of Sy within w = 0.25 units of each Sx time point.
 Tx and X are the times and values of Sx and Ty and Y are the times and
 values of Sy.
 
-~~~~ {.prettyprint}
+```r
 Tx <- seq(1, N, 0.5)
 Tx <- Tx + rnorm(length(Tx), 0, 0.1)
 X <- sin(Tx/10.0) +  sin(Tx/5.0) + rnorm(length(Tx), 0, 0.1)
@@ -1893,7 +1893,7 @@ system.time(out.sqldf <- sqldf(c("create index idx on Sx(Tx)",
   where Ty + 0.25 >= Tx and Ty - 0.25 <= Tx group by Tx")))
 
 all.equal(out.sqldf[,2], out1) # TRUE
-~~~~
+```
 
 Example 4i. Speeding up joins with indexes. Here is an example of
 speeding up a join by using indexes on a single join column
@@ -1908,7 +1908,7 @@ Similar comments apply to `DF2`. The statement
 `sqldf("select * from sqlite_master")` will list the names and related
 info for all tables in `main`.
 
-~~~~ {.prettyprint}
+```r
 > set.seed(1)
 > n <- 1000000
 > 
@@ -1939,12 +1939,12 @@ Loading Tcl/Tk interface ... done
    user  system elapsed 
    7.76    0.06    8.23 
 > sqldf()
-~~~~
+```
 
 The sqldf statements above could also be done in one sqldf call like
 this:
 
-~~~~ {.prettyprint}
+```r
 # define DF1 and DF2 as before
 set.seed(1)
 n <- 1000000
@@ -1958,7 +1958,7 @@ DF2 <- data.frame(a = sample(n, n, replace = TRUE),
 result <- sqldf(c("create index ai1 on DF1(a, b)", 
   "create index ai2 on DF2(a, b)", 
   "select * from main.DF1 natural join main.DF2"))
-~~~~
+```
 
 Note that if your data is so large that you need indexes it may be too
 large to store the database in memory. If you find its overflowing
@@ -1970,9 +1970,9 @@ rather than memory.
 *Note:* The index `ai1` is not actually used so we could have saved the
 time it took to create it, creating only `ai2`.
 
-~~~~ {.prettyprint}
+```r
 sqldf(c("create index ai2 on DF2(a, b)", "select * from DF1 natural join main.DF2"))
-~~~~
+```
 
 Example 4j. Per Group Max and Min
 
@@ -1983,7 +1983,7 @@ SQLite's origin. Note that the output column called `Date` is
 automatically converted to `"Date"` class by the sqldf heuristic because
 there is an input column that has the same name.
 
-~~~~ {.prettyprint}
+```r
 > URL <- "https://ichart.finance.yahoo.com/table.csv?s=GOOG&a=07&b=19&c=2004&d=03&e=16&f=2010&g=d&ignore=.csv"
 > DF25 <- read.csv(URL, nrows = 25)
 > DF25$Date <- as.Date(DF25$Date)
@@ -1996,12 +1996,12 @@ there is an input column that has the same name.
         Date   High    Low  Close   Volume
 1 2010-03-31 588.28 539.70 567.12 51541600
 2 2010-04-16 597.84 549.63 550.15 41201900
-~~~~
+```
 
 and here is another shorter one that uses a trick of Magnus Hagander in
 the second Stackoverflow link below:
 
-~~~~ {.prettyprint}
+```r
 > sqldf("select 
 + max(Date) Date, 
 + max(High) High, 
@@ -2013,7 +2013,7 @@ the second Stackoverflow link below:
         Date   High    Low Close   Volume
 1 2010-03-31 588.28 539.70   567 51541600
 2 2010-04-16 597.84 549.63   550 41201900
-~~~~
+```
 
 Also see [this Xaprb
 link](https://www.xaprb.com/blog/2007/03/14/how-to-find-the-max-row-per-group-in-sql-without-subqueries/)
@@ -2034,7 +2034,7 @@ Here is an example of inserting evaluated variables into a query using
 interpolation. gsubfn is used by sqldf so its already loaded. Note that
 we must use the `fn$` prefix to invoke the interpolation functionality:
 
-~~~~ {.prettyprint}
+```r
 > minSL <- 7
 > limit <- 3
 > species <- "virginica"
@@ -2044,7 +2044,7 @@ we must use the `fn$` prefix to invoke the interpolation functionality:
 1          7.1         3.0          5.9         2.1 virginica
 2          7.6         3.0          6.6         2.1 virginica
 3          7.3         2.9          6.3         1.8 virginica
-~~~~
+```
 
 Example 6. File Input[](#Example_6._File_Input)
 -----------------------------------------------
@@ -2091,7 +2091,7 @@ In addition to the examples below there is an example
 another one with performance results
 [here](http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).
 
-~~~~ {.prettyprint}
+```r
 > # Example 6a.
 > # test of file connections with sqldf
 > 
@@ -2164,12 +2164,12 @@ another one with performance results
 2          5.8         2.7          4.1         1.0 versicolor
 3          7.4         2.8          6.1         1.9  virginica
 4          5.1         3.5          1.4         0.3     setosa
-~~~~
+```
 
 Example 6f. If our file has fixed width fields rather than delimited
 then we can still handle it if we parse the lines manually with substr:
 
-~~~~ {.prettyprint}
+```r
 # write some test data to "fixed"
 # Field 1 has width of 1 column and field 2 has 4 columns
 cat("1 8.3
@@ -2184,7 +2184,7 @@ cat("1 8.3
 fixed <- file("fixed")
 attr(fixed, "file.format") <- list(sep = ";") # ; can be any char not in file
 sqldf("select substr(V1, 1, 1) f1, substr(V1, 2, 4) f2 from fixed order by random(*) limit 3")
-~~~~
+```
 
 Another example of fixed width data is
 [here](https://sites.google.com/site/timriffepersonal/DemogBlog/newformetrickforworkingwithbigishdatainr)
@@ -2193,7 +2193,7 @@ that link too).
 
 Example 6g. Defaults.
 
-~~~~ {.prettyprint}
+```r
 # If first row has one fewer columns than subsequent rows then 
 # header <- row.names <- TRUE is assumed as in example 6a; otherwise,
 # header <- row.names <- FALSE is assumed as shown here:
@@ -2206,14 +2206,14 @@ Example 6g. Defaults.
 1 5.1 3.5 1.4 0.2 setosa
 2 4.9 3.0 1.4 0.2 setosa
 3 4.7 3.2 1.3 0.2 setosa
-~~~~
+```
 
 Example 7. Nested Select[](#Example_7._Nested_Select)
 -----------------------------------------------------
 
 For each species show the two rows with the largest sepal lengths:
 
-~~~~ {.prettyprint}
+```r
 > # Example 7a.
 > sqldf('select * from iris i 
 +   where rowid in 
@@ -2227,7 +2227,7 @@ For each species show the two rows with the largest sepal lengths:
 4          6.9         3.1          4.9         1.5 versicolor
 5          7.9         3.8          6.4         2.0  virginica
 6          7.7         3.8          6.7         2.2  virginica
-~~~~
+```
 
 Here is a similar example. In this one `DF` represents a time series
 whose values are in column `x` and whose times are dates in column `tt`.
@@ -2239,7 +2239,7 @@ using `sqldf`. (For a version of this using the `zoo` package rather
 than `sqldf` see:
 [https://stat.ethz.ch/pipermail/r-help/2007-November/145925.html](https://stat.ethz.ch/pipermail/r-help/2007-November/145925.html)).
 
-~~~~ {.prettyprint}
+```r
 > # Example 7b.
 > #
 > library(chron)
@@ -2258,12 +2258,12 @@ than `sqldf` see:
 4 157 2000-04-22        4     22    2000
 5 172 2000-05-22        5     22    2000
 6 187 2000-06-21        6     21    2000
-~~~~
+```
 
 Here is another example of a nested select. We select each row of a for
 which st/en overlaps with some st/en of b.
 
-~~~~ {.prettyprint}
+```r
 > # Example 7c.
 > #
 > a <- read.table(textConnection("st en
@@ -2281,7 +2281,7 @@ which st/en overlaps with some st/en of b.
   st en
 1  1  4
 2  3  4
-~~~~
+```
 
 7d. Another example of a nested select with sqldf is shown
 [here](https://stat.ethz.ch/pipermail/r-help/2010-March/231975.html)
@@ -2294,7 +2294,7 @@ lines to determine the column classes. What if they all have numbers in
 them but then later we start to see letters? In that case we will have
 to override its choice. Here are two ways:
 
-~~~~ {.prettyprint}
+```r
 library(sqldf)
 
 # example example 8a - file.format attribute on file.object
@@ -2318,7 +2318,7 @@ ff <- file("~/tmp.csv")
 
 tail(sqldf("select * from ff",
  file.format = list(colClasses = c(a = "character"))))
-~~~~
+```
 
 Example 9. Working with Databases[](#Example_9.__Working_with_Databases)
 ------------------------------------------------------------------------
@@ -2335,7 +2335,7 @@ duplicate tables in the database so it will take up twice as much space
 as one table). A second way to do this is to use persistent connections
 as shown in the Example section after this one.
 
-~~~~ {.prettyprint}
+```r
 # create new empty database called mydb
 sqldf("attach 'mydb' as new") 
 
@@ -2358,7 +2358,7 @@ write.table(BOD, file = "~/tmp.csv", quote = FALSE, sep = ",")
 read.csv.sql("~/tmp.csv", sql = "create table mytab as select * from file", 
   dbname = "mydb")
 sqldf("select * from sqlite_master", dbname = "mydb")
-~~~~
+```
 
 Example 10. Persistent Connections[](#Example_10._Persistent_Connections)
 -------------------------------------------------------------------------
@@ -2370,7 +2370,7 @@ each execution of sqldf. (Note that if one just needs a series of sql
 statements ending in a single query an alternative would be just to use
 a vector of sql statements in a single sqldf call.)
 
-~~~~ {.prettyprint}
+```r
 > # Example 10a.
 >
 > # create test .csv file of just 3 records (same as example 6)
@@ -2424,12 +2424,12 @@ NULL
 > # close
 > sqldf()
 NULL
-~~~~
+```
 
 Here is an example of reading a csv file using read.csv.sql and then
 reading it again using a persistent connection:
 
-~~~~ {.prettyprint}
+```r
 # Example 10c.
 
 write.table(iris, "iris.csv", sep = ",", quote = FALSE)
@@ -2442,12 +2442,12 @@ dd <- sqldf("select * from file")
 
 # now close the connection and destroy the database
 sqldf()
-~~~~
+```
 
 Example 11. Between and Alternatives[](#Example_11._Between_and_Alternatives)
 -----------------------------------------------------------------------------
 
-~~~~ {.prettyprint}
+```r
 # example thanks to Michael Rehberg
 #
 # build sample dataframes
@@ -2461,7 +2461,7 @@ from seqdf left join boundsdf on (seqdf.thetime <= boundsdf.theend) and (seqdf.t
 # run the same query using 'between...and' clause
 testquery_2 <- sqldf("select seqdf.thetime, seqdf.thevalue, boundsdf.groupID 
 from seqdf LEFT JOIN boundsdf ON (seqdf.thetime BETWEEN boundsdf.thestart AND boundsdf.theend)")
-~~~~
+```
 
 Example 12. Combine two files in permanent database[](#Example_12._Combine_two_files_in_permanent_database)
 -----------------------------------------------------------------------------------------------------------
@@ -2481,16 +2481,16 @@ with no `x=` argument.
 If we have forgetten whether you have a connection open or not we can
 check either of these:
 
-~~~~ {.prettyprint}
+```r
 dbListConnections(SQLite()) # from DBI
 
 getOption("sqldf.connection") # set by sqldf
-~~~~
+```
 
 Here is an example that illustrates part of the above. See the prior
 examples for more.
 
-~~~~ {.prettyprint}
+```r
 > # set up some test data
 > write.table(head(iris, 3), "irishead.dat", sep = ",", quote = FALSE)
 > write.table(tail(iris, 3), "iristail.dat", sep = ",", quote = FALSE)
@@ -2518,7 +2518,7 @@ NULL
 + select * from main.iristail)', dbname = "mydb")
   count(*)
 1        6
-~~~~
+```
 
 Example 13. read.csv.sql and read.csv2.sql[](#Example_13._read.csv.sql_and_read.csv2.sql)
 -----------------------------------------------------------------------------------------
@@ -2534,7 +2534,7 @@ can handle larger files than R itself can handle as long as the SQL
 statement filters it to a size that R can handle. Here is Example 6c
 redone using this facility:
 
-~~~~ {.prettyprint}
+```r
 # Example 13a.
 library(sqldf)
 
@@ -2598,7 +2598,7 @@ write.table(anscombe, "anscombe.dat", sep = ",", quote = FALSE,
 
 j <- 2
 DF2 <- fn$read.csv.sql("anscombe.dat", sql = "select `nms[j]` from file")
-~~~~
+```
 
 Also see this
 [example](https://stat.ethz.ch/pipermail/r-help/2010-November/260931.html)
@@ -2619,7 +2619,7 @@ PATH there is no other setup needed. (Note that libspatialite-1.dll is
 only looked up the first time sqldf runs in a session so you should be
 sure that it has been put there before starting sqldf.)
 
-~~~~ {.prettyprint}
+```r
 > library(sqldf)
 > # stddev_pop is a function in spatialite library similar to sd in R
 > # Note bug: spatialite has stddev_pop and stddev_samp reversed and ditto for var_pop and var_samp.  More on bug at:
@@ -2629,7 +2629,7 @@ sure that it has been put there before starting sqldf.)
 1    14.83333           4.630623
 > c(mean(BOD$demand), sd(BOD$demand))
 [1] 14.833333  4.630623
-~~~~
+```
 
 Example 15. Use of RSQLite.extfuns library functions[](#Example_15._Use_of_RSQLite.extfuns_library_functions)
 -------------------------------------------------------------------------------------------------------------
@@ -2649,13 +2649,13 @@ upper\_quartile. See the bottom of
 [https://www.sqlite.org/contrib/](https://www.sqlite.org/contrib/) for
 more info on these extension functions.
 
-~~~~ {.prettyprint}
+```r
 > sqldf("select avg(demand) mean, variance(demand) var from BOD")
       mean      var
 1 14.83333 21.44267
 > var(BOD$demand)
 [1] 21.44267
-~~~~
+```
 
 Example 16. Moving Average[](#Example_16._Moving_Average)
 ---------------------------------------------------------
@@ -2665,7 +2665,7 @@ post](https://stat.ethz.ch/pipermail/r-help/2010-August/249996.html).
 Here we compute the moving average of x for the 3rd to 9th preceding
 values of each date performing it separately for each illness.
 
-~~~~ {.prettyprint}
+```r
 > Lines   <- "date           illness x
 +    2006/01/01    DERM 319
 +    2006/01/02    DERM 388
@@ -2730,14 +2730,14 @@ values of each date performing it separately for each illness.
 18 2006-01-11 2712.8571 2006-01-02 2006-01-08   FEVER
 19 2006-01-12 2610.0000 2006-01-03 2006-01-09   FEVER
 20 2006-01-13 2397.1429 2006-01-04 2006-01-10   FEVER
-~~~~
+```
 
 Because of the date processing this is a bit more conveniently done in
 H2 with its support of date class. Using the same `DF` that we just
 defined. Note that SQL functions like AVG and MIN must be written in
 upper case when using H2.
 
-~~~~ {.prettyprint}
+```r
 > library(RH2)
 > sqldf("select
 +                t1.date,
@@ -2771,7 +2771,7 @@ upper case when using H2.
 18 2006-01-11 2712 2006-01-02 2006-01-08   FEVER
 19 2006-01-12 2610 2006-01-03 2006-01-09   FEVER
 20 2006-01-13 2397 2006-01-04 2006-01-10   FEVER
-~~~~
+```
 
 Another example which varies somewhat from a strict moving average can
 be found [in this
@@ -2783,7 +2783,7 @@ Example 17. Lag[](#Example_17._Lag)
 The following example contributed by Søren Højsgaard shows how to lag a
 column.
 
-~~~~ {.prettyprint}
+```r
 ## Create a lagged variable for grouped data
 ## -----------------------------------------
 # Meaning that in the i'th row we not only have y[i] but also y[i-1].
@@ -2813,7 +2813,7 @@ DD <-
                    order by A.id, A.tvar
          ) as BB
          on DF.id=BB.id and DF.tvar=BB.tvar")
-~~~~
+```
 
 In PostgreSQL's
 [window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
@@ -2822,29 +2822,29 @@ In PostgreSQL's
 particularly easy. Below we repeat the SQLite example in PostgreSQL
 (except that the following fills with NA):
 
-~~~~ {.prettyprint}
+```r
 # Be sure PostgreSQL is installed and running.  
 
 library(RPostgreSQL)
 library(sqldf)
 sqldf("select *, lag(y) over (partition by id order by tvar) from DF")
-~~~~
+```
 
 Example 18. MySQL Schema Information[](#Example_18._MySQL_Schema_Information)
 -----------------------------------------------------------------------------
 
-~~~~ {.prettyprint}
+```r
 library(RMySQL)
 library(sqldf)
 sqldf("show databases")
 sqldf("show tables")
-~~~~
+```
 
 The following SQL statements to query the MySQL table schemas are taken
 from the [blog of Christophe
 Ladroue](https://chrisladroue.com/2012/03/a-graphical-overview-of-your-mysql-database/):
 
-~~~~ {.prettyprint}
+```r
 library(RMySQL)
 library(sqldf)
 
@@ -2858,13 +2858,13 @@ sqldf("SELECT TABLE_SCHEMA,SUM(DATA_LENGTH) SCHEMA_LENGTH
 sqldf("SELECT TABLE_SCHEMA,TABLE_NAME,TABLE_ROWS,DATA_LENGTH 
        FROM information_schema.TABLES 
        WHERE TABLE_SCHEMA!='information_schema'")
-~~~~
+```
 
 The following SQL statement to query the MySQL table schemas are taken
 from [the MySQL Performance
 Blog](https://www.percona.com/blog/2008/03/17/researching-your-mysql-table-sizes/):
 
-~~~~ {.prettyprint}
+```r
 # Find total number of tables, rows, total data in index size
 sqldf("SELECT count(*) tables,
   concat(round(sum(table_rows)/1000000,2),'M') rows,
@@ -2897,11 +2897,10 @@ sqldf("SELECT engine,
         FROM information_schema.TABLES
         GROUP BY engine
         ORDER BY sum(data_length+index_length) DESC LIMIT 10")
-~~~~
+```
 
 Links[](#Links)
 ===============
 
 [Visual Representation of SQL
 Joins](https://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins)
-
