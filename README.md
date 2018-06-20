@@ -1111,7 +1111,7 @@ sqldf("select * from a where
 
 numStr <- as.character(1:100)
 DF <- data.frame(a = c(numStr, "Hello"))
-write.table(DF, file = "tmp99.csv", quote = FALSE, sep = ",")
+write.table(DF, file = "tmp99.csv", quote = FALSE, sep = ",", row.names = FALSE)
 sqldf("select * from csvread('tmp99.csv') limit 5")
 
 # Note that ~ does not work on Windows in H2: ###
@@ -2096,7 +2096,7 @@ another one with performance results
 > # test of file connections with sqldf
 > 
 > # create test .csv file of just 3 records
-> write.table(head(iris, 3), "iris3.dat", sep = ",", quote = FALSE)
+> write.table(head(iris, 3), "iris3.dat", sep = ",", quote = FALSE, row.names = FALSE)
 > 
 > # look at contents of iris3.dat
 > readLines("iris3.dat")
@@ -2127,8 +2127,7 @@ another one with performance results
 
 > # Example 6c.
 > # with this format, header=TRUE needs to be specified
-> write.table(head(iris, 3), "iris3a.dat", sep = ",", quote = FALSE, 
-+  row.names = FALSE)
+> write.table(head(iris, 3), "iris3a.dat", sep = ",", quote = FALSE, row.names = FALSE)
 > iris3a <- file("iris3a.dat")
 > sqldf("select * from iris3a", file.format = list(header = TRUE))
   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -2148,7 +2147,7 @@ another one with performance results
 > # Example 6e.
 > # create a test file with all 150 records from iris
 > # and select 4 records at random without reading entire file into R
-> write.table(iris, "iris150.dat", sep = ",", quote = FALSE)
+> write.table(iris, "iris150.dat", sep = ",", quote = FALSE, row.names = FALSE)
 > iris150 <- file("iris150.dat")
 > sqldf("select * from iris150 order by random(*) limit 4")
   Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
@@ -2297,11 +2296,11 @@ to override its choice. Here are two ways:
 ```r
 library(sqldf)
 
-# example example 8a - file.format attribute on file.object
+# example 8a - file.format attribute on file.object
 
 numStr <- as.character(1:100)
 DF <- data.frame(a = c(numStr, "Hello"))
-write.table(DF, file = "~/tmp.csv", quote = FALSE, sep = ",")
+write.table(DF, file = "~/tmp.csv", quote = FALSE, sep = ",", row.names = FALSE)
 ff <- file("~/tmp.csv")
 
 attr(ff, "file.format") <- list(colClasses = c(a = "character"))
@@ -2313,7 +2312,7 @@ tail(sqldf("select * from ff"))
 
 numStr <- as.character(1:100)
 DF <- data.frame(a = c(numStr, "Hello"))
-write.table(DF, file = "~/tmp.csv", quote = FALSE, sep = ",")
+write.table(DF, file = "~/tmp.csv", quote = FALSE, sep = ",", row.names = FALSE)
 ff <- file("~/tmp.csv")
 
 tail(sqldf("select * from ff",
@@ -2374,7 +2373,7 @@ a vector of sql statements in a single sqldf call.)
 > # Example 10a.
 >
 > # create test .csv file of just 3 records (same as example 6)
-> write.table(head(iris, 3), "iris3.dat", sep = ",", quote = FALSE)
+> write.table(head(iris, 3), "iris3.dat", sep = ",", quote = FALSE, row.names = FALSE)
 > # set up file connection
 > iris3 <- file("iris3.dat")
 > # creates connection so in memory database persists after sqldf call
@@ -2432,7 +2431,7 @@ reading it again using a persistent connection:
 ```r
 # Example 10c.
 
-write.table(iris, "iris.csv", sep = ",", quote = FALSE)
+write.table(iris, "iris.csv", sep = ",", quote = FALSE, row.names = FALSE)
 
 sqldf()
 read.csv.sql("iris.csv", sql = "select count(*) from file")
@@ -2492,8 +2491,8 @@ examples for more.
 
 ```r
 > # set up some test data
-> write.table(head(iris, 3), "irishead.dat", sep = ",", quote = FALSE)
-> write.table(tail(iris, 3), "iristail.dat", sep = ",", quote = FALSE)
+> write.table(head(iris, 3), "irishead.dat", sep = ",", quote = FALSE, row.names = FALSE)
+> write.table(tail(iris, 3), "iristail.dat", sep = ",", quote = FALSE, row.names = FALSE)
 > 
 > library(sqldf)
 > 
@@ -2538,7 +2537,7 @@ redone using this facility:
 # Example 13a.
 library(sqldf)
 
-write.table(iris, "iris.csv", sep = ",", quote = FALSE, row.names = FALSE)
+write.table(iris, "iris.csv", sep = ",", quote = FALSE, row.names = FALSE, row.names = FALSE)
 iris.csv <- read.csv.sql("iris.csv", 
     sql = 'select * from file where "Sepal.Length" > 5')
 
@@ -2593,8 +2592,7 @@ library(sqldf)
 
 # create test data file
 nms <- names(anscombe)
-write.table(anscombe, "anscombe.dat", sep = ",", quote = FALSE, 
-    row.names = FALSE)
+write.table(anscombe, "anscombe.dat", sep = ",", quote = FALSE, row.names = FALSE)
 
 j <- 2
 DF2 <- fn$read.csv.sql("anscombe.dat", sql = "select `nms[j]` from file")
