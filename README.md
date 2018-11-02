@@ -87,42 +87,42 @@ database is to be tested (SQLite is the default) and running:
 
 [FAQ](#faq)
 
--   [1. How does sqldf handle classes and
-    factors?](#1-how-does-sqldf-handle-classes-and-factors)
--   [2. Why does sqldf seem to mangle certain variable
-    names?](#2-why-does-sqldf-seem-to-mangle-certain-variable-names)
--   [3. Why does sqldf("select var(x) from DF") not
-    work?](#3-why-does-sqldfselect-varx-from-df-not-work)
--   [4. How does sqldf work with "Date" class
-    variables?](#4-how-does-sqldf-work-with-date-class-variables)
--   [5. I get a message about the tcltk package being
-    missing.](#5-i-get-a-message-about-the-tcltk-package-being-missing)
--   [6. Why are there problems when we use table names or column names
+-   [FAQ 1. How does sqldf handle classes and
+    factors?](#faq-1-how-does-sqldf-handle-classes-and-factors)
+-   [FAQ 2. Why does sqldf seem to mangle certain variable
+    names?](#faq-2-why-does-sqldf-seem-to-mangle-certain-variable-names)
+-   [FAQ 3. Why does sqldf("select var(x) from DF") not
+    work?](#faq-3-why-does-sqldfselect-varx-from-df-not-work)
+-   [FAQ 4. How does sqldf work with "Date" class
+    variables?](#faq-4-how-does-sqldf-work-with-date-class-variables)
+-   [FAQ 5. I get a message about the tcltk package being
+    missing.](#faq-5-i-get-a-message-about-the-tcltk-package-being-missing)
+-   [FAQ 6. Why are there problems when we use table names or column names
     that are the same except for
-    case?](#6-why-are-there-problems-when-we-use-table-names-or-column-name)
--   [7. Why are there messages about
-    MySQL?](#7-why-are-there-messages-about-mysql)
--   [8. Why am I having problems with
-    update?](#8-why-am-I-having-problems-with-update)
--   [9. How do I examine the layout that SQLite uses for a table? which
+    case?](#faq-6-why-are-there-problems-when-we-use-table-names-or-column-name)
+-   [FAQ 7. Why are there messages about
+    MySQL?](#faq-7-why-are-there-messages-about-mysql)
+-   [FAQ 8. Why am I having problems with
+    update?](#faq-8-why-am-I-having-problems-with-update)
+-   [FAQ 9. How do I examine the layout that SQLite uses for a table? which
     tables are in the database? which databases are
-    attached?](#9-how-do-i-examine-the-layout-that-sqlite-uses-for-a-table-which-tables-are-in-the-database-which-databases-are-attached)
--   [10. What are some of the differences between using SQLite and H2
+    attached?](#faq-9-how-do-i-examine-the-layout-that-sqlite-uses-for-a-table-which-tables-are-in-the-database-which-databases-are-attached)
+-   [FAQ 10. What are some of the differences between using SQLite and H2
     with
-    sqldf?](#10-what-are-some-of-the-differences-between-using-sqlite-and-h2-with-sqldf)
--   [11. Why am I having difficulty reading a data file using SQLite and
-    sqldf?](#11-why-am-i-having-difficulty-reading-a-data-file-using-sqlite-and-sqldf)
--   [12. How does one use sqldf with
-    PostgreSQL?](#12-how-does-one-use-sqldf-with-postgresql)
--   [13. How does one deal with quoted fields in read.csv.sql
-    ?](#13-how-does-one-deal-with-quoted-fields-in-readcsvsql)
--   [14. How does one read files where numeric NAs are represented as
+    sqldf?](#faq-10-what-are-some-of-the-differences-between-using-sqlite-and-h2-with-sqldf)
+-   [FAQ 11. Why am I having difficulty reading a data file using SQLite and
+    sqldf?](#faq-11-why-am-i-having-difficulty-reading-a-data-file-using-sqlite-and-sqldf)
+-   [FAQ 12. How does one use sqldf with
+    PostgreSQL?](#faq-12-how-does-one-use-sqldf-with-postgresql)
+-   [FAQ 13. How does one deal with quoted fields in read.csv.sql
+    ?](#faq-13-how-does-one-deal-with-quoted-fields-in-readcsvsql)
+-   [FAQ 14. How does one read files where numeric NAs are represented as
     missing empty
-    fields?](#14-how-does-one-read-files-where-numeric-nas-are-represented-as-missing-empty-fields)
--   [15. Why do certain calculations come out as integer rather than
-    double?](#15-why-do-certain-calculations-come-out-as-integer-rather-than-double)
--   [16. How can one read a file off the net or a csv file in a zip
-    file?](#16-how-can-one-read-a-file-off-the-net-or-a-csv-file-in-a-zip-file)
+    fields?](#faq-14-how-does-one-read-files-where-numeric-nas-are-represented-as-missing-empty-fields)
+-   [FAQ 15. Why do certain calculations come out as integer rather than
+    double?](#faq-15-why-do-certain-calculations-come-out-as-integer-rather-than-double)
+-   [FAQ 16. How can one read a file off the net or a csv file in a zip
+    file?](#faq-16-how-can-one-read-a-file-off-the-net-or-a-csv-file-in-a-zip-file)
 
 [Examples](#examples)
 
@@ -455,8 +455,8 @@ in which case all sqldf calls will use sqlite. See [FAQ
 FAQ[](#FAQ)
 ===========
 
-1. How does sqldf handle classes and factors?[](#1._How_does_sqldf_handle_classes_and_factors?)
------------------------------------------------------------------------------------------------
+FAQ 1. How does sqldf handle classes and factors?[](#faq-1-how-does-sqldf-handle-classes-and-factors)
+-------------------------------------------------------------------------------------
 
 `sqldf` uses a heuristic to assign classes and factor levels to returned
 results. It checks each column name returned against the column names in
@@ -478,8 +478,8 @@ Previously this section had an example of how the heuristic could go
 awry but improvements in the heuristic in sqldf 0.4-0 are such that that
 example now works as expected.
 
-2. Why does sqldf seem to mangle certain variable names?[](#2._Why_does_sqldf_seem_to_mangle_certain_variable_names?)
----------------------------------------------------------------------------------------------------------------------
+FAQ 2. Why does sqldf seem to mangle certain variable names?[](#faq-2-why-does-sqldf-seem-to-mangle-certain-variable-names)
+-------------------------------------------------------------------------------------
 
 Staring with RSQLite 1.0.0 and sqldf 0.4-9 dots in column names are no
 longer translated to underscores.
@@ -548,8 +548,8 @@ has a different name than expected. For an example of what happens:
 12 12 2009-01-17 C -0.63
 ```
 
-3. Why does sqldf("select var(x) from DF") not work?[](#3._Why_does_sqldf("select_var(x)_from_DF")_not_work?)
--------------------------------------------------------------------------------------------------------------
+FAQ 3. Why does sqldf("select var(x) from DF") not work?[](#faq-3-why-does-sqldfselect-varx-from-df-not-work)
+-------------------------------------------------------------------------------------
 
 The SQL statement passed to sqldf must be a valid SQL statement
 understood by the database. The functions that are understood include
@@ -581,8 +581,8 @@ using `sqldf` and then `apply` a function based on `var`:
 2 5,6,7,8 1.666667
 ```
 
-4. How does sqldf work with "Date" class variables?[](#4._How_does_sqldf_work_with_"Date"_class_variables?)
------------------------------------------------------------------------------------------------------------
+FAQ 4. How does sqldf work with "Date" class variables?[](#faq-4-how-does-sqldf-work-with-date-class-variables)
+-------------------------------------------------------------------------------------
 
 The H2 database has specific support for Date class variables so with H2
 Date class variables work as expected:
@@ -683,8 +683,8 @@ for more information. An example using times but not dates can be found
 and some discussion on using POSIXct can be found
 [here](https://groups.google.com/d/msg/sqldf/N-Xci-eKy3Y/faLa1siY6xYJ) .
 
-5. I get a message about the tcltk package being missing.[](#5._I_get_a_message_about_the_tcltk_package_being_missing.)
------------------------------------------------------------------------------------------------------------------------
+FAQ 5. I get a message about the tcltk package being missing.[](#faq-5-i-get-a-message-about-the-tcltk-package-being-missing)
+-------------------------------------------------------------------------------------
 
 The sqldf package uses the gsubfn package for parsing and the gsubfn
 package optionally uses the tcltk R package which in turn uses string
@@ -740,8 +740,8 @@ must use a build of R that has tcltk capability built in. (If the R was
 built with tcltk capability then adding the tcltk package (if its
 missing) and tcl/tk will work.)
 
-6. Why are there problems when we use table names or column names that are the same except for case?[](#6._Why_are_there_problems_when_we_use_table_names_or_column_name)
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 6. Why are there problems when we use table names or column names that are the same except for case?[](#faq-6-why-are-there-problems-when-we-use-table-names-or-column-name)
+-------------------------------------------------------------------------------------
 
 SQL is case insensitive so table names `a` and `A` are the same as far
 as SQLite is concerned. Note that in the example below it did produce a
@@ -762,7 +762,7 @@ In value[[3L]](cond) :
   RS-DBI driver: (error in statement: table `A` already exists)
 ```
 
-7. Why are there messages about MySQL?[](#7._Why_are_there_messages_about_MySQL?)
+FAQ 7. Why are there messages about MySQL?[](#faq-7-why-are-there-messages-about-mysql)
 ---------------------------------------------------------------------------------
 
 sqldf can use several different databases. The database is specified in
@@ -777,7 +777,7 @@ that you will have one of these packages loaded but you do not want to
 that package with sqldf be sure to set the sqldf.driver option, e.g.
 `options(sqldf.driver = "SQLite")` .
 
-8. Why am I having problems with update?[](#8._Why_am_I_having_problems_with_update?)
+FAQ 8. Why am I having problems with update?[](#faq-8-why-am-I-having-problems-with-update)
 -------------------------------------------------------------------------------------
 
 Although data frames referenced in the SQL statement(s) passed to sqldf
@@ -824,8 +824,8 @@ place by not using a factor for `b`. If we had defined column `b` as
 character or numeric instead of factor then we would not have had to
 specify `method = "raw"`.
 
-9. How do I examine the layout that SQLite uses for a table? which tables are in the database? which databases are attached?[](#9._How_do_I_examine_the_layout_that_SQLite_uses_for_a_table?_whi)
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 9. How do I examine the layout that SQLite uses for a table? which tables are in the database? which databases are attached?[](#faq-9-how-do-i-examine-the-layout-that-sqlite-uses-for-a-table-which-tables-are-in-the-database-which-databases-are-attached)
+-------------------------------------------------------------------------------------
 
 Try these approaches to get the indicated meta data:
 
@@ -854,8 +854,8 @@ Try these approaches to get the indicated meta data:
 1           3.7.17
 ```
 
-10. What are some of the differences between using SQLite and H2 with sqldf?[](#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
--------------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 10. What are some of the differences between using SQLite and H2 with sqldf?[](#faq-10-what-are-some-of-the-differences-between-using-sqlite-and-h2-with-sqldf)
+-------------------------------------------------------------------------------------
 
 sqldf will use the H2 database instead of sqlite if the
 [RH2](https://cran.r-project.org/package=RH2/) package is loaded.
@@ -1181,8 +1181,8 @@ from seqdf LEFT JOIN boundsdf ON (seqdf.thetime BETWEEN boundsdf.thestart AND bo
 # 13 see #8
 ```
 
-11. Why am I having difficulty reading a data file using SQLite and sqldf?[](#11._Why_am_I_having_difficulty_reading_a_data_file_using_SQLite)
-----------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 11. Why am I having difficulty reading a data file using SQLite and sqldf?[](#faq-11-why-am-i-having-difficulty-reading-a-data-file-using-sqlite-and-sqldf)
+-------------------------------------------------------------------------------------
 
 SQLite is fussy about line endings. Note the `eol` argument to
 `read.csv.sql` can be used to specify line endings if they are different
@@ -1195,7 +1195,7 @@ read.csv.sql("myfile.dat", eol = "\n")
 `eol` can also be used as a component to the sqldf `file.format`
 argument.
 
-12. How does one use sqldf with PostgreSQL?[](#12._How_does_one_use_sqldf_with_PostgreSQL?)
+FAQ 12. How does one use sqldf with PostgreSQL?[](#faq-12-how-does-one-use-sqldf-with-postgresql)
 -------------------------------------------------------------------------------------------
 
 Install 1. PostgreSQL, 2. RPostgreSQL R package 3. sqldf itself.
@@ -1259,8 +1259,8 @@ example](https://stackoverflow.com/questions/8559485/r-cumulative-sum-by-group-i
 Also note that `log` and `log10` in R correspond to `ln` and `log`,
 respectively, in PostgreSQL.
 
-13. How does one deal with quoted fields in `read.csv.sql`?[](#13._How_does_one_deal_with_quoted_fields_in_read.csv.sql_?)
---------------------------------------------------------------------------------------------------------------------------
+FAQ 13. How does one deal with quoted fields in `read.csv.sql`?[](#faq-13-how-does-one-deal-with-quoted-fields-in-readcsvsql)
+-------------------------------------------------------------------------------------
 
 `read.csv.sql` provides an interface to sqlite's csv reader. That reader
 is not very flexible (but is fast) and, in particular, it does not
@@ -1300,8 +1300,8 @@ put it in our path):
 read.csv.sql("myfile.csv", sep = ";", filter = "csvfix write_dsv -s ;")` .
 ```
 
-14. How does one read files where numeric NAs are represented as missing empty fields?[](#14._How_does_one_read_files_where_numeric_NAs_are_represented_as)
------------------------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 14. How does one read files where numeric NAs are represented as missing empty fields?[](#faq-14-how-does-one-read-files-where-numeric-nas-are-represented-as-missing-empty-fields)
+-------------------------------------------------------------------------------------
 
 Translate the empty fields to some number that will represent NA and
 then fix it up on the R end.
@@ -1367,8 +1367,8 @@ cat(Lines, file = "c.csv")
 DF <- read.csv.sql(filter = "csvfix pad -n 3 c.csv | csvfix write_dsv -s ,")
 ```
 
-15. Why do certain calculations come out as integer rather than double?[](#15._Why_do_certain_calculations_come_out_as_integer_rather_than)
--------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 15. Why do certain calculations come out as integer rather than double?[](#faq-15-why-do-certain-calculations-come-out-as-integer-rather-than-double)
+-------------------------------------------------------------------------------------
 
 SQLite/RSQLite, h2/RH2, PostgreSQL all perform integer division on
 integers; however, RMySQL/MySQL performs real division.
@@ -1421,8 +1421,8 @@ integers; however, RMySQL/MySQL performs real division.
 2      2.0
 ```
 
-16. How can one read a file off the net or a csv file in a zip file?[](#16._How_can_one_read_a_file_off_the_net_or_a_csv_file_in_a_zip_f)
------------------------------------------------------------------------------------------------------------------------------------------
+FAQ 16. How can one read a file off the net or a csv file in a zip file?[](#faq-16-how-can-one-read-a-file-off-the-net-or-a-csv-file-in-a-zip-file)
+-------------------------------------------------------------------------------------
 
 Use `read.csv.sql` and specify the URL of the file:
 
@@ -2030,7 +2030,7 @@ Example 5. Insert Variables[](#Example_5._Insert_Variables)
 -----------------------------------------------------------
 
 Here is an example of inserting evaluated variables into a query using
-[gsubfn](https://code.google.com/p/gsubfn/) quasi-perl-style string
+[gsubfn](https://CRAN.R-project.org/package=gsubfn) quasi-perl-style string
 interpolation. gsubfn is used by sqldf so its already loaded. Note that
 we must use the `fn$` prefix to invoke the interpolation functionality:
 
