@@ -2030,7 +2030,7 @@ Example 5. Insert Variables[](#Example_5._Insert_Variables)
 -----------------------------------------------------------
 
 Here is an example of inserting evaluated variables into a query using
-[gsubfn](https://code.google.com/p/gsubfn/) quasi-perl-style string
+[gsubfn](https://CRAN.R-project.org/package=gsubfn) quasi-perl-style string
 interpolation. gsubfn is used by sqldf so its already loaded. Note that
 we must use the `fn$` prefix to invoke the interpolation functionality:
 
