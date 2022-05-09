@@ -259,8 +259,16 @@ sqldf <- function(x, stringsAsFactors = FALSE,
 				}
 				connection <- dbConnect(m, dbname = dbname)
 			}
+			
 			if (verbose) cat("sqldf: initExtension(connection)\n")
-			initExtension(connection)
+			ext_args <- formals(initExtension)
+			if(! "extension" %in% names(ext_args)) {
+			  initExtension(connection)
+			} else {
+			  ext_args <-eval(ext_args$extension)
+			  lapply(ext_args, initExtension,db=connection)
+			}
+			
     	}
 		attr(connection, "dbPreExists") <- dbPreExists
 		if (missing(dbname) && drv == "sqlite") dbname <- ":memory:"
