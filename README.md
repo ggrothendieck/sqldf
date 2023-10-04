@@ -71,9 +71,9 @@ database is to be tested (SQLite is the default) and running:
 
 [Overview](#Overview)
 
-[Citing sqldf](#Citing_sqldf)
+[Citing sqldf](#Citing-sqldf)
 
-[For Those New to R](#For_Those_New_to_R)
+[For Those New to R](#For-Those-New-to-R)
 
 [News](#news)
 
@@ -83,7 +83,7 @@ database is to be tested (SQLite is the default) and running:
     available](#problem_is_that_installer_gives_message_that_sqldf_is_not_availa)
 -   [Problem with no argument form of sqldf -
     sqldf()](#problem_with_no_argument_form_of_sqldf_-_sqldf())
--   [Problem involvling tcltk](#problem_involvling_tcltk)
+-   [Problem involvling tcltk](#problem-involvling-tcltk)
 
 [FAQ](#faq)
 
