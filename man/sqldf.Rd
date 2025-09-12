@@ -245,7 +245,7 @@ The database is taken from the \code{dbname} argument of the \code{sqldf}
 command or if not set from \code{getOption("sqldf.dbname")} or if that option
 is not set it is assumed to be \code{"test"}.
 Note that MySQL does not use the \code{user}, \code{password}, \code{host}
-and code{port} arguments of sqldf.
+and \code{port} arguments of sqldf.
 See \url{http://dev.mysql.com/doc/refman/5.6/en/option-files.html} for 
 additional locations that the configuration files can be placed as well
 as other information.
