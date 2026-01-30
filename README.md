@@ -17,8 +17,8 @@ database's existence transparent to the user who only specifies the SQL
 statement. Surprisingly this can at times
 [be](https://stackoverflow.com/questions/1727772/quickly-reading-very-large-tables-as-dataframes-in-r/1820610#1820610)
 [even](https://groups.google.com/group/manipulatr/browse_thread/thread/3affbdc5efca9143/d19d7b97ac023ee8?pli=1)
-[faster](http://web.archive.org/web/20130511223824/http://stat.ethz.ch/pipermail/r-help/2009-December/221456.html)
-[than](http://web.archive.org/web/20130604023900/stat.ethz.ch/pipermail/r-help/2009-December/221513.html)
+[faster](https://web.archive.org/web/20130511223824/https://stat.ethz.ch/pipermail/r-help/2009-December/221456.html)
+[than](https://web.archive.org/web/20130604023900/stat.ethz.ch/pipermail/r-help/2009-December/221513.html)
 [the](https://stackoverflow.com/questions/14283566/specific-for-loop-too-slow-in-r/14287476#14287476)
 corresponding pure R calculation (although the purpose of the project is
 convenience and not speed). [This
@@ -30,8 +30,8 @@ from [CRAN](https://cran.r-project.org/package=sqldf).
 
 sqldf supports (1) the [SQLite](https://www.sqlite.org) backend database
 (by default), (2) the [H2](https://www.h2database.com) java database, (3)
-the [PostgreSQL](https://www.postgresql.org) database and (4) sqldf 0.4-0
-onwards also supports [MySQL](https://dev.mysql.com). SQLite, H2, MySQL
+the database and (4) sqldf 0.4-0
+onwards also supports MySQL. SQLite, H2, MySQL
 and PostgreSQL are free software. SQLite and H2 are embedded serverless
 zero administration databases that are included right in the R driver
 packages,
@@ -40,34 +40,15 @@ packages,
 there is no separate installation for either one. A number of [high
 profile projects](https://www.sqlite.org/famous.html) use SQLite. 
 H2 is a java database which contains a large collection of SQL functions
-and supports Date and other data types. It is the most popular database
-package among [scala
-packages](http://blog.takipi.com/the-top-100-most-popular-scala-libraries-based-on-10000-github-projects/).
+and supports Date and other data types. 
 PostgreSQL is a client/server database and unlike SQLite and H2 must be
 separately installed but it has a particularly powerful version of SQL,
-e.g. its
-[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html),
+e.g. its window functions
 so the extra installation work can be worth it. sqldf supports the
 `RPostgreSQL` driver in R. Like PostgreSQL, MySQL is a client server
 database that must be installed independently so its not as easy to
 install as SQLite or H2 but its very popular and is widely used as the
 back end for web sites.
-
-The information below mostly concerns the default SQLite database. The
-use of H2 with sqldf is discussed in [FAQ
-\#10](https://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H)
-which discusses differences between using sqldf with SQLite and H2 and
-also shows how to modify the code in the [Examples](#Examples) section
-to use sqldf/H2 rather than sqldf/SQLite. There is some information on
-using PostgreSQL with sqldf in [FAQ
-\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
-and an example in [Example 17.
-Lag](https://code.google.com/p/sqldf/#Example_17._Lag) . The unit tests
-provide examples that can work with all five data base drivers (covering
-four databases) supported by sqldf. They are run by loading whichever
-database is to be tested (SQLite is the default) and running:
-`demo("sqldf-unitTests")`
 
 [Overview](#Overview)
 
@@ -165,8 +146,8 @@ Overview[](#overview)
 package for running [SQL statements](https://en.wikipedia.org/wiki/SQL)
 on R data frames, optimized for convenience. `sqldf` works with the
 [SQLite](https://www.sqlite.org/), [H2](https://www.h2database.com),
-[PostgreSQL](https://www.postgresql.org) or
-[MySQL](https://dev.mysql.com/doc/) databases. SQLite has the least
+PostgreSQL
+MySQL databases. SQLite has the least
 prerequisites to install. H2 is just as easy if you have Java installed
 and also supports Date class and a few additional functions. PostgreSQL
 notably supports Windowing functions providing the SQL analogue of the R
@@ -225,7 +206,7 @@ In the case of PostgreSQL it works on top of the
 [DBI](https://cran.r-project.org/package=DBI) driver.
 
 There is also some untested code in sqldf for use with the
-[MySQL](https://www.mysql.com) database using the
+MySQL database using the
 [RMySQL](https://cran.r-project.org/package=RMySQL)
 [DBI](https://cran.r-project.org/package=DBI) driver.
 
@@ -266,7 +247,7 @@ sqldf("select avg(a) mean, variance(a) var from DF") # see example 15
 ```
 
 To try it with H2 rather than SQLite the process is similar. Ensure that
-you have the [java](https://java.sun.com) runtime installed, install R as
+you have the [java](https://www.oracle.com/java/technologies/) runtime installed, install R as
 above and start R. From within R enter this ensuring that the version of
 RH2 that you have is RH2 0.1-2.6 or later:
 
@@ -291,8 +272,7 @@ Troubleshooting[](#Troubleshooting)
 
 sqldf has been
 [extensively](https://cran.r-project.org/web/checks/check_results_sqldf.html)
-[tested](https://code.google.com/p/sqldf/source/browse/trunk/inst/unitTests/runit.all.R)
-with multiple architectures and database back ends but there are no
+tested but there are no
 guarantees.
 
 Problem is that installer gives message that sqldf is not available[](#Problem_is_that_installer_gives_message_that_sqldf_is_not_availa)
@@ -339,9 +319,7 @@ Running the above `options` line before using `sqldf`, e.g. put that
 options line in your `.Rprofile`, is all that is needed to get sqldf to
 work without the tcltk package and tcl/tk itself in most cases; however,
 this does have the downside that it will use the R engine which is
-slower. An alternative, is to rebuild R yourself as discussed here:
-[https://permalink.gmane.org/gmane.comp.lang.r.fedora/235](https://permalink.gmane.org/gmane.comp.lang.r.fedora/235)
-
+slower. 
 If the above does not resolve the problem then read the more detailed
 discussion below.
 
@@ -445,13 +423,6 @@ in which case all sqldf calls will use sqlite. See [FAQ
     install sqlite automatically anyways and if you want any of the
     additional ones just install them separately.
 
--   Mac users. According to
-    [http://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
-    Tcl/Tk comes with R 3.0.0 and later but if you are using an earlier
-    version of R look at [this
-    link](http://r.789695.n4.nabble.com/sqldf-hanging-on-macintosh-works-on-windows-tt3022193.html#a3022397)
-    .
-
 FAQ[](#FAQ)
 ===========
 
@@ -554,8 +525,7 @@ has a different name than expected. For an example of what happens:
 The SQL statement passed to sqldf must be a valid SQL statement
 understood by the database. The functions that are understood include
 simple SQLite functions and aggregate SQLite functions and functions in
-the
-[RSQLite.extfuns](https://code.google.com/p/sqldf/#Example_15._Use_of_RSQLite.extfuns_library_functions)
+the RSQLite.extfuns R
 package. Thus in this case in place of var(x) one could use variance(x)
 from the RSQLite.extfuns package. For SQLite functions see the lists of
 [core functions](https://www.sqlite.org/lang_corefunc.html), [aggregate
@@ -700,9 +670,7 @@ version of R that was built to work with tcltk and tcl/tk and includes
 tcl/tk itself.
 
 Mac. This should not occur on **recent** versions of R on Mac. If it
-does occur upgrade your R installation to a recent version. If you must
-use an older version of R on the Mac then get tcl/tk here:
-[http://cran.us.r-project.org/bin/macosx/tools/](http://cran.us.r-project.org/bin/macosx/tools/)
+does occur upgrade your R installation to a recent version.
 
 UNIX/Linux. If you don't already have tcl/tk itself on your system try
 this to install it like this (thanks to Eric Iversion):
@@ -1281,21 +1249,6 @@ or using `gawk`:
 read.csv.sql("myfile.csv", filter = list('gawk -f prog', prog = '{ gsub(/"/, ""); print }') )
 ```
 
-Another program to look at is the
-[csvfix](https://code.google.com/p/csvfix/) program (this is a free
-external program -- not an R program).  For example, the above could be done
-like this with csvfix:
-
-```r
-read.csv.sql("myfile.csv", filter = 'csvfix echo -smq' )
-```
-
-As another csvfix example, suppose we have commas in two contexts: (1) as
-separators between fields and within double quoted fields. To handle that case
-we can use `csvfix` to translate the separators to semicolon stripping off the
-double quotes at the same time (assuming we have installed `csvfix` and we have
-put it in our path):
-
 ```r
 read.csv.sql("myfile.csv", sep = ";", filter = "csvfix write_dsv -s ;")` .
 ```
@@ -1435,10 +1388,6 @@ DF <- read.csv.sql(URL, eol = "\r")
 Since files off the net could have any end of line be careful to specify
 it properly for the file of interest.
 
-As an alternative one could use the filter argument. To use this `wget`
-([download](http://wget.addictivecode.org/FrequentlyAskedQuestions?action=show&redirect=Faq#download),
-[Windows](http://gnuwin32.sourceforge.net/packages/wget.htm)) must be
-present on the system command path.
 
 ```r
 # 2 - same URL as above
@@ -1453,7 +1402,7 @@ DF <- read.csv.sql(filter = "7z x -so anscombe.zip 2>NUL")
 ```
 
 In the line of code above it is assumed that `7z`
-([download](http://www.7-zip.org/download.html)) is present and on the
+([download](https://7-zip.org/download.html)) is present and on the
 system command path. The example is for Windows. On UNIX use `/dev/null`
 in place of `NUL`.
 
@@ -1478,12 +1427,7 @@ tar.gz file to sqlite.
 Examples[](#Examples)
 =====================
 
-These examples illustrate usage of both sqldf and SQLite. For sqldf with
-H2 see [FAQ
-\#10](https://code.google.com/p/sqldf/#10.__What_are_some_of_the_differences_between_using_SQLite_and_H).
-For PostgreSQL see
-[FAQ\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?).
-Also the `"sqldf-unitTests"` demo that comes with sqldf works under
+The `"sqldf-unitTests"` demo that comes with sqldf works under
 sqldf with SQLite, H2, PostgreSQL and MySQL. David L. Reiner has created
 some further examples
 [here](https://files.meetup.com/1625815/crug_sqldf_05-01-2013.pdf) and
@@ -1555,14 +1499,6 @@ naming:
 2 versicolor     6.375000
 3  virginica     7.159091
 ```
-
-Note that PostgreSQL is the only free database that supports
-[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html)
-(similar to `ave` function in R) which would allow a different
-formulation of the above. For more on using sqldf with PostgreSQL see
-[FAQ
-\#12](https://code.google.com/p/sqldf/#12._How_does_one_use_sqldf_with_PostgreSQL?)
 
 ```r
 > library(RPostgreSQL)
@@ -2015,9 +1951,7 @@ the second Stackoverflow link below:
 2 2010-04-16 597.84 549.63   550 41201900
 ```
 
-Also see [this Xaprb
-link](https://www.xaprb.com/blog/2007/03/14/how-to-find-the-max-row-per-group-in-sql-without-subqueries/)
-for an approach without subqueries and for more discussion see [this
+For an approach without subqueries and for more discussion see [this
 stackoverflow
 link](https://stackoverflow.com/questions/121387/sql-fetch-the-row-which-has-the-max-value-for-a-column)
 and [this stackoverflow
@@ -2030,7 +1964,7 @@ Example 5. Insert Variables[](#Example_5._Insert_Variables)
 -----------------------------------------------------------
 
 Here is an example of inserting evaluated variables into a query using
-[gsubfn](https://code.google.com/p/gsubfn/) quasi-perl-style string
+package gsubfn quasi-perl-style string
 interpolation. gsubfn is used by sqldf so its already loaded. Note that
 we must use the `fn$` prefix to invoke the interpolation functionality:
 
@@ -2087,9 +2021,7 @@ fewer component than subsequent ones then it assumes that
 format is only partly supported -- quotes are not regarded as special.
 
 In addition to the examples below there is an example
-[here](http://web.archive.org/web/20140429215324/http://stat.ethz.ch/pipermail/r-help/2009-May/199991.html) and
-another one with performance results
-[here](http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/).
+[here](https://web.archive.org/web/20140429215324/https://stat.ethz.ch/pipermail/r-help/2009-May/199991.html) 
 
 ```r
 > # Example 6a.
@@ -2646,7 +2578,7 @@ floor, pi. **String:** replicate, charindex, leftstr, rightstr, ltrim,
 rtrim, trim, replace, reverse, proper, padl, padr, padc, strfilter.
 **Aggregate:** stdev, variance, mode, median, lower\_quartile,
 upper\_quartile. See the bottom of
-[https://www.sqlite.org/contrib/](https://www.sqlite.org/contrib/) for
+[https://www.sqlite.org/contrib/](https://www.sqlite.org/src/ext/contrib/) for
 more info on these extension functions.
 
 ```r
@@ -2815,9 +2747,7 @@ DD <-
          on DF.id=BB.id and DF.tvar=BB.tvar")
 ```
 
-In PostgreSQL's
-[window](https://developer.postgresql.org/pgdocs/postgres/tutorial-window.html)
-[functions](https://developer.postgresql.org/pgdocs/postgres/functions-window.html)
+PostgreSQL's window functions
 (similar to R's `ave` function) makes reference to other rows
 particularly easy. Below we repeat the SQLite example in PostgreSQL
 (except that the following fills with NA):
@@ -2841,9 +2771,7 @@ sqldf("show tables")
 ```
 
 The following SQL statements to query the MySQL table schemas are taken
-from the [blog of Christophe
-Ladroue](https://chrisladroue.com/2012/03/a-graphical-overview-of-your-mysql-database/):
-
+from the blog of Christophe:
 ```r
 library(RMySQL)
 library(sqldf)

@@ -7,7 +7,7 @@
 # This file is in the public domain.
 #
 # For more information email LoranceStinson+csv@gmail.com.
-# Or see http://lorance.freeshell.org/csv/
+# Or see https://lorance.freeshell.org/csv/
 #
 # Parse a CSV string into an array.
 # The number of fields found is returned.

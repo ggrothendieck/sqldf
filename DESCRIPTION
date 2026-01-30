@@ -1,9 +1,11 @@
 Package: sqldf
-Version: 0.4-11
-Date: 2017-06-23
+Version: 0.4-12
+Date: 2026-01-29
 Title: Manipulate R Data Frames Using SQL
-Author: G. Grothendieck <ggrothendieck@gmail.com>
-Maintainer: G. Grothendieck <ggrothendieck@gmail.com>
+Authors@R: person(given = "G.",
+                  family = "Grothendieck",
+                  role = c("aut", "cre"),
+                  email = "ggrothendieck@gmail.com")
 Description: The sqldf() function is typically passed a single argument which 
 	is an SQL select statement where the table names are ordinary R data 
 	frame names.  sqldf() transparently sets up a database, imports the 
@@ -19,5 +21,6 @@ Suggests: RH2, RMySQL, RPostgreSQL, svUnit, tcltk, MASS
 Imports: DBI, chron
 License: GPL-2
 BugReports: https://github.com/ggrothendieck/sqldf/issues
-URL: https://github.com/ggrothendieck/sqldf, https://groups.google.com/group/sqldf
+URL: https://github.com/ggrothendieck/sqldf
+NeedsCompilation: no
 

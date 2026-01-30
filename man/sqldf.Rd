@@ -9,7 +9,7 @@ SQL select on data frames
 sqldf(x, stringsAsFactors = FALSE,
    row.names = FALSE, envir = parent.frame(), 
    method = getOption("sqldf.method"),
-   file.format = list(), dbname, drv = getOption("sqldf.driver"), 
+   file.format = list(), dbname, drv = getOption("sqldf.driver"),
    user, password = "", host = "localhost", port,
    dll = getOption("sqldf.dll"), connection = getOption("sqldf.connection"),
    verbose = isTRUE(getOption("sqldf.verbose")))
@@ -19,14 +19,14 @@ sqldf(x, stringsAsFactors = FALSE,
 \arguments{
   \item{x}{Character string representing an SQL select statement or
    character vector whose components each represent a successive SQL
-   statement to be executed. 
-   The select statement syntax must conform to the particular database 
+   statement to be executed.
+   The select statement syntax must conform to the particular database
    being used.  If x is missing then it establishes a connection
    which subsequent sqldf statements access.  In that case the database
    is not destroyed until the next sqldf statement with no x.}
-  \item{stringsAsFactors}{ If \code{TRUE} then those columns output 
-   from the database as \code{"character"} are 
-   converted to \code{"factor"} if the heuristic is unable to determine 
+  \item{stringsAsFactors}{ If \code{TRUE} then those columns output
+   from the database as \code{"character"} are
+   converted to \code{"factor"} if the heuristic is unable to determine
    the class.}
   \item{row.names}{For \code{TRUE} the tables in the data base are given
    a \code{row_names} column filled with the row names of the corresponding
@@ -35,22 +35,22 @@ sqldf(x, stringsAsFactors = FALSE,
   \item{envir}{ The environment where the data frames representing the tables
    are to be found.}
   \item{method}{This argument is a list of two functions, keywords or character
-   vectors.  If the second component of the list 
-   is \code{NULL} (the default) then the first component 
+   vectors.  If the second component of the list
+   is \code{NULL} (the default) then the first component
    of the list can be specified without wrapping it in a list. The
    first component
    specifies a transformation of the data frame output from the database
-   and the second specifies a transformation to each data frame that is 
-   passed to the data base just before it is read into the database.  
+   and the second specifies a transformation to each data frame that is
+   passed to the data base just before it is read into the database 
    The second component is less frequently used.
    If the first component is \code{NULL} or not
    specified that it defaults to "auto".  If the second component is \code{NULL}
    or not specified then no transformation is performed on the input.
 
-   The allowable keywords for the first components are (1) \code{"auto"} 
+   The allowable keywords for the first components are (1) \code{"auto"}
    which is the default and automatically assigns the class of each
    column using the heuristic described later, (2) \code{"auto.factor"} which is
-   the same as \code{"auto"} but does not assign \code{"factor"} and 
+   the same as \code{"auto"} but does not assign \code{"factor"} and
    \code{"ordered"} classes,
    (3) \code{"raw"} or \code{NULL} which means use
    whatever classes are returned by the database with no automatic processing
@@ -60,7 +60,7 @@ sqldf(x, stringsAsFactors = FALSE,
    where \code{class} is an R class (such as \code{Date}) are converted to
    that class and the \code{__class} portion is removed from the column name.
    For example, 
-	\code{sqldf("select a as x__Date from DF", method = "name__class")} 
+	\code{sqldf("select a as x__Date from DF", method = "name__class")}
    would cause
    column \code{a} to be coerced to class \code{Date} and have the column name 
    \code{x}.
@@ -68,13 +68,13 @@ sqldf(x, stringsAsFactors = FALSE,
    can also be a character vector of classes to assign to the
    returned data.frame.  The example just given could alternately be implemented
    using 
-	\code{sqldf("select a as x from DF", method = "Date")} 
+	\code{sqldf("select a as x from DF", method = "Date")}
    Note that when \code{Date} is used in this way it assumes the database
    contains the number of days since January 1, 1970.  If the date is in
    the format \code{yyyy-mm-dd} then use \code{Date2} as the class.
   }
-  \item{file.format}{A list whose components are passed to 
-    \code{sqliteImportFile}.  Components may include \code{sep}, 
+  \item{file.format}{A list whose components are passed to
+    \code{sqliteImportFile}.  Components may include \code{sep},
     \code{header}, \code{row.names}, \code{skip}, \code{eol} and \code{filter}.
     Except for \code{filter} they are passed to
     \code{sqliteImportFile} and have the same default values as 
@@ -84,7 +84,7 @@ sqldf(x, stringsAsFactors = FALSE,
     if the file being read does not have the line endings for the platform
     being used then \code{eol} will have to be specified.  In particular, 
     certain UNIX-like tools on Windows may produce files with UNIX line endings
-    in which case \code{eol="\n"} should be specified). 
+    in which case \code{eol="\n"} should be specified).
     \code{filter} may optionally contain a batch/shell command through which the
     input file is piped prior to reading it in.  Alternately \code{filter}
     may be a list whose first component is a batch/shell command containing
@@ -98,34 +98,34 @@ sqldf(x, stringsAsFactors = FALSE,
     then \code{eol} must be specified, as discussed above.
     \code{file.format} may be set to \code{NULL} in order not to search
     for input file objects at all.  The \code{file.format} can also
-    be specified as an attribute in each file object itself in which case 
+    be specified as an attribute in each file object itself in which case
     such specification overrides any given through the argument list.  There
     is further discussion of \code{file.format} below.}
   \item{dbname}{Name of the database.  For SQLite and h2 data bases this 
    defaults to
    \code{":memory:"} which results in an embedded database. For MySQL this
    defaults to \code{getOption("RMysql.dbname")} and if that is not specified
-   then \code{"test"} is used.  
+   then \code{"test"} is used 
    For RPostgreSQL this
    defaults to \code{getOption("sqldf.RPostgreSQL.dbname")} and if that is 
    not specified then \code{"test"} is used.
 }
   \item{drv}{\code{"SQLite"}, \code{"MySQL"}, \code{"h2"},
-   \code{"PostgreSQL"} or \code{"pgSQL"} or any of those names prefaced with 
+   \code{"PostgreSQL"} or \code{"pgSQL"} or any of those names prefaced with
    \code{"R"}.
    If not specified then
    the \code{"dbDriver"} option is checked and if that is not set then
-   \code{sqldf} checks whether \code{RPostgreSQL}, 
+   \code{sqldf} checks whether \code{RPostgreSQL},
    \code{RMySQL} or \code{RH2} 
    is loaded in that order and the driver corresponding to the first one
    found is used.  If none are loaded then \code{"SQLite"} is used. 
    \code{dbname=NULL} causes the default to be used.}
-  \item{user}{user name.  Not needed for embedded databases. 
+  \item{user}{user name.  Not needed for embedded databases.
     For RPostgreSQL
     the default is taken from option \code{sqldf.RPostgreSQL.user} and
     if that is not specified either then \code{"postgres"} is used.
 }
-  \item{password}{password. Not needed for embedded databases. 
+  \item{password}{password. Not needed for embedded databases.
     For RPostgreSQL
     the default is taken from option \code{sqldf.RPostgreSQL.password} and
     if that is not specified then \code{"postgres"} is used.
@@ -136,31 +136,31 @@ sqldf(x, stringsAsFactors = FALSE,
     if that is not specified then \code{"test"} is used.
 
 }
-  \item{port}{port. For RPostgreSQL the default 
+  \item{port}{port. For RPostgreSQL the default
    is taken from the option \code{sqldf.RPostgreSQL.port} and if that is not
    specified then \code{5432} is used.
 }
   \item{dll}{Name of an SQLite loadable extension to automatically load.
-    If found on PATH then it is 
+    If found on PATH then it is
 	automatically loaded and the SQLite functions it in will be accessible.}
   \item{connection}{If this is \code{NULL} then a connection is created;
    otherwise the indicated connection is used.  The default is
-   the value of the option \code{sqldf.connection}.  If neither 
+   the value of the option \code{sqldf.connection}.  If neither
    \code{connection} nor \code{sqldf.connection} are specified a connection
-   is automatically generated on-the-fly and closed on exit of the call to 
+   is automatically generated on-the-fly and closed on exit of the call to
    \code{sqldf}.  If this argument is not \code{NULL} then the specified
-   connection is left open on termination of the \code{sqldf} call.  Usually 
+   connection is left open on termination of the \code{sqldf} call.  Usually
    this argument is left unspecified.  It can be used to make repeated calls
    to a database without reloading it.}
   \item{verbose}{If \code{TRUE} then verboe output shown.  Anything else
-   suppresses verbose output. Can be set globally using option 
+   suppresses verbose output. Can be set globally using option
    \code{"sqldf.verbose"}.}
 }
 \details{
-The typical action of \code{sqldf} is to 
+The typical action of \code{sqldf} is to
 \describe{
 \item{create a database}{in memory}
-\item{read in the data frames and files}{used in the select statement.  
+\item{read in the data frames and files}{used in the select statement.
 This is done by scanning the select statement to see which words in 
 the select statement are of class "data.frame" or "file" in the parent frame,  or the
 specified environment if \code{envir} is used, and for each object
@@ -210,18 +210,18 @@ arguments.
 Warning. Although sqldf is usually used with on-the-fly databases
 which it automatically sets up and destroys if you wish to use it
 with existing databases be sure to back up your database prior to
-using it since incorrect operation could destroy the entire 
+using it since incorrect operation could destroy the entire
 database.
 
 }
 \note{
-If \code{row.names = TRUE} is used then 
+If \code{row.names = TRUE} is used then
 any \code{NATURAL JOIN} will make use of it which may not be what was
 intended.
 
 3/2 and 3.0/2 are the same in R but in SQLite the first one
 causes integer arithmetic to be used whereas the second using floating point.  
-Thus both evaluate to 
+Thus both evaluate to
 1.5 in R but they evaluate to 1 and 1.5 respectively in SQLite.
 
 The \code{dbWriteTable}/\code{sqliteImportFile} routines that sqldf uses to transfer files to the data base are intended for speed and they are not as flexible as \code{\link{read.table}}.  Also they have slightly different defaults. (If more flexible input is needed use the slower \code{read.table} to read the data into a data frame instead of reading directly from a file.)  The default for \code{sep} is \code{sep = ","}. If the first row of the file has one fewer entry than subsequent ones then it is assumed that \code{header <- row.names <- TRUE} and otherwise that \code{header <- row.names <- FALSE}. The \code{header} can be forced to \code{header <- TRUE} by specifying \code{file.format = list(header = TRUE)} as an argument to \code{sqldf.} \code{sep} and \code{row.names} are other \code{file.format} subarguments. Also, one limitation with .csv files is that quotes are not regarded as special within files so a comma within a data field such as \code{"Smith, James"} would be regarded as a field delimiter and the quotes would be entered as part of the data which probably is not what is intended.  
@@ -235,7 +235,7 @@ if they would have otherwise differed only in row names or use
 \code{all.equal} if the data portion is the same but attributes aside
 from row names differ.
 
-On MySQL the database must pre-exist.  Create a \code{c:\\my.ini} 
+On MySQL the database must pre-exist.  Create a \code{c:\\my.ini}
 or \code{\%MYSQL_HOME\%\\my.ini} file on Windows or a \code{/etc/my.cnf}
 file on UNIX to contain information about the database.  This file may 
 specify the username, password and port.  The password
@@ -244,14 +244,11 @@ setup then the \code{port} can be omitted as well.
 The database is taken from the \code{dbname} argument of the \code{sqldf}
 command or if not set from \code{getOption("sqldf.dbname")} or if that option
 is not set it is assumed to be \code{"test"}.
-Note that MySQL does not use the \code{user}, \code{password}, \code{host}
-and \code{port} arguments of sqldf.
-See \url{http://dev.mysql.com/doc/refman/5.6/en/option-files.html} for 
-additional locations that the configuration files can be placed as well
-as other information.
+Note that MySQL does not use the \code{user, password, host, port}
+arguments of sqldf.
 
 If \code{getOption("sqldf.dll")} is specified
-then the named dll will be loaded as an SQLite loadable extension.  
+then the named dll will be loaded as an SQLite loadable extension.
 This is in addition to the extension functions included with RSQLite.
 
 }
