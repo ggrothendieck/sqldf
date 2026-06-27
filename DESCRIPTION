@@ -1,6 +1,6 @@
 Package: sqldf
-Version: 0.4-12
-Date: 2026-01-29
+Version: 0.4-13
+Date: 2026-06-27
 Title: Manipulate R Data Frames Using SQL
 Authors@R: person(given = "G.",
                   family = "Grothendieck",
