@@ -30,7 +30,7 @@ from [CRAN](https://cran.r-project.org/package=sqldf).
 
 sqldf supports (1) the [SQLite](https://www.sqlite.org) backend database
 (by default), (2) the [H2](https://www.h2database.com) java database, (3)
-the database and (4) sqldf 0.4-0
+the [PostgreSQL](https://www.postgresql.org/) database and (4) sqldf 0.4-0
 onwards also supports MySQL. SQLite, H2, MySQL
 and PostgreSQL are free software. SQLite and H2 are embedded serverless
 zero administration databases that are included right in the R driver
