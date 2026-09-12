@@ -6,14 +6,21 @@ sqldf is installed from CRAN like this:
 
 This will download and install sqldf and all its dependencies including the
 RSQLite driver.  The RSQLite driver includes SQLite itself so  the single
-line given above is all that is needed to install everything you need.
+line given above is all that is needed to install everything you need if you
+are using the SQLite backend.
 
 
 INSTALLING FROM GITHUB
 
-The development version of sqldf can be installed from github like this:
+The development version of sqldf can be installed from github like this. 
 
-	library(devtools)
+To ensure that you are downloading a digitally signed version of the source
+first go to https://github.com/ggrothendieck/sqldf in your web browser and on
+the right side of the grey bar above the file tree click on Commits.  The first
+commit should say Verified.  If so it has been signed and although this is
+not foolproof it is better than not being signed.
+
+	library(remotes)
 	install_github("ggrothendieck/sqldf")
 
 
@@ -35,7 +42,7 @@ PROBLEMS
 sqldf uses gsubfn which can optionally use the R tcltk package but can also run
 without that package substituting R code for it.  On Windows and most other R
 installations, the tcltk package comes with the core of R and so you
-automatically have it intalled it when you install R itself.  If the tcltk
+automatically have it installed when you install R itself.  If the tcltk
 package is not present this fact will be automatically detected and it will
 automatically switch to R code.  
 

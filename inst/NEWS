@@ -1,3 +1,7 @@
+Version 0.4-14
+
+o replace trcomma2dot.vbs with trcomma2.js as Microsoft is deprecating vs
+
 Version 0.4-13
 
 o sign commits

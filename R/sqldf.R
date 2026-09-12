@@ -591,7 +591,7 @@ read.csv2.sql <- function(file, sql = "select * from file",
 
 	if (missing(filter)) {
 		filter <- if (.Platform$OS.type == "windows")
-			paste("cscript /nologo", normalizePath(system.file("trcomma2dot.vbs", package = "sqldf")))
+			paste("cscript /nologo", normalizePath(system.file("trcomma2dot.js", package = "sqldf")))
 		else "tr , ."
 	}
 
